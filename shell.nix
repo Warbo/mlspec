@@ -1,6 +1,7 @@
 with (import <nixpkgs> {}).pkgs;
 let pkg = haskellngPackages.callPackage
-            ({ mkDerivation, base, QuickCheck, stdenv, tasty, tasty-quickcheck
+            ({ mkDerivation, base, hipspecifyer, QuickCheck, stdenv, tasty
+             , tasty-quickcheck
              }:
              mkDerivation {
                pname = "MLSpec";
@@ -8,7 +9,7 @@ let pkg = haskellngPackages.callPackage
                src = ./.;
                isLibrary = false;
                isExecutable = true;
-               buildDepends = [ base ];
+               buildDepends = [ base hipspecifyer ];
                testDepends = [ base QuickCheck tasty tasty-quickcheck ];
                homepage = "http://chriswarbo.net/git/mlspec";
                description = "Runs QuickSpec on sub-sets of Haskell definitions";
