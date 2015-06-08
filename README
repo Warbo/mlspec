@@ -1,0 +1,13 @@
+# MLSpec: Machine Learning for QuickSpec #
+
+This project implements a Theory Exploration system, built on QuickSpec and
+"Machine Learning for Haskell" (ML4HS).
+
+QuickSpec takes a (small) collection of Haskell definitions and builds equations
+relating them (tested using QuickCheck).
+
+ML4HS takes a (large) collection of Haskell definitions and clusters them based
+on some similarity measure.
+
+MLSpec runs QuickSpec on the output of ML4HS, as a divide and conquer approach
+to scalability.
