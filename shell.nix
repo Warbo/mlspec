@@ -4,7 +4,7 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, QuickCheck, stdenv, tasty
+  f = { mkDerivation, base, QuickCheck, stdenv, syb, tasty
       , tasty-quickcheck
       }:
       mkDerivation {
@@ -13,8 +13,8 @@ let
         src = ./.;
         isLibrary = false;
         isExecutable = true;
-        buildDepends = [ base ];
-        testDepends = [ base QuickCheck tasty tasty-quickcheck ];
+        buildDepends = [ base syb ];
+        testDepends = [ base QuickCheck syb tasty tasty-quickcheck ];
         homepage = "http://chriswarbo.net/git/mlspec";
         description = "Runs QuickSpec on sub-sets of Haskell definitions";
         license = stdenv.lib.licenses.publicDomain;
