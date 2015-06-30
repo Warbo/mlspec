@@ -21,12 +21,12 @@ canReadMod p m n = getMod (mkEntry p m n) == m
 
 canReadName p (M m) (N n) = getName (mkEntry p (M m) (N n)) == N (m ++ "." ++ n)
 
-canReadTheoryPkgs ps ms ns = p == take count ps
+canReadTheoryPkgs ps ms ns = p == nub (take count ps)
   where T p m s = theory (unwords entries)
         entries = zipWith3 mkEntry ps ms ns
         count   = length entries
 
-canReadTheoryMods ps ms ns = m == take count ms
+canReadTheoryMods ps ms ns = m == nub (take count ms)
   where T p m s = theory (unwords entries)
         entries = zipWith3 mkEntry ps ms ns
         count   = length entries
