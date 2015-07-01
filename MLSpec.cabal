@@ -34,6 +34,7 @@ test-suite test
                      , ArbitraryHaskell
                      , MissingH
                      , process
+                     , temporary
                      , QuickCheck
                      , tasty >= 0.7
                      , tasty-quickcheck
