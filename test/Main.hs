@@ -1,16 +1,28 @@
 {-# LANGUAGE TupleSections #-}
 module Main where
 
+import           Control.Exception (try, SomeException)
+import           Data.Either
 import           Data.List
 import           Data.String.Utils
 import           MLSpec.Theory
+import           System.Exit
+import           System.Process
+import           System.IO.Temp
 import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.Arbitrary.Haskell
 import           Test.QuickCheck
+import           Test.QuickCheck.Monadic
 import           Test.Tasty             (defaultMain, testGroup)
 import           Test.Tasty.QuickCheck  (testProperty)
 
-main = defaultMain $ testGroup "All tests" [
+-- Only run Cabal tests if we have Cabal available
+main = do cabal <- haveCabal
+          let tests = if cabal then allTests
+                               else pureTests
+          defaultMain tests
+
+pureTests = testGroup "Pure tests" [
     testProperty "Can read packages"      canReadPackage
   , testProperty "Can read modules"       canReadPackage
   , testProperty "Can read names"         canReadName
@@ -29,6 +41,13 @@ main = defaultMain $ testGroup "All tests" [
   , testProperty "Executable runs Main"   executableRunsMain
   , testProperty "Executable has deps"    executableHasDependencies
   ]
+
+cabalTests = testGroup "Cabal tests" [
+    testProperty "Cabal projects check OK"     (once cabalCheck)
+  , testProperty "Cabal projects configure OK" (once cabalConfigure)
+  ]
+
+allTests = testGroup "All tests" [pureTests, cabalTests]
 
 canReadPackage p m n = getPackage (mkEntry p m n) == p
 
@@ -100,7 +119,38 @@ executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
         [Cabal.S _ exec] = Cabal.sections project
         project          = mkCabal t
 
+cabalCheck t = monadicIO $ do
+  (code, out, err) <- run $ withSystemTempDirectory "mlspectest" doCheck
+  mDebug (code, out, err)
+  assert (code == ExitSuccess)
+  where doCheck    dir = do pdir <- projectDir dir
+                            cabalIn pdir ["check"]
+        projectDir dir = Cabal.makeProject dir project
+        project        = mkCabal t
+
+cabalConfigure (T _ ms ss) = monadicIO $ do
+  (code, out, err) <- run $ withSystemTempDirectory "mlspectest" doConfig
+  mDebug (code, out, err)
+  assert (code == ExitSuccess)
+  where doConfig   dir = do pdir <- projectDir dir
+                            cabalIn pdir ["configure"]
+        projectDir dir = Cabal.makeProject dir project
+        project        = mkCabal (T [P "containers"] ms ss)
+
 -- Helpers
+
+cabal args dir = readCreateProcessWithExitCode cmd ""
+  where cmd = (proc "cabal" args) { cwd = dir }
+
+cabalIn dir args = cabal args (Just dir)
+
+haveCabal :: IO Bool
+haveCabal = fmap isRight (run (cabal ["--help"] Nothing))
+  where run  :: IO a -> IO (Either SomeException a)
+        run   = try
+
+debug  = whenFail . print
+mDebug = monitor  . debug
 
 mkEntry (P p) (M m) (N n) = p ++ ":" ++ m ++ "." ++ n
 

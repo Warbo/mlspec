@@ -1,5 +1,5 @@
-{ mkDerivation, ArbitraryHaskell, base, MissingH, QuickCheck
-, stdenv, tasty, tasty-quickcheck
+{ mkDerivation, ArbitraryHaskell, base, MissingH, process
+, QuickCheck, stdenv, tasty, tasty-quickcheck, temporary
 }:
 mkDerivation {
   pname = "MLSpec";
@@ -9,7 +9,8 @@ mkDerivation {
   isExecutable = true;
   buildDepends = [ ArbitraryHaskell base ];
   testDepends = [
-    ArbitraryHaskell base MissingH QuickCheck tasty tasty-quickcheck
+    ArbitraryHaskell base MissingH process QuickCheck tasty
+    tasty-quickcheck temporary
   ];
   homepage = "http://chriswarbo.net/git/mlspec";
   description = "Runs QuickSpec on sub-sets of Haskell definitions";
