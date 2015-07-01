@@ -100,7 +100,7 @@ renderedDefinitionContainsNames ss =
 renderedDefinitionSetsArity ss = all arityExists (map snd ss)
   where output        = renderDef ss
         exists        = (`isInfixOf` output)
-        arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
+        arityExists a = exists ("`Test.QuickSpec.blind" ++ show a ++ "`")
 
 renderedClusterContainsNames (C c) =
   all (`isInfixOf` output) (map (show . fst) ss)

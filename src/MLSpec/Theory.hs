@@ -44,7 +44,7 @@ theoryLine :: Symbol -> String
 theoryLine (N n, a) = concat [
     "\""
   , n
-  , "\" `Test.QuickSpec.fun"
+  , "\" `Test.QuickSpec.blind"
   , show a
   , "` "
   , n
