@@ -53,7 +53,7 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
   , Cabal.headers = requiredHeaders
   , Cabal.sections = [
       Cabal.S "executable Main" [
-          ("build-depends", intercalate ", " (map show pkgs))
+          ("build-depends", intercalate ", " (map show deps))
         , ("main-is", "Main.hs")
         ]
     ]
@@ -61,6 +61,13 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
     (([], "Main.hs"), H (renderModule (T pkgs mods symbols)))
     ]
   }
+  where deps = pkgs ++ requiredDeps
+
+requiredDeps :: [Package]
+requiredDeps = map P [
+    "base >= 4.8 && < 4.9"
+  , "quickspec < 2"
+  ]
 
 requiredHeaders = Cabal.S () [
     ("build-type",   "Simple")
@@ -81,7 +88,8 @@ renderModule (T pkgs mods symbols) = unlines [
   ]
 
 renderImports :: [Module] -> String
-renderImports = unlines . map (("import qualified " ++) . show)
+renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
+  where allMods = mods ++ [M "Test.QuickSpec"]
 
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [

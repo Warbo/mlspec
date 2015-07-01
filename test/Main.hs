@@ -13,16 +13,20 @@ import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.Arbitrary.Haskell
 import           Test.QuickCheck
 import           Test.QuickCheck.Monadic
-import           Test.Tasty             (defaultMain, testGroup)
-import           Test.Tasty.QuickCheck  (testProperty)
+import           Test.Tasty             (defaultMain, testGroup, localOption)
+import           Test.Tasty.QuickCheck
 
--- Only run Cabal tests if we have Cabal available
+-- Only run Cabal tests if we have Cabal available; likewise for tests depending
+-- on particular modules.
 main = do cabal <- haveCabal
-          let tests = if cabal then allTests
-                               else pureTests
+          deps  <- testsWithDeps
+          let tests = if cabal then allTests (cabalTests:deps)
+                               else allTests             deps
           defaultMain tests
 
-pureTests = testGroup "Pure tests" [
+allTests rest = testGroup "All tests" (pureTests:rest)
+
+pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
     testProperty "Can read packages"      canReadPackage
   , testProperty "Can read modules"       canReadPackage
   , testProperty "Can read names"         canReadName
@@ -42,12 +46,24 @@ pureTests = testGroup "Pure tests" [
   , testProperty "Executable has deps"    executableHasDependencies
   ]
 
-cabalTests = testGroup "Cabal tests" [
-    testProperty "Cabal projects check OK"     (once cabalCheck)
-  , testProperty "Cabal projects configure OK" (once cabalConfigure)
+-- Tests which depend on the "cabal" command
+cabalTests = localOption (QuickCheckTests 1) $ testGroup "Cabal tests" [
   ]
 
-allTests = testGroup "All tests" [pureTests, cabalTests]
+-- Tests which depend on the availability of particular modules
+dependentTests = [
+    mkDepTests ["Test.QuickSpec"] [
+       testProperty "Cabal projects check OK"      cabalCheck
+      , testProperty "Cabal projects configure OK" cabalConfigure
+      , testProperty "Cabal projects run OK"       cabalRun
+      ]
+  ]
+  where qs = [M "Test.QuickSpec"]
+        mkDepTests ms ts = (map M ms, limit (testGroup (mkStr ms) ts))
+        mkStr ms = "Tests depending on " ++ (intercalate " " ms)
+        limit    = localOption (QuickCheckTests 1)
+
+-- Tests
 
 canReadPackage p m n = getPackage (mkEntry p m n) == p
 
@@ -120,34 +136,68 @@ executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
         project          = mkCabal t
 
 cabalCheck t = monadicIO $ do
-  (code, out, err) <- run $ withSystemTempDirectory "mlspectest" doCheck
+  (code, out, err) <- run $ withCabalProject t doCheck
   mDebug (code, out, err)
   assert (code == ExitSuccess)
-  where doCheck    dir = do pdir <- projectDir dir
-                            cabalIn pdir ["check"]
-        projectDir dir = Cabal.makeProject dir project
-        project        = mkCabal t
+  where doCheck dir = cabalIn dir ["check"]
 
 cabalConfigure (T _ ms ss) = monadicIO $ do
-  (code, out, err) <- run $ withSystemTempDirectory "mlspectest" doConfig
+  (code, out, err) <- run $ withCabalProject (T [P "containers"] ms ss)
+                                             doConfig
   mDebug (code, out, err)
   assert (code == ExitSuccess)
-  where doConfig   dir = do pdir <- projectDir dir
-                            cabalIn pdir ["configure"]
-        projectDir dir = Cabal.makeProject dir project
-        project        = mkCabal (T [P "containers"] ms ss)
+  where doConfig dir = cabalIn dir ["configure"]
+
+cabalRun = monadicIO $ do
+  (code, out, err) <- run $ withCabalProject thy doRun
+  mDebug (code, out, err)
+  assert (code == ExitSuccess)
+  where doRun dir = cabalIn dir ["configure"] >> cabalIn dir ["run"]
+        thy       = (T [P "containers"] [M "Data.Bool"] syms)
+        syms      = [
+            (N "Data.Bool.True",  0)
+          , (N "Data.Bool.False", 0)
+          , (N "Data.Bool.not",   1)
+          , (N "Data.Bool.(||)",  2)
+          , (N "Data.Bool.(&&)",  2)
+          ]
+
+withCabalProject :: Theory -> (FilePath -> IO a) -> IO a
+withCabalProject t f = withSystemTempDirectory "mlspectest" go
+  where go dir  = Cabal.makeProject dir project >>= f
+        project = mkCabal t
 
 -- Helpers
 
-cabal args dir = readCreateProcessWithExitCode cmd ""
-  where cmd = (proc "cabal" args) { cwd = dir }
+testsWithDeps = withDeps dependentTests
+  where withDeps []             = return []
+        withDeps ((ms, ts):tss) = do have <- haveDeps ms
+                                     rest <- withDeps tss
+                                     return $ if have then (ts:rest)
+                                                      else rest
+
+cabal args dir = cabalInWith dir args ""
 
 cabalIn dir args = cabal args (Just dir)
+
+cabalInWith dir args stdin = readCreateProcessWithExitCode cmd stdin
+  where cmd = (proc "cabal" args) { cwd = dir }
 
 haveCabal :: IO Bool
 haveCabal = fmap isRight (run (cabal ["--help"] Nothing))
   where run  :: IO a -> IO (Either SomeException a)
         run   = try
+
+haveDep :: Module -> IO Bool
+haveDep (M m) = haveCabal >>= tryDep
+  where tryDep False = return False
+        tryDep _     = do
+          (_, out, _) <- cabalInWith Nothing ["repl"] ("import " ++ m)
+          -- Hacky, but GHCi still gives ExitSuccess :(
+          return ("Could not find module" `isInfixOf` out)
+
+haveDeps :: [Module] -> IO Bool
+haveDeps ms = fmap (all id) (mapM haveDep ms)
 
 debug  = whenFail . print
 mDebug = monitor  . debug
