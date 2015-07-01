@@ -1,7 +1,8 @@
 module MLSpec.Theory where
 
-import Data.Generics
-import Data.List
+import           Data.List
+import qualified Test.Arbitrary.Cabal   as Cabal
+import           Test.Arbitrary.Haskell
 
 newtype Package = P String deriving (Eq, Ord)
 newtype Module  = M String deriving (Eq, Ord)
@@ -22,7 +23,7 @@ instance Show Name where
 data Theory = T [Package] [Module] [Symbol]
 
 instance Show Theory where
-  show t@(T pkgs mods syms) = show (pkgs, renderTheory t)
+  show t@(T pkgs mods syms) = show (pkgs, renderModule t)
 
 getPackage :: String -> Package
 getPackage = P . takeWhile (/= ':')
@@ -45,8 +46,35 @@ theory l = T (nub pkgs) (nub mods) (nub symbols)
         mods  = map getMod     bits
         symbols = [(n, 0) | n <- names]
 
-renderTheory (T pkgs mods symbols) = concat [
-    "["
+mkCabal :: Theory -> Cabal.Project
+mkCabal (T pkgs mods symbols) = Cabal.P {
+    Cabal.name = "mlspec-temp"
+  , Cabal.version = [1]
+  , Cabal.headers = Cabal.S () []
+  , Cabal.sections = [
+      Cabal.S "executable Main" [
+          ("build-depends", intercalate ", " (map show pkgs))
+        , ("main-is", "Main.hs")
+        ]
+    ]
+  , Cabal.files = [
+    (([], "Main.hs"), H (renderModule (T pkgs mods symbols)))
+    ]
+  }
+
+renderModule :: Theory -> String
+renderModule (T pkgs mods symbols) = unlines [
+    "module Main where"
+  , renderImports mods
+  , renderDef symbols
+  ]
+
+renderImports :: [Module] -> String
+renderImports = unlines . map (("import qualified " ++) . show)
+
+renderDef :: [Symbol] -> String
+renderDef symbols = concat [
+    "theory = ["
   , intercalate ", " (map theoryLine symbols)
   , "]"
   ]
