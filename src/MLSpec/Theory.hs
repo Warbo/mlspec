@@ -1,5 +1,6 @@
 module MLSpec.Theory where
 
+import           Data.Hashable
 import           Data.List
 import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.Arbitrary.Haskell
@@ -7,6 +8,10 @@ import           Test.Arbitrary.Haskell
 newtype Package = P String deriving (Eq, Ord)
 newtype Module  = M String deriving (Eq, Ord)
 newtype Name    = N String deriving (Eq, Ord)
+
+unPkg  (P x) = x
+unMod  (M x) = x
+unName (N x) = x
 
 type Arity   = Int
 type Symbol  = (Name, Arity)
@@ -48,7 +53,7 @@ theory l = T (nub pkgs) (nub mods) (nub symbols)
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {
-    Cabal.name = "mlspec-temp"
+    Cabal.name = "mlspec-temp" ++ (show uid)
   , Cabal.version = [1]
   , Cabal.headers = requiredHeaders
   , Cabal.sections = [
@@ -62,6 +67,9 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
     ]
   }
   where deps = pkgs ++ requiredDeps
+        uid  = hash (map unPkg pkgs,
+                     map unMod mods,
+                     map (\(x, y) -> (unName x, y)) symbols)
 
 requiredDeps :: [Package]
 requiredDeps = map P [
@@ -100,3 +108,9 @@ renderDef symbols = concat [
 
 theoriesFromClusters :: String -> [Theory]
 theoriesFromClusters = map theory . lines
+
+writeTheoriesFromClusters :: FilePath -> String -> IO [FilePath]
+writeTheoriesFromClusters dir s = do
+    mapM (Cabal.makeProject dir) projects
+  where theories = theoriesFromClusters s
+        projects = map mkCabal theories

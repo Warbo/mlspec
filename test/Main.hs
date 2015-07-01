@@ -6,6 +6,7 @@ import           Data.Either
 import           Data.List
 import           Data.String.Utils
 import           MLSpec.Theory
+import           System.Directory
 import           System.Exit
 import           System.Process
 import           System.IO.Temp
@@ -24,7 +25,7 @@ main = do cabal <- haveCabal
                                else allTests             deps
           defaultMain tests
 
-allTests rest = testGroup "All tests" (pureTests:rest)
+allTests rest = testGroup "All tests" (pureTests:impureTests:rest)
 
 pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
     testProperty "Can read packages"      canReadPackage
@@ -44,6 +45,10 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Package has executable" projectHasExecutable
   , testProperty "Executable runs Main"   executableRunsMain
   , testProperty "Executable has deps"    executableHasDependencies
+  ]
+
+impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
+    testProperty "Project dirs made from clusters" projectsMadeFromClusters
   ]
 
 -- Tests which depend on the "cabal" command
@@ -135,6 +140,17 @@ executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
         [Cabal.S _ exec] = Cabal.sections project
         project          = mkCabal t
 
+projectsMadeFromClusters cs = monadicIO $ do
+  made <- run $ withSystemTempDirectory "mlspectest" getMade
+  mDebug (("names", names), ("made", made))
+  assert (all id made)
+  where getMade dir = do writeTheoriesFromClusters dir clusters
+                         mapM (existsIn dir) names
+        clusters      = mkEntries cs
+        theories      = map theory (lines clusters)
+        names         = map (Cabal.name . mkCabal) theories
+        existsIn x y  = doesDirectoryExist (x ++ "/" ++ y)
+
 cabalCheck t = monadicIO $ do
   (code, out, err) <- run $ withCabalProject t doCheck
   mDebug (code, out, err)
@@ -199,7 +215,10 @@ haveDep (M m) = haveCabal >>= tryDep
 haveDeps :: [Module] -> IO Bool
 haveDeps ms = fmap (all id) (mapM haveDep ms)
 
+debug :: Show a => a -> Property -> Property
 debug  = whenFail . print
+
+mDebug :: Show a => a -> PropertyM IO ()
 mDebug = monitor  . debug
 
 mkEntry (P p) (M m) (N n) = p ++ ":" ++ m ++ "." ++ n
@@ -207,7 +226,13 @@ mkEntry (P p) (M m) (N n) = p ++ ":" ++ m ++ "." ++ n
 -- Uncurried
 mkEntryUC (p, m, n) = mkEntry p m n
 
-newtype Cluster = C [(Package, Module, Name)] deriving (Show)
+mkEntries :: [Cluster] -> String
+mkEntries cs = unlines $ map show cs
+
+newtype Cluster = C [(Package, Module, Name)]
+
+instance Show Cluster where
+  show (C xs) = unwords $ map mkEntryUC xs
 
 instance Arbitrary Cluster where
   arbitrary = do

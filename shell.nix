@@ -4,8 +4,9 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, ArbitraryHaskell, base, MissingH, process
-      , QuickCheck, stdenv, tasty, tasty-quickcheck, temporary
+  f = { mkDerivation, ArbitraryHaskell, base, directory, hashable
+      , MissingH, process, QuickCheck, stdenv, tasty, tasty-quickcheck
+      , temporary
       }:
       mkDerivation {
         pname = "MLSpec";
@@ -13,10 +14,10 @@ let
         src = ./.;
         isLibrary = false;
         isExecutable = true;
-        buildDepends = [ ArbitraryHaskell base ];
+        buildDepends = [ ArbitraryHaskell base hashable ];
         testDepends = [
-          ArbitraryHaskell base MissingH process QuickCheck tasty
-          tasty-quickcheck temporary
+          ArbitraryHaskell base directory hashable MissingH process
+          QuickCheck tasty tasty-quickcheck temporary
         ];
         homepage = "http://chriswarbo.net/git/mlspec";
         description = "Runs QuickSpec on sub-sets of Haskell definitions";
