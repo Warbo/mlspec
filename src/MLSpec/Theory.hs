@@ -53,7 +53,7 @@ theory l = T (nub pkgs) (nub mods) (nub symbols)
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {
-    Cabal.name = "mlspec-temp" ++ (show uid)
+    Cabal.name = "mlspec-temp" ++ show uid
   , Cabal.version = [1]
   , Cabal.headers = requiredHeaders
   , Cabal.sections = [
@@ -67,9 +67,9 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
     ]
   }
   where deps = pkgs ++ requiredDeps
-        uid  = hash (map unPkg pkgs,
-                     map unMod mods,
-                     map (\(x, y) -> (unName x, y)) symbols)
+        uid  = abs (hash (map unPkg pkgs,
+                          map unMod mods,
+                          map (\(x, y) -> (unName x, y)) symbols))
 
 requiredDeps :: [Package]
 requiredDeps = map P [
