@@ -41,7 +41,14 @@ getName :: String -> Name
 getName = N . tail . dropWhile (/= ':')
 
 theoryLine :: Symbol -> String
-theoryLine (N n, a) = "\"" ++ n ++ "\" `fun" ++ show a ++ "` " ++ n
+theoryLine (N n, a) = concat [
+    "\""
+  , n
+  , "\" `Test.QuickSpec.fun"
+  , show a
+  , "` "
+  , n
+  ]
 
 theory :: String -> Theory
 theory l = T (nub pkgs) (nub mods) (nub symbols)
@@ -92,7 +99,7 @@ renderModule (T pkgs mods symbols) = unlines [
     "module Main where"
   , renderImports mods
   , renderDef symbols
-  , "main = quickSpec theory"
+  , "main = Test.QuickSpec.quickSpec theory"
   ]
 
 renderImports :: [Module] -> String

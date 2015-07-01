@@ -99,7 +99,8 @@ renderedDefinitionContainsNames ss =
 
 renderedDefinitionSetsArity ss = all arityExists (map snd ss)
   where output        = renderDef ss
-        arityExists a = ("`fun" ++ show a ++ "`") `isInfixOf` output
+        exists        = (`isInfixOf` output)
+        arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
 
 renderedClusterContainsNames (C c) =
   all (`isInfixOf` output) (map (show . fst) ss)
@@ -118,7 +119,8 @@ moduleImports t@(T _ ms _) =
 modulesAreMain t = "module Main where" `elem` lines output
   where output = renderModule t
 
-moduleRunsQuickSpec t = "main = quickSpec theory" `elem` lines output
+moduleRunsQuickSpec t =
+  "main = Test.QuickSpec.quickSpec theory" `elem` lines output
   where output = renderModule t
 
 projectGetsModule t = mainMod == renderModule t
