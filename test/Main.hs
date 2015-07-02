@@ -34,7 +34,8 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Theory gets packages"   canReadTheoryPkgs
   , testProperty "Theory gets modules"    canReadTheoryMods
   , testProperty "Theory gets names"      canReadTheoryNames
-  , testProperty "Types have right arity" typeArityCorrect
+  , testProperty "Arities make sense"     typeArityBounded
+  , testProperty "Arities ignore nesting" typeArityCorrect
   , testProperty "Names are rendered"     renderedDefinitionContainsNames
   , testProperty "Arities are rendered"   renderedDefinitionSetsArity
   , testProperty "Clusters give names"    renderedClusterContainsNames
@@ -95,9 +96,17 @@ canReadTheoryNames ps ms ns ts = map (\(n, a, t) -> n) s == take count names
         names   = zipWith qualify ms ns
         qualify (M m) (N n) = N (m ++ "." ++ n)
 
-typeArityCorrect ts = arity (Ty complete) == length ts - 1
-  where chunks   = map (\(Ty x) -> wrap x) ts
-        complete = intercalate " -> " chunks
+typeArityBounded (Ty t) = arity (Ty t) <= arrowsIn t
+  where arrowsIn ('-':'>':s) = 1 + arrowsIn s
+        arrowsIn (_:s)       = arrowsIn s
+        arrowsIn ""          = 0
+
+typeArityCorrect ts = not (null ts) ==>
+  arity chain == length chunks - 1
+  where chunks = map (wrap . unType) ts
+        chain  = Ty (intercalate " -> " chunks)
+
+
 
 renderedDefinitionContainsNames ss' =
   all (`isInfixOf` output) (map (\(n, a, t) -> show n) ss)
@@ -112,11 +121,13 @@ renderedDefinitionSetsArity ss = all arityExists (map (\(n, a, t) -> a) ss)
                            then True  -- QuickSpec doesn't support arity > 5
                            else exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
 
-renderedClusterContainsNames (C c) =
-  all (`isInfixOf` output) (map (\(n, a, t) -> show n) ss)
+renderedClusterContainsNames (C c) = all (`isInfixOf` output) allowed
   where output     = renderModule (T ps ms ss)
         T ps ms ss = theory line
         line       = intercalate "\t" (map mkEntryUC c)
+        -- We skip anything with arity > 5, due to QuickSpec limits
+        kept       = filter (\(n, a, t) -> a <= 5) ss
+        allowed    = map    (\(n, a, t) -> show n) kept
 
 renderedImports ms =
   all ((`elem` lines output) . ("import qualified " ++) . show) ms

@@ -11,9 +11,10 @@ newtype Module  = M  String deriving (Eq, Ord)
 newtype Name    = N  String deriving (Eq, Ord)
 newtype Type    = Ty String deriving (Eq, Ord)
 
-unPkg  (P x) = x
-unMod  (M x) = x
-unName (N x) = x
+unPkg  (P  x) = x
+unMod  (M  x) = x
+unName (N  x) = x
+unType (Ty x) = x
 
 type Arity   = Int
 type Symbol  = (Name, Arity, Type)
@@ -49,11 +50,13 @@ getNameType s = (N name, Ty typ)
         typ    = filter (/= '"') $ tail (dropWhile (/= ':') suffix)
 
 arity :: Type -> Int
-arity (Ty t) = bits t - 1
-  where bits :: String -> Int
-        bits ('-':'>':s) = 1 + bits s
-        bits (c:s)       = bits s
-        bits []          = 1
+arity (Ty t) = stepArity 0 t
+
+stepArity 0 ""          = 0                      -- base case
+stepArity 0 ('-':'>':s) = 1 + stepArity  0    s  -- Only count top-level "->"
+stepArity n ('(':s)     =     stepArity (n+1) s  -- Go in  a level
+stepArity n (')':s)     =     stepArity (n-1) s  -- Go out a level
+stepArity n (_:s)       =     stepArity  n    s  -- Skip everything else
 
 theoryLine :: Symbol -> String
 theoryLine (_, a, _) | a > 5 = ""  -- QuickSpec only goes up to fun5
