@@ -34,6 +34,7 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Theory gets packages"   canReadTheoryPkgs
   , testProperty "Theory gets modules"    canReadTheoryMods
   , testProperty "Theory gets names"      canReadTheoryNames
+  , testProperty "Types have right arity" typeArityCorrect
   , testProperty "Names are rendered"     renderedDefinitionContainsNames
   , testProperty "Arities are rendered"   renderedDefinitionSetsArity
   , testProperty "Clusters give names"    renderedClusterContainsNames
@@ -93,6 +94,10 @@ canReadTheoryNames ps ms ns ts = map (\(n, a, t) -> n) s == take count names
         count   = length entries
         names   = zipWith qualify ms ns
         qualify (M m) (N n) = N (m ++ "." ++ n)
+
+typeArityCorrect ts = arity (Ty complete) == length ts - 1
+  where chunks   = map (\(Ty x) -> wrap x) ts
+        complete = intercalate " -> " chunks
 
 renderedDefinitionContainsNames ss' =
   all (`isInfixOf` output) (map (\(n, a, t) -> show n) ss)
@@ -255,6 +260,8 @@ mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 setArity n t = (n, a, t)
   where a = arity t
 
+wrap x    = "(" ++ x ++ ")"
+
 lower = "abcdefghijklmnopqrstuvwxyz"
 upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -273,11 +280,35 @@ instance Arbitrary Name where
     rest    <- listOf (elements (lower ++ upper))
     return $ N (initial:rest)
 
+typeName = do initial <- elements upper
+              rest    <- listOf (elements (lower ++ upper ++ " "))
+              return (initial:rest)
+
+sizedListOf gen 0 = return []
+sizedListOf gen n = do
+  points <- listOf (choose (0, n))
+  count  <- arbitrary
+  let points' = take (abs count `mod` n) points
+      diffs   = diffsOf (sort points')
+  mapM gen diffs
+
+diffsOf = diffsOf' 0
+  where diffsOf' n [] = []
+        diffsOf' n (x:xs) = x - n : diffsOf' x xs
+
+sizedTypeName 0 = typeName
+sizedTypeName n = do
+  chunks <- sizedListOf sizedTypeName (n - 1)
+  head   <- typeName
+  return $ case chunks of
+                [] -> head
+                _  -> intercalate " -> " (map wrap chunks)
+
 instance Arbitrary Type where
   arbitrary = do
-    initial <- elements upper
-    rest    <- listOf (elements (lower ++ upper ++ ", ()"))
-    return $ Ty (initial:rest)
+    size <- arbitrary
+    name <- sizedTypeName (abs size `mod` 100)
+    return (Ty name)
 
 instance Arbitrary Theory where
   arbitrary = do
