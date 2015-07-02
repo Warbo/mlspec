@@ -70,43 +70,48 @@ dependentTests = [
 
 -- Tests
 
-canReadPackage p m n = getPackage (mkEntry p m n) == p
+canReadPackage p m n t = getPackage (mkEntry p m n t) == p
 
-canReadMod p m n = getMod (mkEntry p m n) == m
+canReadMod p m n t = getMod (mkEntry p m n t) == m
 
-canReadName p (M m) (N n) = getName (mkEntry p (M m) (N n)) == N (m ++ "." ++ n)
+canReadName p (M m) (N n) t = name == N (m ++ "." ++ n)
+  where (name, _) = getNameType (mkEntry p (M m) (N n) t)
 
-canReadTheoryPkgs ps ms ns = p == nub (take count ps)
-  where T p m s = theory (unwords entries)
-        entries = zipWith3 mkEntry ps ms ns
+canReadTheoryPkgs ps ms ns ts = p == nub (take count ps)
+  where T p _ _ = theory (intercalate "\t" entries)
+        entries = zipWith4 mkEntry ps ms ns ts
         count   = length entries
 
-canReadTheoryMods ps ms ns = m == nub (take count ms)
-  where T p m s = theory (unwords entries)
-        entries = zipWith3 mkEntry ps ms ns
+canReadTheoryMods ps ms ns ts = m == nub (take count ms)
+  where T p m s = theory (intercalate "\t" entries)
+        entries = zipWith4 mkEntry ps ms ns ts
         count   = length entries
 
-canReadTheoryNames ps ms ns = map fst s == take count names
-  where T p m s = theory (unwords entries)
-        entries = zipWith3 mkEntry ps ms ns
+canReadTheoryNames ps ms ns ts = map (\(n, a, t) -> n) s == take count names
+  where T p m s = theory (intercalate "\t" entries)
+        entries = zipWith4 mkEntry ps ms ns ts
         count   = length entries
         names   = zipWith qualify ms ns
         qualify (M m) (N n) = N (m ++ "." ++ n)
 
-renderedDefinitionContainsNames ss =
-  all (`isInfixOf` output) (map (show . fst) ss)
-  where output = renderDef ss
+renderedDefinitionContainsNames ss' =
+  all (`isInfixOf` output) (map (\(n, a, t) -> show n) ss)
+  where ss        = map intoRange ss'
+        output    = renderDef ss
+        intoRange (n, a, t) = (n, abs a `mod` 6, t)
 
-renderedDefinitionSetsArity ss = all arityExists (map snd ss)
+renderedDefinitionSetsArity ss = all arityExists (map (\(n, a, t) -> a) ss)
   where output        = renderDef ss
         exists        = (`isInfixOf` output)
-        arityExists a = exists ("`Test.QuickSpec.blind" ++ show a ++ "`")
+        arityExists a = if a > 5
+                           then True  -- QuickSpec doesn't support arity > 5
+                           else exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
 
 renderedClusterContainsNames (C c) =
-  all (`isInfixOf` output) (map (show . fst) ss)
+  all (`isInfixOf` output) (map (\(n, a, t) -> show n) ss)
   where output     = renderModule (T ps ms ss)
         T ps ms ss = theory line
-        line       = unwords (map mkEntryUC c)
+        line       = intercalate "\t" (map mkEntryUC c)
 
 renderedImports ms =
   all ((`elem` lines output) . ("import qualified " ++) . show) ms
@@ -173,11 +178,11 @@ cabalRun = monadicIO $ do
   where doRun dir = cabalIn dir ["configure"] >> cabalIn dir ["run"]
         thy       = (T [P "containers"] [M "Data.Bool"] syms)
         syms      = [
-            (N "Data.Bool.True",  0)
-          , (N "Data.Bool.False", 0)
-          , (N "Data.Bool.not",   1)
-          , (N "Data.Bool.(||)",  2)
-          , (N "Data.Bool.(&&)",  2)
+            (N "Data.Bool.True",  0, Ty "Bool")
+          , (N "Data.Bool.False", 0, Ty "Bool")
+          , (N "Data.Bool.not",   1, Ty "Bool -> Bool")
+          , (N "Data.Bool.||",    2, Ty "Bool -> Bool -> Bool")
+          , (N "Data.Bool.&&",    2, Ty "Bool -> Bool -> Bool")
           ]
 
 withCabalProject :: Theory -> (FilePath -> IO a) -> IO a
@@ -223,18 +228,18 @@ debug  = whenFail . print
 mDebug :: Show a => a -> PropertyM IO ()
 mDebug = monitor  . debug
 
-mkEntry (P p) (M m) (N n) = p ++ ":" ++ m ++ "." ++ n
+mkEntry (P p) (M m) (N n) (Ty t) = p ++ ":" ++ m ++ "." ++ n ++ ":\"" ++ t ++ "\""
 
 -- Uncurried
-mkEntryUC (p, m, n) = mkEntry p m n
+mkEntryUC (p, m, n, t) = mkEntry p m n t
 
 mkEntries :: [Cluster] -> String
 mkEntries cs = unlines $ map show cs
 
-newtype Cluster = C [(Package, Module, Name)]
+newtype Cluster = C [(Package, Module, Name, Type)]
 
 instance Show Cluster where
-  show (C xs) = unwords $ map mkEntryUC xs
+  show (C xs) = intercalate "\t" $ map mkEntryUC xs
 
 instance Arbitrary Cluster where
   arbitrary = do
@@ -242,9 +247,13 @@ instance Arbitrary Cluster where
     ps <- vectorOf n arbitrary
     ms <- vectorOf n arbitrary
     ns <- vectorOf n arbitrary
-    return $ C (zip3 ps ms ns)
+    ts <- vectorOf n arbitrary
+    return $ C (zip4 ps ms ns ts)
 
-mkCluster ps ms ns = (ps, ms, ns, zipWith3 mkEntry ps ms ns)
+mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
+
+setArity n t = (n, a, t)
+  where a = arity t
 
 lower = "abcdefghijklmnopqrstuvwxyz"
 upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -264,11 +273,18 @@ instance Arbitrary Name where
     rest    <- listOf (elements (lower ++ upper))
     return $ N (initial:rest)
 
+instance Arbitrary Type where
+  arbitrary = do
+    initial <- elements upper
+    rest    <- listOf (elements (lower ++ upper ++ ", ()"))
+    return $ Ty (initial:rest)
+
 instance Arbitrary Theory where
   arbitrary = do
     pkgs  <- arbitrary
     mods  <- arbitrary
     names <- arbitrary
+    types <- arbitrary
     return $ T      pkgs
                     mods
-               (zip names (repeat 0))
+               (zipWith setArity names types)

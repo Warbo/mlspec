@@ -2,28 +2,33 @@ module MLSpec.Theory where
 
 import           Data.Hashable
 import           Data.List
+import           Data.Typeable
 import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.Arbitrary.Haskell
 
-newtype Package = P String deriving (Eq, Ord)
-newtype Module  = M String deriving (Eq, Ord)
-newtype Name    = N String deriving (Eq, Ord)
+newtype Package = P  String deriving (Eq, Ord)
+newtype Module  = M  String deriving (Eq, Ord)
+newtype Name    = N  String deriving (Eq, Ord)
+newtype Type    = Ty String deriving (Eq, Ord)
 
 unPkg  (P x) = x
 unMod  (M x) = x
 unName (N x) = x
 
 type Arity   = Int
-type Symbol  = (Name, Arity)
+type Symbol  = (Name, Arity, Type)
 
 instance Show Package where
-  show (P x) = x
+  show (P  x) = x
 
 instance Show Module where
-  show (M x) = x
+  show (M  x) = x
 
 instance Show Name where
-  show (N x) = x
+  show (N  x) = x
+
+instance Show Type where
+  show (Ty x) = x
 
 data Theory = T [Package] [Module] [Symbol]
 
@@ -34,29 +39,51 @@ getPackage :: String -> Package
 getPackage = P . takeWhile (/= ':')
 
 getMod :: String -> Module
-getMod x = let N n = getName x
+getMod x = let (N n, _) = getNameType x
             in M . init . dropWhileEnd (/= '.') $ n
 
-getName :: String -> Name
-getName = N . tail . dropWhile (/= ':')
+getNameType :: String -> (Name, Type)
+getNameType s = (N name, Ty typ)
+  where suffix = tail . dropWhile (/= ':') $ s
+        name   = takeWhile (/= ':') suffix
+        typ    = filter (/= '"') $ tail (dropWhile (/= ':') suffix)
+
+arity :: Type -> Int
+arity (Ty t) = bits t - 1
+  where bits :: String -> Int
+        bits ('-':'>':s) = 1 + bits s
+        bits (c:s)       = bits s
+        bits []          = 1
 
 theoryLine :: Symbol -> String
-theoryLine (N n, a) = concat [
+theoryLine (_, a, _) | a > 5 = ""  -- QuickSpec only goes up to fun5
+theoryLine (N n, a, Ty t)    = concat [
     "\""
   , n
-  , "\" `Test.QuickSpec.blind"
+  , "\" `Test.QuickSpec.fun"
   , show a
-  , "` "
+  , "` (("
   , n
+  , ") :: "
+  , t
+  , ")"
   ]
+
+tabWords :: String -> [String]
+tabWords s = let (pre, post) = span (/= '\t') s
+             in case pre of
+                     [] -> []
+                     _  -> pre : (case post of
+                                       ""     -> []
+                                       '\t':s -> tabWords s)
 
 theory :: String -> Theory
 theory l = T (nub pkgs) (nub mods) (nub symbols)
-  where bits  = words l
-        pkgs  = map getPackage bits
-        names = map getName    bits
-        mods  = map getMod     bits
-        symbols = [(n, 0) | n <- names]
+  where bits = tabWords l
+        pkgs = map getPackage  bits
+        nts  = map getNameType bits
+        mods = map getMod      bits
+        symbols = [(n, arity t, t) | (n,t) <- nts]
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {
@@ -76,7 +103,7 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
   where deps = pkgs ++ requiredDeps
         uid  = abs (hash (map unPkg pkgs,
                           map unMod mods,
-                          map (\(x, y) -> (unName x, y)) symbols))
+                          map (\((N x), y, (Ty z)) -> (x, y, z)) symbols))
 
 requiredDeps :: [Package]
 requiredDeps = map P [
