@@ -22,7 +22,7 @@ unMod  (M  x) = x
 unName (N  x) = x
 unType (Ty x) = x
 
-newtype Entry = E (Package, Module, Name, Type, Arity)
+newtype Entry = E (Package, Module, Name, Type, Arity) deriving (Show, Eq)
 
 instance FromJSON Entry where
   parseJSON (Object o) = do
@@ -43,7 +43,7 @@ instance ToJSON Entry where
     , "arity"   .= a
     ]
 
-newtype Cluster = C [Entry]
+newtype Cluster = C [Entry] deriving (Eq)
 
 instance FromJSON Cluster where
   parseJSON = fmap C . parseJSON
@@ -105,14 +105,6 @@ theoryLine (M m, N n, Ty t, a)    = concat [
   , t
   , ")"
   ]
-
-tabWords :: String -> [String]
-tabWords s = let (pre, post) = span (/= '\t') s
-             in case pre of
-                     [] -> []
-                     _  -> pre : (case post of
-                                       ""     -> []
-                                       '\t':s -> tabWords s)
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
@@ -178,8 +170,13 @@ renderDef symbols = concat [
 theoriesFromClusters :: [Cluster] -> [Theory]
 theoriesFromClusters = map theory
 
+getProjects s = let theories = theoriesFromClusters (readClusters s)
+                 in map mkCabal theories
+
+readClusters :: String -> [Cluster]
+readClusters x = case decode . fromString $ x of
+                      Nothing -> []
+                      Just xs -> xs
+
 writeTheoriesFromClusters :: FilePath -> String -> IO [FilePath]
-writeTheoriesFromClusters dir s = do
-    mapM (Cabal.makeProject dir) projects
-  where theories = theoriesFromClusters (mapMaybe decode [fromString s])
-        projects = map mkCabal theories
+writeTheoriesFromClusters dir s = mapM (Cabal.makeProject dir) (getProjects s)

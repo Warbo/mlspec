@@ -32,20 +32,23 @@ main = do cabal <- haveCabal
 allTests rest = testGroup "All tests" (pureTests:impureTests:rest)
 
 pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
-    testProperty "Theory gets packages"   canReadTheoryPkgs
-  , testProperty "Theory gets modules"    canReadTheoryMods
-  , testProperty "Theory gets names"      canReadTheoryNames
-  , testProperty "Names are rendered"     renderedDefinitionContainsNames
-  , testProperty "Arities are rendered"   renderedDefinitionSetsArity
-  , testProperty "Clusters give names"    renderedClusterContainsNames
-  , testProperty "Imports rendered"       renderedImports
-  , testProperty "Modules import"         moduleImports
-  , testProperty "Modules are Main"       modulesAreMain
-  , testProperty "Modules run QuickSpec"  moduleRunsQuickSpec
-  , testProperty "Package has Main.hs"    projectGetsModule
-  , testProperty "Package has executable" projectHasExecutable
-  , testProperty "Executable runs Main"   executableRunsMain
-  , testProperty "Executable has deps"    executableHasDependencies
+    testProperty "Theory gets packages"     canReadTheoryPkgs
+  , testProperty "Theory gets modules"      canReadTheoryMods
+  , testProperty "Theory gets names"        canReadTheoryNames
+  , testProperty "Names are rendered"       renderedDefinitionContainsNames
+  , testProperty "Arities are rendered"     renderedDefinitionSetsArity
+  , testProperty "Clusters give names"      renderedClusterContainsNames
+  , testProperty "Imports rendered"         renderedImports
+  , testProperty "Modules import"           moduleImports
+  , testProperty "Modules are Main"         modulesAreMain
+  , testProperty "Modules run QuickSpec"    moduleRunsQuickSpec
+  , testProperty "Package has Main.hs"      projectGetsModule
+  , testProperty "Package has executable"   projectHasExecutable
+  , testProperty "Executable runs Main"     executableRunsMain
+  , testProperty "Executable has deps"      executableHasDependencies
+  , testProperty "JSON <-> Entry"           canHandleJSONEntries
+  , testProperty "JSON <-> Cluster"         canHandleJSONClusters
+  , testProperty "Can read JSON clusters"   canReadJSONClusters
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -140,16 +143,40 @@ executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
         [Cabal.S _ exec] = Cabal.sections project
         project          = mkCabal t
 
+canHandleJSONEntries :: Entry -> Bool
+canHandleJSONEntries entry =
+  case decode encoded of
+       Nothing -> error $ "Couldn't decode '" ++ S.toString encoded ++ "'"
+       Just x  -> x == entry
+   where encoded = encode entry
+
+canHandleJSONClusters es =
+  case decode encoded of
+       Nothing -> error $ "Couldn't decode '" ++ S.toString encoded ++ "'"
+       Just x  -> x == cluster
+  where encoded = encode cluster
+        cluster = C es
+
+canReadJSONClusters :: [Cluster] -> Bool
+canReadJSONClusters cs' = readClusters encoded == cs
+  where encoded = S.toString (encode cs)
+        cs      = take 10 cs'
+
 projectsMadeFromClusters cs = monadicIO $ do
-  made <- run $ withSystemTempDirectory "mlspectest" getMade
-  mDebug (("names", names), ("made", made))
-  assert (all id made)
-  where getMade dir = do writeTheoriesFromClusters dir clusters
-                         mapM (existsIn dir) names
-        clusters      = S.toString (mkEntries cs)
-        theories      = map theory (mapMaybe decode [S.fromString clusters])
-        names         = map (Cabal.name . mkCabal) theories
-        existsIn x y  = doesDirectoryExist (x ++ "/" ++ y)
+  (claimed, made) <- run $ withSystemTempDirectory "mlspectest" getMade
+  mDebug (("names",    names),
+          ("claimed",  claimed),
+          ("made",     made),
+          ("clusters", clusters),
+          ("theories", theories))
+  assert (all snd made)
+  where getMade dir  = do out1 <- writeTheoriesFromClusters dir clusters
+                          out2 <- mapM (\n -> fmap (n,) (existsIn dir n)) names
+                          return (out1, out2)
+        clusters     = S.toString (mkEntries cs)
+        theories     = map theory (readClusters clusters)
+        names        = map (Cabal.name . mkCabal) theories
+        existsIn x y = doesDirectoryExist (x ++ "/" ++ y)
 
 cabalCheck t = monadicIO $ do
   (code, out, err) <- run $ withCabalProject t doCheck
@@ -296,6 +323,9 @@ instance Arbitrary Type where
 
 instance Arbitrary Arity where
   arbitrary = fmap (A . abs . (`mod` 6)) arbitrary
+
+instance Arbitrary Entry where
+  arbitrary = E <$> arbitrary
 
 instance Arbitrary Theory where
   arbitrary = do
