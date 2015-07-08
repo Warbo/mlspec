@@ -1,0 +1,680 @@
+[
+  [
+    {
+      "module": "Data.StringMap.StringSet",
+      "name": "foldPS",
+      "arity": 4,
+      "type": "(Data.StringMap.Types.Key -> b -> b)      -> b      -> (Data.StringMap.Types.Key -> Data.StringMap.Types.Key)      -> Data.StringMap.StringSet.StringSet      -> b",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyVarTy\" (\"{abstract:Var}\")) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))))))))",
+      "features": "3,0,0,0,36,22,5,0,3,0,0,0,8,4,12,0,0,0,0,0,0,1,0,0,0,26,5,5,7,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.StringSet",
+      "name": "foldWithKeyPS",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> b -> b)      -> b -> Data.StringMap.StringSet.StringSet -> b",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))))))",
+      "features": "0,0,0,0,8,4,1,0,0,0,0,0,2,1,1,0,0,0,0,0,0,0,0,0,0,5,3,1,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "val",
+      "arity": 2,
+      "type": "v      -> Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "1,0,0,0,19,9,1,0,1,0,0,0,2,3,6,0,0,0,0,0,1,1,0,0,0,8,6,1,3,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "valueWithDefault",
+      "arity": 2,
+      "type": "a -> Data.StringMap.Base.StringMap a -> a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,17,7,4,0,0,0,0,0,8,7,4,0,0,0,0,0,0,0,0,0,0,14,3,4,3,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "findWithDefault",
+      "arity": 3,
+      "type": "a      -> Data.StringMap.Types.Key -> Data.StringMap.Base.StringMap a -> a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,17,7,2,0,0,0,0,0,5,5,2,0,0,0,0,0,0,0,0,0,0,11,5,2,2,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "lookupRange",
+      "arity": 3,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,13,5,3,0,0,0,0,0,5,5,3,0,0,0,0,0,0,0,0,0,0,9,3,3,3,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "updateWithKey",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> a -> Maybe a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,12,6,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,6,5,0,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "adjust",
+      "arity": 3,
+      "type": "(a -> a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))))",
+      "features": "0,0,0,0,13,5,1,0,0,0,0,0,5,5,1,0,0,0,0,0,0,0,0,0,0,9,3,1,1,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "adjustWithKey",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> a -> a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,18,8,1,0,0,0,0,0,5,5,1,0,0,0,0,0,0,0,0,0,0,12,5,1,1,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "intersection",
+      "arity": 2,
+      "type": "Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,12,4,0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0,0,0,0,8,3,0,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "cutAllPx'",
+      "arity": 2,
+      "type": "Data.StringMap.StringSet.StringSet      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"[]\")))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "1,0,0,0,26,9,4,0,1,0,0,0,9,10,9,0,0,0,0,0,1,1,0,0,0,15,4,4,8,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "prefixFind",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a -> [a]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,11,4,3,0,0,0,0,0,5,5,3,0,0,0,0,0,0,0,0,0,0,8,2,3,3,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "toList",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap a      -> [(Data.StringMap.Types.Key, a)]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))))))",
+      "features": "0,0,0,0,16,7,8,0,0,0,0,0,6,5,8,0,0,0,0,0,0,0,0,0,0,12,4,8,7,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "prefixFindWithKey",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> [(Data.StringMap.Types.Key, a)]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,24,11,21,0,0,0,0,0,16,11,21,0,0,0,0,0,0,0,0,0,0,26,2,21,16,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "tree",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Lit\" (\"MachStr\" (\"BS(tree)\" (\"(:)\" (\"116\") (\"(:)\" (\"114\") (\"(:)\" (\"101\") (\"(:)\" (\"101\") (\"[]\")))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"[]\"))))))",
+      "features": "1,0,0,0,14,4,2,0,3,1,0,0,1,3,8,0,0,0,0,0,1,1,0,0,0,3,4,2,10,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "singleton",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key -> a -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,16,8,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,10,5,0,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "insertWith",
+      "arity": 4,
+      "type": "(a -> a -> a)      -> Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"FunTy\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))))) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"FunTy\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))))",
+      "features": "0,0,0,0,25,5,9,0,0,0,0,0,6,10,9,0,0,0,0,0,0,0,0,0,0,10,3,9,6,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "insertWithKey",
+      "arity": 4,
+      "type": "(Data.StringMap.Types.Key -> a -> a -> a)      -> Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,12,6,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,6,5,0,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "fromList",
+      "arity": 1,
+      "type": "[(Data.StringMap.Types.Key, a)]      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "1,0,0,0,19,8,5,0,1,0,0,0,5,5,8,0,0,0,0,0,0,1,0,0,0,11,3,5,7,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "prefixFindWithKeyBF",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> [(Data.StringMap.Types.Key, a)]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,24,11,21,0,0,0,0,0,16,11,21,0,0,0,0,0,0,0,0,0,0,26,2,21,16,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "singleton",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key -> a -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,14,6,1,0,0,0,0,0,1,2,4,0,0,0,0,0,1,1,0,0,0,5,5,1,2,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "insertWith",
+      "arity": 4,
+      "type": "(a -> a -> a)      -> Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))))",
+      "features": "0,0,0,0,22,10,1,0,0,0,0,0,1,2,4,0,0,0,0,0,1,1,0,0,0,9,9,1,2,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "insert",
+      "arity": 3,
+      "type": "Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,24,8,4,0,0,0,0,0,3,7,10,0,0,0,0,0,2,2,0,0,0,8,5,4,6,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "fromList",
+      "arity": 1,
+      "type": "[(Data.StringMap.Types.Key, a)]      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "1,0,0,0,19,8,5,0,1,0,0,0,5,5,8,0,0,0,0,0,0,1,0,0,0,11,3,5,7,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "insertWithKey",
+      "arity": 4,
+      "type": "(Data.StringMap.Types.Key -> a -> a -> a)      -> Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"FunTy\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))))",
+      "features": "0,0,0,0,15,5,2,0,0,0,0,0,1,4,5,0,0,0,0,0,1,1,0,0,0,4,3,2,3,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "updateWithKey",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> a -> Maybe a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,12,6,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,6,5,0,0,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "adjust",
+      "arity": 3,
+      "type": "(a -> a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))))",
+      "features": "0,0,0,0,13,5,1,0,0,0,0,0,5,5,1,0,0,0,0,0,0,0,0,0,0,9,3,1,1,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "adjustWithKey",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> a -> a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,18,8,1,0,0,0,0,0,5,5,1,0,0,0,0,0,0,0,0,0,0,12,5,1,1,0",
+      "cluster": "cluster1"
+    },
+    {
+      "module": "Data.StringMap.Dim2Search",
+      "name": "lookupRange",
+      "arity": 3,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,13,5,3,0,0,0,0,0,5,5,3,0,0,0,0,0,0,0,0,0,0,9,3,3,3,0",
+      "cluster": "cluster1"
+    }
+  ],
+  [
+    {
+      "module": "Data.StringMap.StringSet",
+      "name": "elemsPS",
+      "arity": 1,
+      "type": "Data.StringMap.StringSet.StringSet -> [Data.StringMap.Types.Key]",
+      "package": "data-stringmap",
+      "ast": "(\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))",
+      "features": "0,0,0,0,3,3,4,0,0,0,0,0,3,0,4,0,0,0,0,0,0,0,0,0,0,5,0,4,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.StringSet",
+      "name": "nullPS",
+      "arity": 1,
+      "type": "Data.StringMap.StringSet.StringSet -> Bool",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))",
+      "features": "1,0,0,0,7,4,1,0,1,0,0,0,0,0,6,0,0,0,0,0,1,1,0,0,0,1,2,1,2,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "empty",
+      "arity": 0,
+      "type": "Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "unNorm",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))))))",
+      "features": "2,0,1,0,27,13,1,0,2,0,0,0,3,4,8,0,0,0,0,0,1,1,1,0,0,11,3,1,9,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "deepUnNorm",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"[]\"))))))))",
+      "features": "2,0,1,0,33,16,1,0,2,0,0,0,6,7,8,0,0,0,0,0,1,1,1,0,0,17,3,1,9,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "!",
+      "arity": 2,
+      "type": "Data.StringMap.Base.StringMap a -> Data.StringMap.Types.Key -> a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(StringMap.! : element not in the map)\" (\"(:)\" (\"83\") (\"(:)\" (\"116\") (\"(:)\" (\"114\") (\"(:)\" (\"105\") (\"(:)\" (\"110\") (\"(:)\" (\"103\") (\"(:)\" (\"77\") (\"(:)\" (\"97\") (\"(:)\" (\"112\") (\"(:)\" (\"46\") (\"(:)\" (\"33\") (\"(:)\" (\"32\") (\"(:)\" (\"58\") (\"(:)\" (\"32\") (\"(:)\" (\"101\") (\"(:)\" (\"108\") (\"(:)\" (\"101\") (\"(:)\" (\"109\") (\"(:)\" (\"101\") (\"(:)\" (\"110\") (\"(:)\" (\"116\") (\"(:)\" (\"32\") (\"(:)\" (\"110\") (\"(:)\" (\"111\") (\"(:)\" (\"116\") (\"(:)\" (\"32\") (\"(:)\" (\"105\") (\"(:)\" (\"110\") (\"(:)\" (\"32\") (\"(:)\" (\"116\") (\"(:)\" (\"104\") (\"(:)\" (\"101\") (\"(:)\" (\"32\") (\"(:)\" (\"109\") (\"(:)\" (\"97\") (\"(:)\" (\"112\") (\"[]\")))))))))))))))))))))))))))))))))))))))))))))",
+      "features": "0,0,1,0,26,5,6,0,5,4,0,0,8,13,7,0,0,0,0,1,0,0,0,3,2,12,1,8,40,6",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "update",
+      "arity": 3,
+      "type": "(a -> Maybe a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "delete",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,8,3,1,0,0,0,0,0,4,4,1,0,0,0,0,0,0,0,0,0,0,6,1,1,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "union",
+      "arity": 2,
+      "type": "Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,2,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,4,1,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "unionWith",
+      "arity": 3,
+      "type": "(a -> a -> a)      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "unionWithKey",
+      "arity": 3,
+      "type": "(Data.StringMap.Types.Key -> a -> a -> a)      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))))",
+      "features": "0,0,0,0,6,3,1,0,0,0,0,0,2,1,1,0,0,0,0,0,0,0,0,0,0,4,2,1,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "cutPx'",
+      "arity": 2,
+      "type": "Data.StringMap.StringSet.StringSet      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))))",
+      "features": "0,0,0,0,5,2,1,0,0,0,0,0,2,2,1,0,0,0,0,0,0,0,0,0,0,3,1,1,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "elems",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap a -> [a]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,8,3,1,0,0,0,0,0,4,4,1,0,0,0,0,0,0,0,0,0,0,6,1,1,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "child",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Lit\" (\"MachStr\" (\"BS(child)\" (\"(:)\" (\"99\") (\"(:)\" (\"104\") (\"(:)\" (\"105\") (\"(:)\" (\"108\") (\"(:)\" (\"100\") (\"[]\"))))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))))))",
+      "features": "4,0,0,0,23,7,2,0,6,0,0,0,1,2,14,1,0,0,0,0,1,1,0,1,2,3,3,3,22,1",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "toMap",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap a      -> containers-0.5.6.2:Data.Map.Base.Map Data.StringMap.Types.Key a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,1,0,14,8,6,0,0,0,0,0,8,4,6,0,0,0,0,0,0,0,1,0,0,14,1,6,2,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "fromKey",
+      "arity": 1,
+      "type": "Data.StringMap.Types.Key -> Data.StringMap.Base.Key1",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))",
+      "features": "0,0,0,0,6,5,3,0,0,0,0,0,3,0,3,0,0,0,0,0,0,0,0,0,0,7,1,3,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "insert",
+      "arity": 3,
+      "type": "Data.StringMap.Types.Key      -> a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,2,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,4,1,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "fromMap",
+      "arity": 1,
+      "type": "containers-0.5.6.2:Data.Map.Base.Map Data.StringMap.Types.Key a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,8,3,2,0,0,0,0,0,5,4,2,0,0,0,0,0,0,0,0,0,0,7,1,2,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.FuzzySearch",
+      "name": "lookupNoCase",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,3,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,3,2,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.FuzzySearch",
+      "name": "prefixFilterNoCase",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,3,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,3,2,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.FuzzySearch",
+      "name": "prefixFilter",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,3,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,3,2,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "update",
+      "arity": 3,
+      "type": "(a -> Maybe a)      -> Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "delete",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "0,0,0,0,8,3,1,0,0,0,0,0,4,4,1,0,0,0,0,0,0,0,0,0,0,6,1,1,1,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "union",
+      "arity": 2,
+      "type": "Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))",
+      "features": "0,0,0,0,6,2,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,4,1,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Strict",
+      "name": "unionWith",
+      "arity": 3,
+      "type": "(a -> a -> a)      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Dim2Search",
+      "name": "lookupLE",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    },
+    {
+      "module": "Data.StringMap.Dim2Search",
+      "name": "lookupGE",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Var\" (\"{abstract:Var}\"))",
+      "features": "0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "cluster": "cluster4"
+    }
+  ],
+  [
+    {
+      "module": "Data.StringMap.Base",
+      "name": "normError'",
+      "arity": 2,
+      "type": "String -> String -> a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(.)\" (\"(:)\" (\"46\") (\"[]\"))))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(: pattern match error, prefix tree not normalized)\" (\"(:)\" (\"58\") (\"(:)\" (\"32\") (\"(:)\" (\"112\") (\"(:)\" (\"97\") (\"(:)\" (\"116\") (\"(:)\" (\"116\") (\"(:)\" (\"101\") (\"(:)\" (\"114\") (\"(:)\" (\"110\") (\"(:)\" (\"32\") (\"(:)\" (\"109\") (\"(:)\" (\"97\") (\"(:)\" (\"116\") (\"(:)\" (\"99\") (\"(:)\" (\"104\") (\"(:)\" (\"32\") (\"(:)\" (\"101\") (\"(:)\" (\"114\") (\"(:)\" (\"114\") (\"(:)\" (\"111\") (\"(:)\" (\"114\") (\"(:)\" (\"44\") (\"(:)\" (\"32\") (\"(:)\" (\"112\") (\"(:)\" (\"114\") (\"(:)\" (\"101\") (\"(:)\" (\"102\") (\"(:)\" (\"105\") (\"(:)\" (\"120\") (\"(:)\" (\"32\") (\"(:)\" (\"116\") (\"(:)\" (\"114\") (\"(:)\" (\"101\") (\"(:)\" (\"101\") (\"(:)\" (\"32\") (\"(:)\" (\"110\") (\"(:)\" (\"111\") (\"(:)\" (\"116\") (\"(:)\" (\"32\") (\"(:)\" (\"110\") (\"(:)\" (\"111\") (\"(:)\" (\"114\") (\"(:)\" (\"109\") (\"(:)\" (\"97\") (\"(:)\" (\"108\") (\"(:)\" (\"105\") (\"(:)\" (\"122\") (\"(:)\" (\"101\") (\"(:)\" (\"100\") (\"[]\")))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "features": "0,0,1,0,21,8,5,0,10,10,0,0,4,6,5,1,0,1,0,2,0,1,0,3,1,13,3,5,50,8",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "toKey",
+      "arity": 1,
+      "type": "Data.StringMap.Base.Key1 -> Data.StringMap.Types.Key",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))))))) (\"[]\"))))))))))))",
+      "features": "9,0,0,0,100,74,26,0,9,0,0,0,25,0,45,0,0,0,0,0,0,1,0,0,0,89,1,26,33,0",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "branch",
+      "arity": 3,
+      "type": "Data.StringMap.Types.Sym      -> Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"[]\"))))))))))) (\"[]\")))))))",
+      "features": "17,0,1,0,142,86,9,0,17,0,0,0,12,21,70,0,0,0,0,0,9,9,1,0,0,70,7,9,53,0",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "norm",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"[]\"))))) (\"[]\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Case\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"[]\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))) (\"[]\")))))))))))))",
+      "features": "12,0,0,0,134,69,5,0,12,0,0,0,28,33,40,0,0,0,0,0,3,5,0,0,0,81,5,5,42,0",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "lookupGE",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(lookupGE)\" (\"(:)\" (\"108\") (\"(:)\" (\"111\") (\"(:)\" (\"111\") (\"(:)\" (\"107\") (\"(:)\" (\"117\") (\"(:)\" (\"112\") (\"(:)\" (\"71\") (\"(:)\" (\"69\") (\"[]\"))))))))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\")))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Case\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))) (\"[]\"))))) (\"[]\"))))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "10,0,1,0,75,37,11,0,13,0,1,0,13,16,40,0,0,0,1,0,2,5,1,2,0,38,9,11,36,0",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "lookupLE",
+      "arity": 2,
+      "type": "Data.StringMap.Types.Key      -> Data.StringMap.Base.StringMap a      -> Data.StringMap.Base.StringMap a",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"[]\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(lookupLE)\" (\"(:)\" (\"108\") (\"(:)\" (\"111\") (\"(:)\" (\"111\") (\"(:)\" (\"107\") (\"(:)\" (\"117\") (\"(:)\" (\"112\") (\"(:)\" (\"76\") (\"(:)\" (\"69\") (\"[]\"))))))))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))) (\"[]\")))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Let\" (\"NonRec\" (\"{abstract:Var}\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"Case\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"[]\")))))) (\"[]\"))))) (\"[]\"))))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))))",
+      "features": "11,0,1,0,97,47,12,0,14,0,1,0,20,24,46,0,1,0,0,0,3,6,2,2,0,53,10,12,40,0",
+      "cluster": "cluster3"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "toListShortestFirst",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> [(Data.StringMap.Types.Key, v)]",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))))))))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\"))))))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))) (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"[]\")))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"FunTy\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))))) (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")))))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\")))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"[]\")) (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))))))))))) (\"[]\"))))))) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))))))))))",
+      "features": "1,0,0,0,150,55,184,0,1,0,0,0,78,51,189,0,0,0,0,0,1,1,0,0,0,130,12,184,131,0",
+      "cluster": "cluster3"
+    }
+  ],
+  [
+    {
+      "module": "Data.StringMap.Base",
+      "name": "siseq",
+      "arity": 2,
+      "type": "Data.StringMap.Base.Key1      -> Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\")))) (\"[]\"))))) (\"[]\")))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))) (\"Var\" (\"{abstract:Var}\"))) (\"Var\" (\"{abstract:Var}\"))))))",
+      "features": "3,0,0,0,32,15,3,0,3,0,0,0,2,5,16,0,0,0,0,0,2,3,0,0,0,11,7,3,10,0",
+      "cluster": "cluster2"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "deepNorm",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Lit\" (\"MachStr\" (\"BS(deepNorm)\" (\"(:)\" (\"100\") (\"(:)\" (\"101\") (\"(:)\" (\"101\") (\"(:)\" (\"112\") (\"(:)\" (\"78\") (\"(:)\" (\"111\") (\"(:)\" (\"114\") (\"(:)\" (\"109\") (\"[]\"))))))))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"[]\") (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"App\" (\"App\" (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\")))) (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Var\" (\"{abstract:Var}\"))))) (\"[]\"))))))))",
+      "features": "3,0,0,1,37,17,2,0,6,2,0,0,8,9,12,0,0,0,0,0,1,1,0,1,0,21,3,2,19,2",
+      "cluster": "cluster2"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "next",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v      -> Data.StringMap.Base.StringMap v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyConApp\" (\"{abstract:TyCon}\") (\"(:)\" (\"TyVarTy\" (\"{abstract:Var}\")) (\"[]\"))))) (\"Lit\" (\"MachStr\" (\"BS(next)\" (\"(:)\" (\"110\") (\"(:)\" (\"101\") (\"(:)\" (\"120\") (\"(:)\" (\"116\") (\"[]\")))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))))))",
+      "features": "4,0,0,0,27,7,3,0,6,0,0,0,1,3,14,0,0,0,0,1,1,1,0,0,0,3,3,2,23,0",
+      "cluster": "cluster2"
+    },
+    {
+      "module": "Data.StringMap.Base",
+      "name": "value'",
+      "arity": 1,
+      "type": "Data.StringMap.Base.StringMap v -> v",
+      "package": "data-stringmap",
+      "ast": "(\"Lam\" (\"{abstract:Var}\") (\"Lam\" (\"{abstract:Var}\") (\"Case\" (\"Var\" (\"{abstract:Var}\")) (\"{abstract:Var}\") (\"TyVarTy\" (\"{abstract:Var}\")) (\"(:)\" (\"(,,)\" (\"DEFAULT\") (\"[]\") (\"App\" (\"Lam\" (\"{abstract:Var}\") (\"App\" (\"App\" (\"Var\" (\"{abstract:Var}\")) (\"Type\" (\"TyVarTy\" (\"{abstract:Var}\")))) (\"Lit\" (\"MachStr\" (\"BS(value')\" (\"(:)\" (\"118\") (\"(:)\" (\"97\") (\"(:)\" (\"108\") (\"(:)\" (\"117\") (\"(:)\" (\"101\") (\"(:)\" (\"39\") (\"[]\")))))))))))) (\"Var\" (\"{abstract:Var}\")))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"[]\")) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\")))) (\"Var\" (\"{abstract:Var}\"))) (\"(:)\" (\"(,,)\" (\"DataAlt\" (\"{abstract:DataCon}\")) (\"(:)\" (\"{abstract:Var}\") (\"(:)\" (\"{abstract:Var}\") (\"[]\"))) (\"Var\" (\"{abstract:Var}\"))) (\"[]\")))))))))))",
+      "features": "6,0,0,0,29,9,1,0,9,0,0,0,1,2,17,0,0,0,0,0,1,2,0,1,0,3,4,0,26,0",
+      "cluster": "cluster2"
+    }
+  ]
+]

@@ -2,6 +2,7 @@
 module Main where
 
 import           Control.Exception (try, SomeException)
+import qualified TestData
 import           Data.Aeson
 import qualified Data.ByteString.Lazy.Internal as B
 import           Data.Either
@@ -49,6 +50,7 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "JSON <-> Entry"           canHandleJSONEntries
   , testProperty "JSON <-> Cluster"         canHandleJSONClusters
   , testProperty "Can read JSON clusters"   canReadJSONClusters
+  , testProperty "Can read real JSON"       canReadRealJSON
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -161,6 +163,11 @@ canReadJSONClusters :: [Cluster] -> Bool
 canReadJSONClusters cs' = readClusters encoded == cs
   where encoded = S.toString (encode cs)
         cs      = take 10 cs'
+
+canReadRealJSON = monadicIO readJSON
+  where readJSON = do
+          str <- run $ readFile "test/data/data-stringmap.clusters.json"
+          assert (readClusters str == TestData.clusters)
 
 projectsMadeFromClusters cs = monadicIO $ do
   (claimed, made) <- run $ withSystemTempDirectory "mlspectest" getMade
