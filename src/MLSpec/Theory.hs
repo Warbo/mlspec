@@ -1,7 +1,12 @@
+{-# LANGUAGE OverloadedStrings #-}
 module MLSpec.Theory where
 
+import           Control.Monad
+import           Data.Aeson
 import           Data.Hashable
 import           Data.List
+import           Data.Maybe
+import           Data.Stringable
 import           Data.Typeable
 import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.Arbitrary.Haskell
@@ -10,14 +15,43 @@ newtype Package = P  String deriving (Eq, Ord)
 newtype Module  = M  String deriving (Eq, Ord)
 newtype Name    = N  String deriving (Eq, Ord)
 newtype Type    = Ty String deriving (Eq, Ord)
+newtype Arity   = A  Int    deriving (Eq, Ord)
 
 unPkg  (P  x) = x
 unMod  (M  x) = x
 unName (N  x) = x
 unType (Ty x) = x
 
-type Arity   = Int
-type Symbol  = (Name, Arity, Type)
+newtype Entry = E (Package, Module, Name, Type, Arity)
+
+instance FromJSON Entry where
+  parseJSON (Object o) = do
+    p <- o .: "package"
+    m <- o .: "module"
+    n <- o .: "name"
+    t <- o .: "type"
+    a <- o .: "arity"
+    return $ E (P p, M m, N n, Ty t, A a)
+  parseJSON _ = mzero
+
+instance ToJSON Entry where
+  toJSON (E (P p, M m, N n, Ty t, A a)) = object [
+      "package" .= p
+    , "module"  .= m
+    , "name"    .= n
+    , "type"    .= t
+    , "arity"   .= a
+    ]
+
+newtype Cluster = C [Entry]
+
+instance FromJSON Cluster where
+  parseJSON = fmap C . parseJSON
+
+instance ToJSON Cluster where
+  toJSON (C xs) = toJSON xs
+
+type Symbol = (Module, Name, Type, Arity)
 
 instance Show Package where
   show (P  x) = x
@@ -31,41 +65,41 @@ instance Show Name where
 instance Show Type where
   show (Ty x) = x
 
+instance Show Arity where
+  show (A  x) = show x
+
 data Theory = T [Package] [Module] [Symbol]
 
 instance Show Theory where
   show t@(T pkgs mods syms) = show (pkgs, renderModule t)
 
-getPackage :: String -> Package
-getPackage = P . takeWhile (/= ':')
+getPackage :: Entry -> Package
+getPackage (E (p, _, _, _, _)) = p
 
-getMod :: String -> Module
-getMod x = let (N n, _) = getNameType x
-            in M . init . dropWhileEnd (/= '.') $ n
+getMod :: Entry -> Module
+getMod (E (_, m, _, _, _)) = m
 
-getNameType :: String -> (Name, Type)
-getNameType s = (N name, Ty typ)
-  where suffix = tail . dropWhile (/= ':') $ s
-        name   = takeWhile (/= ':') suffix
-        typ    = filter (/= '"') $ tail (dropWhile (/= ':') suffix)
+getName :: Entry -> Name
+getName (E (_, _, n, _, _)) = n
 
-arity :: Type -> Int
-arity (Ty t) = stepArity 0 t
+getType :: Entry -> Type
+getType (E (_, _, _, t, _)) = t
 
-stepArity 0 ""          = 0                      -- base case
-stepArity 0 ('-':'>':s) = 1 + stepArity  0    s  -- Only count top-level "->"
-stepArity n ('(':s)     =     stepArity (n+1) s  -- Go in  a level
-stepArity n (')':s)     =     stepArity (n-1) s  -- Go out a level
-stepArity n (_:s)       =     stepArity  n    s  -- Skip everything else
+getArity :: Entry -> Arity
+getArity (E (_, _, _, _, a)) = a
 
 theoryLine :: Symbol -> String
-theoryLine (_, a, _) | a > 5 = ""  -- QuickSpec only goes up to fun5
-theoryLine (N n, a, Ty t)    = concat [
+theoryLine (_, _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
+theoryLine (M m, N n, Ty t, a)    = concat [
     "\""
+  , m
+  , "."
   , n
   , "\" `Test.QuickSpec.fun"
   , show a
   , "` (("
+  , m
+  , "."
   , n
   , ") :: "
   , t
@@ -80,13 +114,11 @@ tabWords s = let (pre, post) = span (/= '\t') s
                                        ""     -> []
                                        '\t':s -> tabWords s)
 
-theory :: String -> Theory
-theory l = T (nub pkgs) (nub mods) (nub symbols)
-  where bits = tabWords l
-        pkgs = map getPackage  bits
-        nts  = map getNameType bits
-        mods = map getMod      bits
-        symbols = [(n, arity t, t) | (n,t) <- nts]
+theory :: Cluster -> Theory
+theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
+  where pkgs    = map getPackage  es
+        mods    = map getMod      es
+        symbols = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {
@@ -106,7 +138,7 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
   where deps = pkgs ++ requiredDeps
         uid  = abs (hash (map unPkg pkgs,
                           map unMod mods,
-                          map (\((N x), y, (Ty z)) -> (x, y, z)) symbols))
+                          [(m, n, t, a) | (M m, N n, Ty t, A a) <- symbols]))
 
 requiredDeps :: [Package]
 requiredDeps = map P [
@@ -143,11 +175,11 @@ renderDef symbols = concat [
   , "]"
   ]
 
-theoriesFromClusters :: String -> [Theory]
-theoriesFromClusters = map theory . lines
+theoriesFromClusters :: [Cluster] -> [Theory]
+theoriesFromClusters = map theory
 
 writeTheoriesFromClusters :: FilePath -> String -> IO [FilePath]
 writeTheoriesFromClusters dir s = do
     mapM (Cabal.makeProject dir) projects
-  where theories = theoriesFromClusters s
+  where theories = theoriesFromClusters (mapMaybe decode [fromString s])
         projects = map mkCabal theories
