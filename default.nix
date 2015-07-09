@@ -1,6 +1,7 @@
 { mkDerivation, aeson, ArbitraryHaskell, base, bytestring
-, directory, hashable, MissingH, process, QuickCheck, stdenv
-, stringable, tasty, tasty-quickcheck, temporary
+, directory, hashable, haskell-src-exts, MissingH, process
+, QuickCheck, stdenv, stringable, syb, tasty, tasty-quickcheck
+, temporary
 }:
 mkDerivation {
   pname = "MLSpec";
@@ -9,11 +10,13 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   buildDepends = [
-    aeson ArbitraryHaskell base bytestring hashable stringable
+    aeson ArbitraryHaskell base bytestring hashable haskell-src-exts
+    stringable syb
   ];
   testDepends = [
-    aeson ArbitraryHaskell base bytestring directory hashable MissingH
-    process QuickCheck stringable tasty tasty-quickcheck temporary
+    aeson ArbitraryHaskell base bytestring directory hashable
+    haskell-src-exts MissingH process QuickCheck stringable syb tasty
+    tasty-quickcheck temporary
   ];
   homepage = "http://chriswarbo.net/git/mlspec";
   description = "Runs QuickSpec on sub-sets of Haskell definitions";
