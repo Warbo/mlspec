@@ -3,12 +3,16 @@ module MLSpec.Theory where
 
 import           Control.Monad
 import           Data.Aeson
+import           Data.Data
+import           Data.Generics.Aliases
 import           Data.Hashable
 import           Data.List
 import           Data.Maybe
 import           Data.Stringable
 import           Data.Typeable
-import qualified Test.Arbitrary.Cabal   as Cabal
+import qualified Language.Haskell.Exts.Parser as HEP
+import qualified Language.Haskell.Exts.Syntax as HES
+import qualified Test.Arbitrary.Cabal         as Cabal
 import           Test.Arbitrary.Haskell
 
 newtype Package = P  String deriving (Eq, Ord)
@@ -88,6 +92,21 @@ getType (E (_, _, _, t, _)) = t
 getArity :: Entry -> Arity
 getArity (E (_, _, _, _, a)) = a
 
+readMods :: Type -> [Module]
+readMods x = concatMap readMods'' (typeBits x)
+
+typeBits (Ty t) = case HEP.parseType t of
+  HEP.ParseFailed _ _ -> []
+  HEP.ParseOk   x     -> [x]
+
+readMods'' :: Data a => a -> [Module]
+readMods'' x = readMods' x ++ concat (gmapQ readMods'' x)
+
+readMods' :: Data a => a -> [Module]
+readMods' = concat . gmapQ (const [] `extQ` typeMod)
+
+typeMod (HES.ModuleName m) = [M m]
+
 theoryLine :: Symbol -> String
 theoryLine (_, _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
 theoryLine (M m, N n, Ty t, a)    = concat [
@@ -108,9 +127,10 @@ theoryLine (M m, N n, Ty t, a)    = concat [
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
-  where pkgs    = map getPackage  es
-        mods    = map getMod      es
-        symbols = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
+  where pkgs     = map getPackage  es
+        mods     = map getMod      es ++ typeMods
+        symbols  = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
+        typeMods = concat [readMods t | (_, _, t, _) <- symbols]
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {

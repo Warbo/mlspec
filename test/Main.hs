@@ -36,6 +36,7 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
     testProperty "Theory gets packages"     canReadTheoryPkgs
   , testProperty "Theory gets modules"      canReadTheoryMods
   , testProperty "Theory gets names"        canReadTheoryNames
+  , testProperty "Type modules included"    typeModulesIncluded
   , testProperty "Names are rendered"       renderedDefinitionContainsNames
   , testProperty "Arities are rendered"     renderedDefinitionSetsArity
   , testProperty "Clusters give names"      renderedClusterContainsNames
@@ -51,6 +52,8 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "JSON <-> Cluster"         canHandleJSONClusters
   , testProperty "Can read JSON clusters"   canReadJSONClusters
   , testProperty "Can read real JSON"       canReadRealJSON
+  , testProperty "Can parse type sigs"      canParseTypeSigs
+  , testProperty "Can extract type's mods"  canExtractTypeMods
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -93,6 +96,23 @@ canReadTheoryNames ps ms ns ts as =
         count   = length entries
         names   = zipWith qualify ms ns
         qualify (M m) (N n) = N (m ++ "." ++ n)
+
+typeModulesIncluded :: [Package]
+                    -> [Module]
+                    -> [Name]
+                    -> [QType]
+                    -> [Arity]
+                    ->  Bool
+typeModulesIncluded ps' ms' ns' ts' as' = equiv m (nub allMods)
+  where T p m s = theory (C entries)
+        entries = zipWith5 mkEntry ps ms ns uts as
+        uts     = map renderQType ts
+        tms     = concatMap (\(QT (ms, _)) -> ms) ts
+        allMods = ms ++ tms
+        (ps, ms, ns, ts, as) = unzip5 (zip5 ps' ms' ns' ts' as')
+        equiv xs ys = length xs == length ys &&
+                          all (`elem` ys) xs &&
+                          all (`elem` xs) ys
 
 renderedDefinitionContainsNames :: [Symbol] -> Bool
 renderedDefinitionContainsNames ss =
@@ -168,6 +188,10 @@ canReadRealJSON = monadicIO readJSON
   where readJSON = do
           str <- run $ readFile "test/data/data-stringmap.clusters.json"
           assert (readClusters str == TestData.clusters)
+
+canParseTypeSigs t = length (typeBits t) == 1
+
+canExtractTypeMods (QT (ms, t)) = readMods t == ms
 
 projectsMadeFromClusters cs = monadicIO $ do
   (claimed, made) <- run $ withSystemTempDirectory "mlspectest" getMade
@@ -280,6 +304,8 @@ mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 
 wrap x    = "(" ++ x ++ ")"
 
+renderQType (QT (ms, t)) = t
+
 lower = "abcdefghijklmnopqrstuvwxyz"
 upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -321,6 +347,14 @@ sizedTypeName n = do
   return $ case chunks of
                 [] -> head
                 _  -> intercalate " -> " (map wrap chunks)
+
+newtype QType = QT ([Module], Type) deriving (Show)
+
+instance Arbitrary QType where
+  arbitrary = do
+    n   <- typeName
+    M m <- arbitrary
+    return (QT ([M m], Ty (m ++ "." ++ n)))
 
 instance Arbitrary Type where
   arbitrary = do
