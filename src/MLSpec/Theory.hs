@@ -183,6 +183,8 @@ renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
     "theory = ["
+  , "vars [\"x\", \"y\", \"z\"] (undefined :: Integer),"
+  , "vars [\"s1\", \"s2\", \"s3\"] (undefined :: String),"
   , intercalate ", " (map theoryLine symbols)
   , "]"
   ]
