@@ -183,8 +183,8 @@ renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
     "theory = ["
-  , "vars [\"x\", \"y\", \"z\"] (undefined :: Integer),"
-  , "vars [\"s1\", \"s2\", \"s3\"] (undefined :: String),"
+  , "Test.QuickSpec.vars [\"i1\", \"i2\", \"i3\"] (undefined :: Integer),"
+  , "Test.QuickSpec.vars [\"s1\", \"s2\", \"s3\"] (undefined :: String),"
   , intercalate ", " (map theoryLine symbols)
   , "]"
   ]
