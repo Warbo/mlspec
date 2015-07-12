@@ -110,7 +110,7 @@ typeMod (HES.ModuleName m) = [M m]
 theoryLine :: Symbol -> String
 theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
 theoryLine (M m, N n, _,   a)         = concat [
-    "let f = $(Test.QuickCheck.All.monomorphic ('", qname, "))"
+    "let f = $(Test.QuickCheck.All.monomorphic ('", qname, "))",
     "in \"", qname, "\" `Test.QuickSpec.fun", show a, "` f"
   ]
   where qname = m ++ "." ++ n
