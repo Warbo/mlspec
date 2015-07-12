@@ -162,7 +162,8 @@ requiredHeaders = Cabal.S () [
 
 renderModule :: Theory -> String
 renderModule (T pkgs mods symbols) = unlines [
-    "module Main where"
+    "{-# LANGUAGE TemplateHaskell #-}"
+  , "module Main where"
   , renderImports mods
   , renderDef symbols
   , "main = Test.QuickSpec.quickSpec theory"

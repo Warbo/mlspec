@@ -5,6 +5,7 @@ import           Control.Exception (try, SomeException)
 import qualified TestData
 import           Data.Aeson
 import qualified Data.ByteString.Lazy.Internal as B
+import           Data.Char
 import           Data.Either
 import           Data.List
 import           Data.Maybe
@@ -131,6 +132,34 @@ renderedNamesAreMonomorphised ss = all (`isInfixOf` output) (map mono ss)
   where mono s = "Test.QuickCheck.All.monomorphic (" ++ quote s ++ ")"
         quote (M m, N n, _, _) = "'" ++ m ++ "." ++ n
         output = renderDef ss
+
+renderedModuleUsesTemplateHaskell :: Theory -> Bool
+renderedModuleUsesTemplateHaskell t =
+  "TemplateHaskell" `elem` getExts (renderModule t)
+
+getExts x = map strip         .
+              concatMap split .
+              map stripL      .
+              filter ("LANGUAGE" `isInfixOf`) .
+              takePragmas $ x
+  where takePragmas ('{':'-':'#':s) = let (p, s') = pragmaFrom s
+                                       in p : takePragmas s'
+        takePragmas (c:s)           = takePragmas s
+        takePragmas ""              = []
+        pragmaFrom ('#':'-':'}':s) = ("", s)
+        pragmaFrom (c:s)           = let (p,   s') = pragmaFrom s
+                                      in (c:p, s')
+        pragmaFrom ""              = ("", "")
+        stripL ('L':'A':'N':'G':'U':'A':'G':'E':s) = stripL s
+        stripL (c:s) = c : stripL s
+        stripL [] = []
+        split (',':s) = let s' = split s
+                         in "":s'
+        split (c:s)   = case split s of
+                             []     -> [c:[]]
+                             (o:os) -> ((c:o):os)
+        split "" = []
+        strip    = dropWhile isSpace . reverse . dropWhile isSpace . reverse
 
 renderedClusterContainsNames c = all (`isInfixOf` output) allowed
   where output     = renderModule (T ps ms ss)
