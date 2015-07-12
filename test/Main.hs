@@ -106,7 +106,7 @@ typeModulesIncluded :: [Package]
                     -> [Arity]
                     ->  Bool
 typeModulesIncluded ps' ms' ns' ts' as' = equiv m (nub allMods)
-  where T p m s = theory (C entries)
+  where T p m s = addTypeMods (theory (C entries))
         entries = zipWith5 mkEntry ps ms ns uts as
         uts     = map renderQType ts
         tms     = concatMap (\(QT (ms, _)) -> ms) ts

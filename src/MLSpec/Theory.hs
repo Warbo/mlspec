@@ -110,7 +110,7 @@ typeMod (HES.ModuleName m) = [M m]
 theoryLine :: Symbol -> String
 theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
 theoryLine (M m, N n, _,   a)         = concat [
-    "let f = $(Test.QuickCheck.All.monomorphic ('", qname, "))",
+    "let f = $(Test.QuickCheck.All.monomorphic ('", qname, ")) ",
     "in \"", qname, "\" `Test.QuickSpec.fun", show a, "` f"
   ]
   where qname = m ++ "." ++ n
@@ -118,9 +118,12 @@ theoryLine (M m, N n, _,   a)         = concat [
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
   where pkgs     = map getPackage  es
-        mods     = map getMod      es ++ typeMods
+        mods     = map getMod      es
         symbols  = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
-        typeMods = concat [readMods t | (_, _, t, _) <- symbols]
+
+addTypeMods :: Theory -> Theory
+addTypeMods (T ps ms ss) = T ps (nub (ms ++ tms)) ss
+  where tms = concat [readMods t | (_, _, t, _) <- ss]
 
 mkCabal :: Theory -> Cabal.Project
 mkCabal (T pkgs mods symbols) = Cabal.P {
