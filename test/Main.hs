@@ -33,27 +33,28 @@ main = do cabal <- haveCabal
 allTests rest = testGroup "All tests" (pureTests:impureTests:rest)
 
 pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
-    testProperty "Theory gets packages"     canReadTheoryPkgs
-  , testProperty "Theory gets modules"      canReadTheoryMods
-  , testProperty "Theory gets names"        canReadTheoryNames
-  , testProperty "Type modules included"    typeModulesIncluded
-  , testProperty "Names are rendered"       renderedDefinitionContainsNames
-  , testProperty "Arities are rendered"     renderedDefinitionSetsArity
-  , testProperty "Clusters give names"      renderedClusterContainsNames
-  , testProperty "Imports rendered"         renderedImports
-  , testProperty "Modules import"           moduleImports
-  , testProperty "Modules are Main"         modulesAreMain
-  , testProperty "Modules run QuickSpec"    moduleRunsQuickSpec
-  , testProperty "Package has Main.hs"      projectGetsModule
-  , testProperty "Package has executable"   projectHasExecutable
-  , testProperty "Executable runs Main"     executableRunsMain
-  , testProperty "Executable has deps"      executableHasDependencies
-  , testProperty "JSON <-> Entry"           canHandleJSONEntries
-  , testProperty "JSON <-> Cluster"         canHandleJSONClusters
-  , testProperty "Can read JSON clusters"   canReadJSONClusters
-  , testProperty "Can read real JSON"       canReadRealJSON
-  , testProperty "Can parse type sigs"      canParseTypeSigs
-  , testProperty "Can extract type's mods"  canExtractTypeMods
+    testProperty "Theory gets packages"    canReadTheoryPkgs
+  , testProperty "Theory gets modules"     canReadTheoryMods
+  , testProperty "Theory gets names"       canReadTheoryNames
+  , testProperty "Type modules included"   typeModulesIncluded
+  , testProperty "Names are rendered"      renderedDefinitionContainsNames
+  , testProperty "Names are monomorphised" renderedNamesAreMonomorphised
+  , testProperty "Arities are rendered"    renderedDefinitionSetsArity
+  , testProperty "Clusters give names"     renderedClusterContainsNames
+  , testProperty "Imports rendered"        renderedImports
+  , testProperty "Modules import"          moduleImports
+  , testProperty "Modules are Main"        modulesAreMain
+  , testProperty "Modules run QuickSpec"   moduleRunsQuickSpec
+  , testProperty "Package has Main.hs"     projectGetsModule
+  , testProperty "Package has executable"  projectHasExecutable
+  , testProperty "Executable runs Main"    executableRunsMain
+  , testProperty "Executable has deps"     executableHasDependencies
+  , testProperty "JSON <-> Entry"          canHandleJSONEntries
+  , testProperty "JSON <-> Cluster"        canHandleJSONClusters
+  , testProperty "Can read JSON clusters"  canReadJSONClusters
+  , testProperty "Can read real JSON"      canReadRealJSON
+  , testProperty "Can parse type sigs"     canParseTypeSigs
+  , testProperty "Can extract type's mods" canExtractTypeMods
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -67,7 +68,7 @@ cabalTests = localOption (QuickCheckTests 1) $ testGroup "Cabal tests" [
 -- Tests which depend on the availability of particular modules
 dependentTests = [
     mkDepTests ["Test.QuickSpec"] [
-       testProperty "Cabal projects check OK"      cabalCheck
+        testProperty "Cabal projects check OK"      cabalCheck
       , testProperty "Cabal projects configure OK" cabalConfigure
       , testProperty "Cabal projects run OK"       cabalRun
       ]
@@ -124,6 +125,12 @@ renderedDefinitionSetsArity ss = all arityExists (map (\(_, _, _, a) -> a) ss)
   where output        = renderDef ss
         exists        = (`isInfixOf` output)
         arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
+
+renderedNamesAreMonomorphised :: [Symbol] -> Bool
+renderedNamesAreMonomorphised ss = all (`isInfixOf` output) (map mono ss)
+  where mono s = "Test.QuickCheck.All.monomorphic (" ++ quote s ++ ")"
+        quote (M m, N n, _, _) = "'" ++ m ++ "." ++ n
+        output = renderDef ss
 
 renderedClusterContainsNames c = all (`isInfixOf` output) allowed
   where output     = renderModule (T ps ms ss)

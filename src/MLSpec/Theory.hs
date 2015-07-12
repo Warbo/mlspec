@@ -108,22 +108,13 @@ readMods' = concat . gmapQ (const [] `extQ` typeMod)
 typeMod (HES.ModuleName m) = [M m]
 
 theoryLine :: Symbol -> String
-theoryLine (_, _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
-theoryLine (M m, N n, Ty t, a)    = concat [
-    "\""
-  , m
-  , "."
-  , n
-  , "\" `Test.QuickSpec.fun"
-  , show a
-  , "` (("
-  , m
-  , "."
-  , n
-  , ") :: "
-  , t
-  , ")"
+theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
+theoryLine (M m, N n, _,   a)         = concat [
+    "\"", qname, "\" "
+  , "`Test.QuickSpec.fun", show a
+  , "` (Test.QuickCheck.All.monomorphic ('", qname, "))"
   ]
+  where qname = m ++ "." ++ n
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
@@ -156,6 +147,7 @@ requiredDeps :: [Package]
 requiredDeps = map P [
     "base >= 4.8 && < 4.9"
   , "quickspec < 2"
+  , "QuickCheck > 2"
   ]
 
 requiredHeaders = Cabal.S () [
@@ -178,7 +170,7 @@ renderModule (T pkgs mods symbols) = unlines [
 
 renderImports :: [Module] -> String
 renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
-  where allMods = mods ++ [M "Test.QuickSpec"]
+  where allMods = mods ++ [M "Test.QuickSpec", M "Test.QuickCheck.All"]
 
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
