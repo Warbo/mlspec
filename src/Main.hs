@@ -5,5 +5,7 @@ import System.Environment
 
 main = do stdin <- getContents
           [dir] <- getArgs
-          dirs  <- writeTheoriesFromClusters dir stdin
+          env   <- getEnvironment
+          let size = fmap read (lookup "SIZE" env)
+          dirs  <- writeTheoriesFromClusters size dir stdin
           mapM (putStrLn . ("PROJECT " ++)) dirs
