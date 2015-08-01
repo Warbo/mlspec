@@ -75,7 +75,7 @@ instance Show Arity where
 data Theory = T [Package] [Module] [Symbol]
 
 instance Show Theory where
-  show t@(T pkgs mods syms) = show (pkgs, renderModule t)
+  show t@(T pkgs mods syms) = show (pkgs, renderModule Nothing t)
 
 getPackage :: Entry -> Package
 getPackage (E (p, _, _, _, _)) = p
@@ -125,8 +125,8 @@ addTypeMods :: Theory -> Theory
 addTypeMods (T ps ms ss) = T ps (nub (ms ++ tms)) ss
   where tms = concat [readMods t | (_, _, t, _) <- ss]
 
-mkCabal :: Theory -> Cabal.Project
-mkCabal (T pkgs mods symbols) = Cabal.P {
+mkCabal :: Maybe Int -> Theory -> Cabal.Project
+mkCabal n (T pkgs mods symbols) = Cabal.P {
     Cabal.name = "mlspec-temp" ++ show uid
   , Cabal.version = [1]
   , Cabal.headers = requiredHeaders
@@ -137,7 +137,7 @@ mkCabal (T pkgs mods symbols) = Cabal.P {
         ]
     ]
   , Cabal.files = [
-    (([], "Main.hs"), H (renderModule (T pkgs mods symbols)))
+    (([], "Main.hs"), H (renderModule n (T pkgs mods symbols)))
     ]
   }
   where deps = pkgs ++ requiredDeps
@@ -162,12 +162,14 @@ requiredHeaders = Cabal.S () [
   , ("cabal-version", ">= 1.2")
   ]
 
-renderModule :: Theory -> String
-renderModule (T pkgs mods symbols) = unlines [
+renderModule :: Maybe Int -> Theory -> String
+renderModule n (T pkgs mods symbols) = unlines [
     "{-# LANGUAGE TemplateHaskell #-}"
   , "module Main where"
   , renderImports mods
-  , renderDef symbols
+  , renderDef (case n of
+                Nothing -> symbols
+                Just m  -> take m symbols)
   , "main = Test.QuickSpec.quickSpec theory"
   ]
 
@@ -187,13 +189,14 @@ renderDef symbols = concat [
 theoriesFromClusters :: [Cluster] -> [Theory]
 theoriesFromClusters = map theory
 
-getProjects s = let theories = theoriesFromClusters (readClusters s)
-                 in map mkCabal theories
+getProjects n s = let theories = theoriesFromClusters (readClusters s)
+                   in map (mkCabal n) theories
 
 readClusters :: String -> [Cluster]
 readClusters x = case decode . fromString $ x of
                       Nothing -> []
                       Just xs -> xs
 
-writeTheoriesFromClusters :: FilePath -> String -> IO [FilePath]
-writeTheoriesFromClusters dir s = mapM (Cabal.makeProject dir) (getProjects s)
+writeTheoriesFromClusters :: Maybe Int -> FilePath -> String -> IO [FilePath]
+writeTheoriesFromClusters n dir s =
+  mapM (Cabal.makeProject dir) (getProjects n s)

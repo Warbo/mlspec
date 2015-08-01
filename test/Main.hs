@@ -56,6 +56,7 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can read real JSON"      canReadRealJSON
   , testProperty "Can parse type sigs"     canParseTypeSigs
   , testProperty "Can extract type's mods" canExtractTypeMods
+  , testProperty "Can limit theory size"   canLimitTheorySize
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -135,7 +136,7 @@ renderedNamesAreMonomorphised ss = all (`isInfixOf` output) (map mono ss)
 
 renderedModuleUsesTemplateHaskell :: Theory -> Bool
 renderedModuleUsesTemplateHaskell t =
-  "TemplateHaskell" `elem` getExts (renderModule t)
+  "TemplateHaskell" `elem` getExts (renderModule Nothing t)
 
 getExts x = map strip         .
               concatMap split .
@@ -146,23 +147,26 @@ getExts x = map strip         .
                                        in p : takePragmas s'
         takePragmas (c:s)           = takePragmas s
         takePragmas ""              = []
-        pragmaFrom ('#':'-':'}':s) = ("", s)
-        pragmaFrom (c:s)           = let (p,   s') = pragmaFrom s
-                                      in (c:p, s')
-        pragmaFrom ""              = ("", "")
+        pragmaFrom ('#':'-':'}':s)  = ("", s)
+        pragmaFrom (c:s)            = let (p,   s') = pragmaFrom s
+                                       in (c:p, s')
+        pragmaFrom ""               = ("", "")
+        split (',':s)               = let s' = split s
+                                       in "":s'
+        split (c:s)                 = case split s of
+                                           []     -> [c:[]]
+                                           (o:os) -> ((c:o):os)
+        split ""                    = []
+        strip                       = dropWhile isSpace     .
+                                          reverse           .
+                                          dropWhile isSpace .
+                                          reverse
         stripL ('L':'A':'N':'G':'U':'A':'G':'E':s) = stripL s
-        stripL (c:s) = c : stripL s
-        stripL [] = []
-        split (',':s) = let s' = split s
-                         in "":s'
-        split (c:s)   = case split s of
-                             []     -> [c:[]]
-                             (o:os) -> ((c:o):os)
-        split "" = []
-        strip    = dropWhile isSpace . reverse . dropWhile isSpace . reverse
+        stripL (c:s)                               = c : stripL s
+        stripL []                                  = []
 
 renderedClusterContainsNames c = all (`isInfixOf` output) allowed
-  where output     = renderModule (T ps ms ss)
+  where output     = renderModule Nothing (T ps ms ss)
         T ps ms ss = theory line
         line       = C (map mkEntryUC c)
         allowed    = map (\(_, n, a, t) -> show n) ss
@@ -173,33 +177,33 @@ renderedImports ms =
 
 moduleImports t@(T _ ms _) =
   all ((`elem` lines output) . ("import qualified " ++) . show) ms
-  where output = renderModule t
+  where output = renderModule Nothing t
 
 modulesAreMain t = "module Main where" `elem` lines output
-  where output = renderModule t
+  where output = renderModule Nothing t
 
 moduleRunsQuickSpec t =
   "main = Test.QuickSpec.quickSpec theory" `elem` lines output
-  where output = renderModule t
+  where output = renderModule Nothing t
 
-projectGetsModule t = mainMod == renderModule t
-  where project          = mkCabal t
+projectGetsModule t = mainMod == renderModule Nothing t
+  where project          = mkCabal Nothing t
         Just (H mainMod) = lookup ([], "Main.hs") (Cabal.files project)
 
 projectHasExecutable t = heading == "executable Main"
   where [Cabal.S heading _] = Cabal.sections project
-        project             = mkCabal t
+        project             = mkCabal Nothing t
 
 executableRunsMain t = main == "Main.hs"
   where Just main        = lookup "main-is" exec
         [Cabal.S _ exec] = Cabal.sections project
-        project          = mkCabal t
+        project          = mkCabal Nothing t
 
 executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
   where deps             = map strip $ split "," depline
         Just depline     = lookup "build-depends" exec
         [Cabal.S _ exec] = Cabal.sections project
-        project          = mkCabal t
+        project          = mkCabal Nothing t
 
 canHandleJSONEntries :: Entry -> Bool
 canHandleJSONEntries entry =
@@ -229,6 +233,10 @@ canParseTypeSigs t = length (typeBits t) == 1
 
 canExtractTypeMods (QT (ms, t)) = readMods t == ms
 
+canLimitTheorySize :: Theory -> Int -> Bool
+canLimitTheorySize t n =
+  length (renderModule (Just n) t) <= length (renderModule (Just (n+1)) t)
+
 projectsMadeFromClusters cs = monadicIO $ do
   (claimed, made) <- run $ withSystemTempDirectory "mlspectest" getMade
   mDebug (("names",    names),
@@ -237,12 +245,12 @@ projectsMadeFromClusters cs = monadicIO $ do
           ("clusters", clusters),
           ("theories", theories))
   assert (all snd made)
-  where getMade dir  = do out1 <- writeTheoriesFromClusters dir clusters
+  where getMade dir  = do out1 <- writeTheoriesFromClusters Nothing dir clusters
                           out2 <- mapM (\n -> fmap (n,) (existsIn dir n)) names
                           return (out1, out2)
         clusters     = S.toString (mkEntries cs)
         theories     = map theory (readClusters clusters)
-        names        = map (Cabal.name . mkCabal) theories
+        names        = map (Cabal.name . mkCabal Nothing) theories
         existsIn x y = doesDirectoryExist (x ++ "/" ++ y)
 
 cabalCheck t = monadicIO $ do
@@ -275,7 +283,7 @@ cabalRun = monadicIO $ do
 withCabalProject :: Theory -> (FilePath -> IO a) -> IO a
 withCabalProject t f = withSystemTempDirectory "mlspectest" go
   where go dir  = Cabal.makeProject dir project >>= f
-        project = mkCabal t
+        project = mkCabal Nothing t
 
 -- Helpers
 
