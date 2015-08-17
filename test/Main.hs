@@ -70,14 +70,14 @@ cabalTests = localOption (QuickCheckTests 1) $ testGroup "Cabal tests" [
 -- Tests which depend on the availability of particular modules
 dependentTests = [
     mkDepTests ["Test.QuickSpec"] [
-        testProperty "Cabal projects check OK"      cabalCheck
+        testProperty "Cabal projects check OK"     cabalCheck
       , testProperty "Cabal projects configure OK" cabalConfigure
       , testProperty "Cabal projects run OK"       cabalRun
+      , testProperty "No missing types"            noMissingTypes
       ]
   ]
-  where qs = [M "Test.QuickSpec"]
-        mkDepTests ms ts = (map M ms, limit (testGroup (mkStr ms) ts))
-        mkStr ms = "Tests depending on " ++ (intercalate " " ms)
+  where mkDepTests ms ts = (map M ms, limit (testGroup (mkStr ms) ts))
+        mkStr ms = "Tests depending on " ++ unwords ms
         limit    = localOption (QuickCheckTests 1)
 
 -- Tests
@@ -138,9 +138,8 @@ renderedModuleUsesTemplateHaskell :: Theory -> Bool
 renderedModuleUsesTemplateHaskell t =
   "TemplateHaskell" `elem` getExts (renderModule Nothing t)
 
-getExts x = map strip         .
-              concatMap split .
-              map stripL      .
+getExts x = map strip                         .
+              concatMap (split . stripL)      .
               filter ("LANGUAGE" `isInfixOf`) .
               takePragmas $ x
   where takePragmas ('{':'-':'#':s) = let (p, s') = pragmaFrom s
@@ -154,8 +153,8 @@ getExts x = map strip         .
         split (',':s)               = let s' = split s
                                        in "":s'
         split (c:s)                 = case split s of
-                                           []     -> [c:[]]
-                                           (o:os) -> ((c:o):os)
+                                           []     -> [[c]]
+                                           (o:os) -> (c:o):os
         split ""                    = []
         strip                       = dropWhile isSpace     .
                                           reverse           .
@@ -267,11 +266,14 @@ cabalConfigure (T _ ms ss) = monadicIO $ do
   where doConfig dir = cabalIn dir ["configure"]
 
 cabalRun = monadicIO $ do
-  (code, out, err) <- run $ withCabalProject thy doRun
+  (code, out, err) <- runBools
   mDebug (code, out, err)
   assert (code == ExitSuccess)
+
+-- Build a theory of Booleans and run it via Cabal
+runBools = run $ withCabalProject thy doRun
   where doRun dir = cabalIn dir ["configure"] >> cabalIn dir ["run"]
-        thy       = (T [P "containers"] [M "Data.Bool"] syms)
+        thy       = T [P "containers"] [M "Data.Bool"] syms
         syms      = [
             (M "Data.Bool", N "True",  Ty "Bool",                 A 0)
           , (M "Data.Bool", N "False", Ty "Bool",                 A 0)
@@ -279,6 +281,12 @@ cabalRun = monadicIO $ do
           , (M "Data.Bool", N "||",    Ty "Bool -> Bool -> Bool", A 2)
           , (M "Data.Bool", N "&&",    Ty "Bool -> Bool -> Bool", A 2)
           ]
+
+noMissingTypes = monadicIO $ do
+  (code, out, err) <- runBools
+  mDebug (code, out, err)
+  assert (noMissingTypeMessages out)
+  where noMissingTypeMessages = error "Not implemented"
 
 withCabalProject :: Theory -> (FilePath -> IO a) -> IO a
 withCabalProject t f = withSystemTempDirectory "mlspectest" go
@@ -291,14 +299,14 @@ testsWithDeps = withDeps dependentTests
   where withDeps []             = return []
         withDeps ((ms, ts):tss) = do have <- haveDeps ms
                                      rest <- withDeps tss
-                                     return $ if have then (ts:rest)
-                                                      else rest
+                                     return $ if have then ts:rest
+                                                      else    rest
 
 cabal args dir = cabalInWith dir args ""
 
 cabalIn dir args = cabal args (Just dir)
 
-cabalInWith dir args stdin = readCreateProcessWithExitCode cmd stdin
+cabalInWith dir args = readCreateProcessWithExitCode cmd
   where cmd = (proc "cabal" args) { cwd = dir }
 
 haveCabal :: IO Bool
@@ -310,12 +318,12 @@ haveDep :: Module -> IO Bool
 haveDep (M m) = haveCabal >>= tryDep
   where tryDep False = return False
         tryDep _     = do
-          (_, out, _) <- cabalInWith Nothing ["repl"] ("import " ++ m)
+          (_, _, err) <- cabalInWith Nothing ["repl", "test"] ("import " ++ m)
           -- Hacky, but GHCi still gives ExitSuccess :(
-          return ("Could not find module" `isInfixOf` out)
+          return (not ("Could not find module" `isInfixOf` err))
 
 haveDeps :: [Module] -> IO Bool
-haveDeps ms = fmap (all id) (mapM haveDep ms)
+haveDeps ms = fmap and (mapM haveDep ms)
 
 debug :: Show a => a -> Property -> Property
 debug  = whenFail . print
@@ -329,7 +337,7 @@ mkEntry p m n t a = E (p, m, n, t, a)
 mkEntryUC (p, m, n, t, a) = mkEntry p m n t a
 
 mkEntries :: [Cluster] -> B.ByteString
-mkEntries cs = encode cs
+mkEntries = encode
 
 instance Show Cluster where
   show (C xs) = S.toString (encode xs)

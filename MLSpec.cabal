@@ -49,5 +49,6 @@ test-suite test
                      , haskell-src-exts
                      , syb
                      , QuickCheck
+                     , quickspec
                      , tasty >= 0.7
                      , tasty-quickcheck
