@@ -1,13 +1,22 @@
 # MLSpec: Machine Learning for QuickSpec #
 
-This project implements a Theory Exploration system, built on QuickSpec and
-"Machine Learning for Haskell" (ML4HS).
+This project constructs "theories" for the QuickSpec system to explore.
 
-QuickSpec takes a (small) collection of Haskell definitions and builds equations
-relating them (tested using QuickCheck).
+Specifically, it reads from stdin, descriptions of functions as JSON like:
 
-ML4HS takes a (large) collection of Haskell definitions and clusters them based
-on some similarity measure.
+    {
+        "package" : "foo"
+      , "module"  : "Bar.Baz"
+      , "name"    : "quux"
+      , "type"    : "Bar.T a -> Baz.U b"
+      , "arity"   : 1
+    }
 
-MLSpec runs QuickSpec on the output of ML4HS, as a divide and conquer approach
-to scalability.
+It takes a directory name as argument, and inside that directory creates a new
+Haskell project. That project has all of the given packages as Cabal
+dependencies; along with an executable `Main.hs` which imports all of the given
+modules, defines a QuickSpec "theory" containing all of the given functions and
+a `main` function which calls `quickSpec` on that theory.
+
+If the `SIZE` environment variable is available, it will be read as an `Int` and
+used as an upper bound on the number of functions added to the theory.

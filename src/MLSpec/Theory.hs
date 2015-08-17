@@ -193,9 +193,7 @@ getProjects n s = let theories = theoriesFromClusters (readClusters s)
                    in map (mkCabal n) theories
 
 readClusters :: String -> [Cluster]
-readClusters x = case decode . fromString $ x of
-                      Nothing -> []
-                      Just xs -> xs
+readClusters x = fromMaybe [] (decode . fromString $ x)
 
 writeTheoriesFromClusters :: Maybe Int -> FilePath -> String -> IO [FilePath]
 writeTheoriesFromClusters n dir s =
