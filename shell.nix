@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc7101" }:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc7102" }:
 
 let
 
@@ -16,8 +16,9 @@ let
         isLibrary = false;
         isExecutable = true;
         buildDepends = [
-          aeson ArbitraryHaskell base bytestring hashable haskell-src-exts
-          stringable syb
+          aeson ArbitraryHaskell base bytestring directory hashable
+          haskell-src-exts MissingH process QuickCheck quickspec stringable
+          syb tasty tasty-quickcheck temporary
         ];
         testDepends = [
           aeson ArbitraryHaskell base bytestring directory hashable

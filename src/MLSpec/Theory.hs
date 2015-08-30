@@ -3,6 +3,7 @@ module MLSpec.Theory where
 
 import           Control.Monad
 import           Data.Aeson
+import           Data.Char
 import           Data.Data
 import           Data.Generics.Aliases
 import           Data.Hashable
@@ -110,10 +111,16 @@ typeMod (HES.ModuleName m) = [M m]
 theoryLine :: Symbol -> String
 theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
 theoryLine (M m, N n, _,   a)         = concat [
-    "let f = $(Test.QuickCheck.All.monomorphic ('", qname, ")) ",
+    "let f = $(Helper.mono ('", wrappedName, ")) ",
     "in \"", qname, "\" `Test.QuickSpec.fun", show a, "` f"
   ]
   where qname = m ++ "." ++ n
+        wrappedName = if op n then "(" ++ qname ++ ")"
+                              else qname
+        op          = any isSym
+        isSym c     = or [c `elem` ("!#$%&*+./<=>?@\\^|-~:" :: String),
+                          isPunctuation c,
+                          isSymbol c]
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
@@ -137,7 +144,8 @@ mkCabal n (T pkgs mods symbols) = Cabal.P {
         ]
     ]
   , Cabal.files = [
-    (([], "Main.hs"), H (renderModule n (T pkgs mods symbols)))
+      (([], "Main.hs"), H (renderModule n (T pkgs mods symbols)))
+    , (([], "Helper.hs"), H "module Helper where\nimport Data.Char\nimport Language.Haskell.TH.Syntax\nimport Test.QuickCheck.All\nmono = fmap vToC . monomorphic\nvToC (VarE n) = if isC then ConE n else VarE n\n  where isC   = isUpper c || c `elem` \":[\"\n        (c:_) = nameBase n")
     ]
   }
   where deps = pkgs ++ requiredDeps
@@ -150,6 +158,7 @@ requiredDeps = map P [
     "base >= 4.8 && < 4.9"
   , "quickspec < 2"
   , "QuickCheck > 2"
+  , "template-haskell"
   ]
 
 requiredHeaders = Cabal.S () [
@@ -175,14 +184,14 @@ renderModule n (T pkgs mods symbols) = unlines [
 
 renderImports :: [Module] -> String
 renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
-  where allMods = mods ++ [M "Test.QuickSpec", M "Test.QuickCheck.All"]
+  where allMods = mods ++ [M "Test.QuickSpec", M "Helper"]
 
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
     "theory = ["
-  , "Test.QuickSpec.vars [\"i1\", \"i2\", \"i3\"] (undefined :: Integer),"
-  , "Test.QuickSpec.vars [\"s1\", \"s2\", \"s3\"] (undefined :: String),"
-  , intercalate ", " (map theoryLine symbols)
+  , "Test.QuickSpec.vars [\"i1\", \"i2\", \"i3\"] (undefined :: Integer)\n  , "
+  , "Test.QuickSpec.vars [\"s1\", \"s2\", \"s3\"] (undefined :: String)\n  , "
+  , intercalate "\n  , " (map theoryLine symbols)
   , "]"
   ]
 

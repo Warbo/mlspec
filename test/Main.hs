@@ -1,6 +1,7 @@
 {-# LANGUAGE TupleSections #-}
 module Main where
 
+import           Common
 import           Control.Exception (try, SomeException)
 import qualified TestData
 import           Data.Aeson
@@ -23,15 +24,7 @@ import           Test.QuickCheck.Monadic
 import           Test.Tasty             (defaultMain, testGroup, localOption)
 import           Test.Tasty.QuickCheck
 
--- Only run Cabal tests if we have Cabal available; likewise for tests depending
--- on particular modules.
-main = do cabal <- haveCabal
-          deps  <- testsWithDeps
-          let tests = if cabal then allTests (cabalTests:deps)
-                               else allTests             deps
-          defaultMain tests
-
-allTests rest = testGroup "All tests" (pureTests:impureTests:rest)
+main = defaultMain $ testGroup "All tests" [pureTests, impureTests]
 
 pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
     testProperty "Theory gets packages"    canReadTheoryPkgs
@@ -60,25 +53,8 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
-    testProperty "Project dirs made from clusters" projectsMadeFromClusters
+    --testProperty "Project dirs made from clusters" projectsMadeFromClusters
   ]
-
--- Tests which depend on the "cabal" command
-cabalTests = localOption (QuickCheckTests 1) $ testGroup "Cabal tests" [
-  ]
-
--- Tests which depend on the availability of particular modules
-dependentTests = [
-    mkDepTests ["Test.QuickSpec"] [
-        testProperty "Cabal projects check OK"     cabalCheck
-      , testProperty "Cabal projects configure OK" cabalConfigure
-      , testProperty "Cabal projects run OK"       cabalRun
-      , testProperty "No missing types"            noMissingTypes
-      ]
-  ]
-  where mkDepTests ms ts = (map M ms, limit (testGroup (mkStr ms) ts))
-        mkStr ms = "Tests depending on " ++ unwords ms
-        limit    = localOption (QuickCheckTests 1)
 
 -- Tests
 
@@ -252,84 +228,7 @@ projectsMadeFromClusters cs = monadicIO $ do
         names        = map (Cabal.name . mkCabal Nothing) theories
         existsIn x y = doesDirectoryExist (x ++ "/" ++ y)
 
-cabalCheck t = monadicIO $ do
-  (code, out, err) <- run $ withCabalProject t doCheck
-  mDebug (code, out, err)
-  assert (code == ExitSuccess)
-  where doCheck dir = cabalIn dir ["check"]
-
-cabalConfigure (T _ ms ss) = monadicIO $ do
-  (code, out, err) <- run $ withCabalProject (T [P "containers"] ms ss)
-                                             doConfig
-  mDebug (code, out, err)
-  assert (code == ExitSuccess)
-  where doConfig dir = cabalIn dir ["configure"]
-
-cabalRun = monadicIO $ do
-  (code, out, err) <- runBools
-  mDebug (code, out, err)
-  assert (code == ExitSuccess)
-
--- Build a theory of Booleans and run it via Cabal
-runBools = run $ withCabalProject thy doRun
-  where doRun dir = cabalIn dir ["configure"] >> cabalIn dir ["run"]
-        thy       = T [P "containers"] [M "Data.Bool"] syms
-        syms      = [
-            (M "Data.Bool", N "True",  Ty "Bool",                 A 0)
-          , (M "Data.Bool", N "False", Ty "Bool",                 A 0)
-          , (M "Data.Bool", N "not",   Ty "Bool -> Bool",         A 1)
-          , (M "Data.Bool", N "||",    Ty "Bool -> Bool -> Bool", A 2)
-          , (M "Data.Bool", N "&&",    Ty "Bool -> Bool -> Bool", A 2)
-          ]
-
-noMissingTypes = monadicIO $ do
-  (code, out, err) <- runBools
-  mDebug (code, out, err)
-  assert (noMissingTypeMessages out)
-  where noMissingTypeMessages = error "Not implemented"
-
-withCabalProject :: Theory -> (FilePath -> IO a) -> IO a
-withCabalProject t f = withSystemTempDirectory "mlspectest" go
-  where go dir  = Cabal.makeProject dir project >>= f
-        project = mkCabal Nothing t
-
 -- Helpers
-
-testsWithDeps = withDeps dependentTests
-  where withDeps []             = return []
-        withDeps ((ms, ts):tss) = do have <- haveDeps ms
-                                     rest <- withDeps tss
-                                     return $ if have then ts:rest
-                                                      else    rest
-
-cabal args dir = cabalInWith dir args ""
-
-cabalIn dir args = cabal args (Just dir)
-
-cabalInWith dir args = readCreateProcessWithExitCode cmd
-  where cmd = (proc "cabal" args) { cwd = dir }
-
-haveCabal :: IO Bool
-haveCabal = fmap isRight (run (cabal ["--help"] Nothing))
-  where run  :: IO a -> IO (Either SomeException a)
-        run   = try
-
-haveDep :: Module -> IO Bool
-haveDep (M m) = haveCabal >>= tryDep
-  where tryDep False = return False
-        tryDep _     = do
-          (_, _, err) <- cabalInWith Nothing ["repl", "test"] ("import " ++ m)
-          -- Hacky, but GHCi still gives ExitSuccess :(
-          return (not ("Could not find module" `isInfixOf` err))
-
-haveDeps :: [Module] -> IO Bool
-haveDeps ms = fmap and (mapM haveDep ms)
-
-debug :: Show a => a -> Property -> Property
-debug  = whenFail . print
-
-mDebug :: Show a => a -> PropertyM IO ()
-mDebug = monitor  . debug
 
 mkEntry p m n t a = E (p, m, n, t, a)
 
@@ -354,51 +253,7 @@ instance Arbitrary Cluster where
 
 mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 
-wrap x    = "(" ++ x ++ ")"
-
 renderQType (QT (ms, t)) = t
-
-lower = "abcdefghijklmnopqrstuvwxyz"
-upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-instance Arbitrary Module where
-  arbitrary = do
-    initials <- listOf1 (elements upper)
-    rest     <- infiniteListOf (listOf (elements lower))
-    return $ M $ intercalate "." (zipWith (:) initials rest)
-
-instance Arbitrary Package where
-  arbitrary = fmap P (listOf1 (elements lower))
-
-instance Arbitrary Name where
-  arbitrary = do
-    initial <- elements lower
-    rest    <- listOf (elements (lower ++ upper))
-    return $ N (initial:rest)
-
-typeName = do initial <- elements upper
-              rest    <- listOf (elements (lower ++ upper ++ " "))
-              return (initial:rest)
-
-sizedListOf gen 0 = return []
-sizedListOf gen n = do
-  points <- listOf (choose (0, n))
-  count  <- arbitrary
-  let points' = take (abs count `mod` n) points
-      diffs   = diffsOf (sort points')
-  mapM gen diffs
-
-diffsOf = diffsOf' 0
-  where diffsOf' n [] = []
-        diffsOf' n (x:xs) = x - n : diffsOf' x xs
-
-sizedTypeName 0 = typeName
-sizedTypeName n = do
-  chunks <- sizedListOf sizedTypeName (n - 1)
-  head   <- typeName
-  return $ case chunks of
-                [] -> head
-                _  -> intercalate " -> " (map wrap chunks)
 
 newtype QType = QT ([Module], Type) deriving (Show)
 
@@ -408,25 +263,5 @@ instance Arbitrary QType where
     M m <- arbitrary
     return (QT ([M m], Ty (m ++ "." ++ n)))
 
-instance Arbitrary Type where
-  arbitrary = do
-    size <- arbitrary
-    name <- sizedTypeName (abs size `mod` 100)
-    return (Ty name)
-
-instance Arbitrary Arity where
-  arbitrary = fmap (A . abs . (`mod` 6)) arbitrary
-
 instance Arbitrary Entry where
   arbitrary = E <$> arbitrary
-
-instance Arbitrary Theory where
-  arbitrary = do
-    pkgs    <- arbitrary
-    mods    <- arbitrary
-    names   <- arbitrary
-    types   <- arbitrary
-    arities <- arbitrary
-    return $ T      pkgs
-                    mods
-               (zip4 mods names types arities)

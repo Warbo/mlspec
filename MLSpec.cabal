@@ -52,3 +52,27 @@ test-suite test
                      , quickspec
                      , tasty >= 0.7
                      , tasty-quickcheck
+
+-- These executables are actually tests. Since they test the output of commands,
+-- it's hard to capture these commands as dependencies in Cabal. Instead, we
+-- just build the executables, and use a separate system like Nix to ensure all
+-- of the required commands are available.
+executable mlspec-test-quickspec
+  main-is:             Main.hs
+  hs-source-dirs:      quickspec-test, test, src
+  build-depends:       base >=4.7
+                     , ArbitraryHaskell
+                     , MissingH
+                     , process
+                     , temporary
+                     , directory
+                     , hashable
+                     , aeson
+                     , stringable
+                     , bytestring
+                     , haskell-src-exts
+                     , syb
+                     , QuickCheck
+                     , quickspec
+                     , tasty >= 0.7
+                     , tasty-quickcheck
