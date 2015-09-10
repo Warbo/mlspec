@@ -44,7 +44,8 @@ noMissingTypes = monadicIO $ do
   (code, out, err) <- runBools
   mDebug (code, out, err)
   assert (noMissingTypeMessages out)
-  where noMissingTypeMessages = error "Not implemented"
+  where noMissingTypeMessages = not . (msg `isInfixOf`)
+        msg = "WARNING: there are no variables of the following types"
 
 mkShellNix d = do (code, out, err) <- cmdIn d "cabal2nix" ["--shell", "./."]
                   case code of

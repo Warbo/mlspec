@@ -104,9 +104,11 @@ renderedDefinitionSetsArity ss = all arityExists (map (\(_, _, _, a) -> a) ss)
         exists        = (`isInfixOf` output)
         arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
 
-renderedNamesAreMonomorphised :: [Symbol] -> Bool
-renderedNamesAreMonomorphised ss = all (`isInfixOf` output) (map mono ss)
-  where mono s = "Test.QuickCheck.All.monomorphic (" ++ quote s ++ ")"
+renderedNamesAreMonomorphised :: [Symbol] -> Property
+renderedNamesAreMonomorphised ss = conjoin $ map (test . mono) ss
+  where test m = counterexample (show m ++ " `isInfixOf` " ++ show output)
+                                (m `isInfixOf` output)
+        mono s = "Helper.mono (" ++ quote s ++ ")"
         quote (M m, N n, _, _) = "'" ++ m ++ "." ++ n
         output = renderDef ss
 
@@ -158,7 +160,7 @@ modulesAreMain t = "module Main where" `elem` lines output
   where output = renderModule Nothing t
 
 moduleRunsQuickSpec t =
-  "main = Test.QuickSpec.quickSpec theory" `elem` lines output
+  "main = Test.QuickSpec.quickSpec (Helper.addVars theory)" `elem` lines output
   where output = renderModule Nothing t
 
 projectGetsModule t = mainMod == renderModule Nothing t

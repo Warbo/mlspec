@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc7102" }:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "default" }:
 
 let
 
@@ -15,12 +15,12 @@ let
         src = ./.;
         isLibrary = false;
         isExecutable = true;
-        buildDepends = [
+        executableHaskellDepends = [
           aeson ArbitraryHaskell base bytestring directory hashable
           haskell-src-exts MissingH process QuickCheck quickspec stringable
           syb tasty tasty-quickcheck temporary
         ];
-        testDepends = [
+        testHaskellDepends = [
           aeson ArbitraryHaskell base bytestring directory hashable
           haskell-src-exts MissingH process QuickCheck quickspec stringable
           syb tasty tasty-quickcheck temporary
@@ -30,7 +30,11 @@ let
         license = stdenv.lib.licenses.publicDomain;
       };
 
-  drv = pkgs.haskell.packages.${compiler}.callPackage f {};
+  haskellPackages = if compiler == "default"
+                      then pkgs.haskellPackages
+                      else pkgs.haskell.packages.${compiler};
+
+  drv = haskellPackages.callPackage f {};
 
 in
 

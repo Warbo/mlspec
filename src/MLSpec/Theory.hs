@@ -179,7 +179,7 @@ renderModule n (T pkgs mods symbols) = unlines [
   , renderDef (case n of
                 Nothing -> symbols
                 Just m  -> take m symbols)
-  , "main = Test.QuickSpec.quickSpec theory"
+  , "main = Test.QuickSpec.quickSpec (Helper.addVars theory)"
   ]
 
 renderImports :: [Module] -> String
