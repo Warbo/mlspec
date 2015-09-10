@@ -13,6 +13,8 @@ import           Data.Stringable
 import           Data.Typeable
 import qualified Language.Haskell.Exts.Parser as HEP
 import qualified Language.Haskell.Exts.Syntax as HES
+import           Paths_MLSpec (getDataFileName)
+import           System.IO.Unsafe
 import qualified Test.Arbitrary.Cabal         as Cabal
 import           Test.Arbitrary.Haskell
 
@@ -132,6 +134,9 @@ addTypeMods :: Theory -> Theory
 addTypeMods (T ps ms ss) = T ps (nub (ms ++ tms)) ss
   where tms = concat [readMods t | (_, _, t, _) <- ss]
 
+helperContent = unsafePerformIO content
+  where content = getDataFileName "Helper.hs" >>= readFile
+
 mkCabal :: Maybe Int -> Theory -> Cabal.Project
 mkCabal n (T pkgs mods symbols) = Cabal.P {
     Cabal.name = "mlspec-temp" ++ show uid
@@ -145,7 +150,7 @@ mkCabal n (T pkgs mods symbols) = Cabal.P {
     ]
   , Cabal.files = [
       (([], "Main.hs"), H (renderModule n (T pkgs mods symbols)))
-    , (([], "Helper.hs"), H "module Helper where\nimport Data.Char\nimport Language.Haskell.TH.Syntax\nimport Test.QuickCheck.All\nmono = fmap vToC . monomorphic\nvToC (VarE n) = if isC then ConE n else VarE n\n  where isC   = isUpper c || c `elem` \":[\"\n        (c:_) = nameBase n")
+    , (([], "Helper.hs"), H helperContent)
     ]
   }
   where deps = pkgs ++ requiredDeps
@@ -188,7 +193,7 @@ renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
 
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
-    "theory = ["
+    "theory = Test.QuickSpec.signature ["
   , "Test.QuickSpec.vars [\"i1\", \"i2\", \"i3\"] (undefined :: Integer)\n  , "
   , "Test.QuickSpec.vars [\"s1\", \"s2\", \"s3\"] (undefined :: String)\n  , "
   , intercalate "\n  , " (map theoryLine symbols)

@@ -15,6 +15,7 @@ category:            Language
 build-type:          Simple
 extra-source-files:  README
 cabal-version:       >=1.10
+data-files:          Helper.hs
 
 executable MLSpec
   main-is:             Main.hs
