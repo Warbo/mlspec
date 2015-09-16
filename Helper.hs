@@ -11,6 +11,7 @@ mono = fmap vToC . monomorphic
 
 vToC (VarE n) = if isC n then ConE n else VarE n
 vToC (ConE n) = if isC n then ConE n else VarE n
+vToC x        = x
 
 isC n = let (c:_) = nameBase n
          in isUpper c || c `elem` ":["
