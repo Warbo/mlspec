@@ -9,9 +9,11 @@ import Test.QuickSpec.Utils.Typed
 
 mono = fmap vToC . monomorphic
 
-vToC (VarE n) = if isC then ConE n else VarE n
-  where isC   = isUpper c || c `elem` ":["
-        (c:_) = nameBase n
+vToC (VarE n) = if isC n then ConE n else VarE n
+vToC (ConE n) = if isC n then ConE n else VarE n
+
+isC n = let (c:_) = nameBase n
+         in isUpper c || c `elem` ":["
 
 -- FIXME: return makes for a pretty crappy generator...
 addVars :: Sig -> Sig
