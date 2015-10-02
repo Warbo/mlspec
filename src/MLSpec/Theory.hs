@@ -11,25 +11,23 @@ import           Data.List
 import           Data.Maybe
 import           Data.Stringable
 import           Data.Typeable
+import           Language.Eval
 import qualified Language.Haskell.Exts.Parser as HEP
 import qualified Language.Haskell.Exts.Syntax as HES
-import           Paths_MLSpec (getDataFileName)
 import           System.IO.Unsafe
 import qualified Test.Arbitrary.Cabal         as Cabal
 import           Test.Arbitrary.Haskell
 
-newtype Package = P  String deriving (Eq, Ord)
-newtype Module  = M  String deriving (Eq, Ord)
 newtype Name    = N  String deriving (Eq, Ord)
 newtype Type    = Ty String deriving (Eq, Ord)
 newtype Arity   = A  Int    deriving (Eq, Ord)
 
-unPkg  (P  x) = x
-unMod  (M  x) = x
+unPkg  (Pkg  x) = x
+unMod  (Mod  x) = x
 unName (N  x) = x
 unType (Ty x) = x
 
-newtype Entry = E (Package, Module, Name, Type, Arity) deriving (Show, Eq)
+newtype Entry = E (Pkg, Mod, Name, Type, Arity) deriving (Show, Eq)
 
 instance FromJSON Entry where
   parseJSON (Object o) = do
@@ -38,11 +36,11 @@ instance FromJSON Entry where
     n <- o .: "name"
     t <- o .: "type"
     a <- o .: "arity"
-    return $ E (P p, M m, N n, Ty t, A a)
+    return $ E (Pkg p, Mod m, N n, Ty t, A a)
   parseJSON _ = mzero
 
 instance ToJSON Entry where
-  toJSON (E (P p, M m, N n, Ty t, A a)) = object [
+  toJSON (E (Pkg p, Mod m, N n, Ty t, A a)) = object [
       "package" .= p
     , "module"  .= m
     , "name"    .= n
@@ -58,13 +56,7 @@ instance FromJSON Cluster where
 instance ToJSON Cluster where
   toJSON (C xs) = toJSON xs
 
-type Symbol = (Module, Name, Type, Arity)
-
-instance Show Package where
-  show (P  x) = x
-
-instance Show Module where
-  show (M  x) = x
+type Symbol = (Mod, Name, Type, Arity)
 
 instance Show Name where
   show (N  x) = x
@@ -75,15 +67,15 @@ instance Show Type where
 instance Show Arity where
   show (A  x) = show x
 
-data Theory = T [Package] [Module] [Symbol]
+data Theory = T [Pkg] [Mod] [Symbol]
 
 instance Show Theory where
   show t@(T pkgs mods syms) = show (pkgs, renderModule Nothing t)
 
-getPackage :: Entry -> Package
-getPackage (E (p, _, _, _, _)) = p
+getPkg :: Entry -> Pkg
+getPkg (E (p, _, _, _, _)) = p
 
-getMod :: Entry -> Module
+getMod :: Entry -> Mod
 getMod (E (_, m, _, _, _)) = m
 
 getName :: Entry -> Name
@@ -95,24 +87,24 @@ getType (E (_, _, _, t, _)) = t
 getArity :: Entry -> Arity
 getArity (E (_, _, _, _, a)) = a
 
-readMods :: Type -> [Module]
+readMods :: Type -> [Mod]
 readMods x = concatMap readMods'' (typeBits x)
 
 typeBits (Ty t) = case HEP.parseType t of
   HEP.ParseFailed _ _ -> []
   HEP.ParseOk   x     -> [x]
 
-readMods'' :: Data a => a -> [Module]
+readMods'' :: Data a => a -> [Mod]
 readMods'' x = readMods' x ++ concat (gmapQ readMods'' x)
 
-readMods' :: Data a => a -> [Module]
+readMods' :: Data a => a -> [Mod]
 readMods' = concat . gmapQ (const [] `extQ` typeMod)
 
-typeMod (HES.ModuleName m) = [M m]
+typeMod (HES.ModuleName m) = [Mod m]
 
 theoryLine :: Symbol -> String
 theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
-theoryLine (M m, N n, _,   a)         = concat [
+theoryLine (Mod m, N n, _,   a)         = concat [
     "let f = $(Helper.mono ('", wrappedName, ")) ",
     "in \"", qname, "\" `Test.QuickSpec.fun", show a, "` f"
   ]
@@ -126,7 +118,7 @@ theoryLine (M m, N n, _,   a)         = concat [
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
-  where pkgs     = map getPackage  es
+  where pkgs     = map getPkg  es
         mods     = map getMod      es
         symbols  = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
 
@@ -134,62 +126,27 @@ addTypeMods :: Theory -> Theory
 addTypeMods (T ps ms ss) = T ps (nub (ms ++ tms)) ss
   where tms = concat [readMods t | (_, _, t, _) <- ss]
 
-helperContent = unsafePerformIO content
-  where content = getDataFileName "Helper.hs" >>= readFile
+addScope = withPkgs requiredDeps . withMods requiredMods
 
-mkCabal :: Maybe Int -> Theory -> Cabal.Project
-mkCabal n (T pkgs mods symbols) = Cabal.P {
-    Cabal.name = "mlspec-temp" ++ show uid
-  , Cabal.version = [1]
-  , Cabal.headers = requiredHeaders
-  , Cabal.sections = [
-      Cabal.S "executable Main" [
-          ("build-depends", intercalate ", " (map show deps))
-        , ("main-is", "Main.hs")
-        ]
-    ]
-  , Cabal.files = [
-      (([], "Main.hs"), H (renderModule n (T pkgs mods symbols)))
-    , (([], "Helper.hs"), H helperContent)
-    ]
-  }
-  where deps = pkgs ++ requiredDeps
-        uid  = abs (hash (map unPkg pkgs,
-                          map unMod mods,
-                          [(m, n, t, a) | (M m, N n, Ty t, A a) <- symbols]))
+requiredDeps :: [Pkg]
+requiredDeps = map Pkg ["MLSpec", "quickspec", "QuickCheck"]
 
-requiredDeps :: [Package]
-requiredDeps = map P [
-    "base >= 4.8 && < 4.9"
-  , "quickspec < 2"
-  , "QuickCheck > 2"
-  , "template-haskell"
-  ]
-
-requiredHeaders = Cabal.S () [
-    ("build-type",   "Simple")
-  , ("category",     "Testing")
-  , ("maintainer",   "nobody@example.com")
-  , ("synopsis",     "Auto-generated by MLSpec")
-  , ("description",  "Auto-generated by MLSpec")
-  , ("license",      "PublicDomain")
-  , ("cabal-version", ">= 1.2")
-  ]
+requiredMods :: [Mod]
+requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec"]
 
 renderModule :: Maybe Int -> Theory -> String
 renderModule n (T pkgs mods symbols) = unlines [
-    "{-# LANGUAGE TemplateHaskell #-}"
-  , "module Main where"
-  , renderImports mods
-  , renderDef (case n of
-                Nothing -> symbols
-                Just m  -> take m symbols)
-  , "main = Test.QuickSpec.quickSpec (Helper.addVars theory)"
+  renderDef (case n of
+               Nothing -> symbols
+               Just m  -> take m symbols)
   ]
 
-renderImports :: [Module] -> String
-renderImports mods = unlines . map (("import qualified " ++) . show) $ allMods
-  where allMods = mods ++ [M "Test.QuickSpec", M "Helper"]
+renderMain :: String -> String
+renderMain x = "main = Test.QuickSpec.quickSpec (Helper.addVars (" ++ x ++ "))"
+
+asList :: [Expr] -> Expr
+asList []     = "[]"
+asList (x:xs) = ("(:)" $$ x) $$ asList xs
 
 renderDef :: [Symbol] -> String
 renderDef symbols = concat [
@@ -204,11 +161,7 @@ theoriesFromClusters :: [Cluster] -> [Theory]
 theoriesFromClusters = map theory
 
 getProjects n s = let theories = theoriesFromClusters (readClusters s)
-                   in map (mkCabal n) theories
+                   in theories
 
 readClusters :: String -> [Cluster]
 readClusters x = fromMaybe [] (decode . fromString $ x)
-
-writeTheoriesFromClusters :: Maybe Int -> FilePath -> String -> IO [FilePath]
-writeTheoriesFromClusters n dir s =
-  mapM (Cabal.makeProject dir) (getProjects n s)

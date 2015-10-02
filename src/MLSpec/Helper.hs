@@ -1,4 +1,5 @@
-module Helper where
+module MLSpec.Helper where
+
 import Data.Char
 import Data.Typeable
 import Language.Haskell.TH.Syntax

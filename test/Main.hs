@@ -12,6 +12,7 @@ import           Data.List
 import           Data.Maybe
 import           Data.String.Utils
 import qualified Data.Stringable as S
+import           Language.Eval
 import           MLSpec.Theory
 import           System.Directory
 import           System.Exit
@@ -35,14 +36,9 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Names are monomorphised" renderedNamesAreMonomorphised
   , testProperty "Arities are rendered"    renderedDefinitionSetsArity
   , testProperty "Clusters give names"     renderedClusterContainsNames
-  , testProperty "Imports rendered"        renderedImports
   , testProperty "Modules import"          moduleImports
   , testProperty "Modules are Main"        modulesAreMain
   , testProperty "Modules run QuickSpec"   moduleRunsQuickSpec
-  , testProperty "Package has Main.hs"     projectGetsModule
-  , testProperty "Package has executable"  projectHasExecutable
-  , testProperty "Executable runs Main"    executableRunsMain
-  , testProperty "Executable has deps"     executableHasDependencies
   , testProperty "JSON <-> Entry"          canHandleJSONEntries
   , testProperty "JSON <-> Cluster"        canHandleJSONClusters
   , testProperty "Can read JSON clusters"  canReadJSONClusters
@@ -74,10 +70,10 @@ canReadTheoryNames ps ms ns ts as =
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
         names   = zipWith qualify ms ns
-        qualify (M m) (N n) = N (m ++ "." ++ n)
+        qualify (Mod m) (N n) = N (m ++ "." ++ n)
 
-typeModulesIncluded :: [Package]
-                    -> [Module]
+typeModulesIncluded :: [Pkg]
+                    -> [Mod]
                     -> [Name]
                     -> [QType]
                     -> [Arity]
@@ -109,7 +105,7 @@ renderedNamesAreMonomorphised ss = conjoin $ map (test . mono) ss
   where test m = counterexample (show m ++ " `isInfixOf` " ++ show output)
                                 (m `isInfixOf` output)
         mono s = "Helper.mono (" ++ quote s ++ ")"
-        quote (M m, N n, _, _) = "'" ++ m ++ "." ++ n
+        quote (Mod m, N n, _, _) = "'" ++ m ++ "." ++ n
         output = renderDef ss
 
 renderedModuleUsesTemplateHaskell :: Theory -> Bool
@@ -148,10 +144,6 @@ renderedClusterContainsNames c = all (`isInfixOf` output) allowed
         line       = C (map mkEntryUC c)
         allowed    = map (\(_, n, a, t) -> show n) ss
 
-renderedImports ms =
-  all ((`elem` lines output) . ("import qualified " ++) . show) ms
-  where output = renderImports ms
-
 moduleImports t@(T _ ms _) =
   all ((`elem` lines output) . ("import qualified " ++) . show) ms
   where output = renderModule Nothing t
@@ -162,25 +154,6 @@ modulesAreMain t = "module Main where" `elem` lines output
 moduleRunsQuickSpec t =
   "main = Test.QuickSpec.quickSpec (Helper.addVars theory)" `elem` lines output
   where output = renderModule Nothing t
-
-projectGetsModule t = mainMod == renderModule Nothing t
-  where project          = mkCabal Nothing t
-        Just (H mainMod) = lookup ([], "Main.hs") (Cabal.files project)
-
-projectHasExecutable t = heading == "executable Main"
-  where [Cabal.S heading _] = Cabal.sections project
-        project             = mkCabal Nothing t
-
-executableRunsMain t = main == "Main.hs"
-  where Just main        = lookup "main-is" exec
-        [Cabal.S _ exec] = Cabal.sections project
-        project          = mkCabal Nothing t
-
-executableHasDependencies t@(T ps _ _) = all (`elem` deps) (map show ps)
-  where deps             = map strip $ split "," depline
-        Just depline     = lookup "build-depends" exec
-        [Cabal.S _ exec] = Cabal.sections project
-        project          = mkCabal Nothing t
 
 canHandleJSONEntries :: Entry -> Bool
 canHandleJSONEntries entry =
@@ -214,22 +187,6 @@ canLimitTheorySize :: Theory -> Int -> Bool
 canLimitTheorySize t n =
   length (renderModule (Just n) t) <= length (renderModule (Just (n+1)) t)
 
-projectsMadeFromClusters cs = monadicIO $ do
-  (claimed, made) <- run $ withSystemTempDirectory "mlspectest" getMade
-  mDebug (("names",    names),
-          ("claimed",  claimed),
-          ("made",     made),
-          ("clusters", clusters),
-          ("theories", theories))
-  assert (all snd made)
-  where getMade dir  = do out1 <- writeTheoriesFromClusters Nothing dir clusters
-                          out2 <- mapM (\n -> fmap (n,) (existsIn dir n)) names
-                          return (out1, out2)
-        clusters     = S.toString (mkEntries cs)
-        theories     = map theory (readClusters clusters)
-        names        = map (Cabal.name . mkCabal Nothing) theories
-        existsIn x y = doesDirectoryExist (x ++ "/" ++ y)
-
 -- Helpers
 
 mkEntry p m n t a = E (p, m, n, t, a)
@@ -257,13 +214,13 @@ mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 
 renderQType (QT (ms, t)) = t
 
-newtype QType = QT ([Module], Type) deriving (Show)
+newtype QType = QT ([Mod], Type) deriving (Show)
 
 instance Arbitrary QType where
   arbitrary = do
     n   <- typeName
-    M m <- arbitrary
-    return (QT ([M m], Ty (m ++ "." ++ n)))
+    Mod m <- arbitrary
+    return (QT ([Mod m], Ty (m ++ "." ++ n)))
 
 instance Arbitrary Entry where
   arbitrary = E <$> arbitrary

@@ -1,6 +1,7 @@
 module Common where
 
 import Data.List
+import Language.Eval
 import MLSpec.Theory
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
@@ -66,11 +67,11 @@ instance Arbitrary Name where
     rest    <- listOf (elements (lower ++ upper))
     return $ N (initial:rest)
 
-instance Arbitrary Module where
+instance Arbitrary Mod where
   arbitrary = do
     initials <- listOf1 (elements upper)
     rest     <- infiniteListOf (listOf (elements lower))
-    return $ M $ intercalate "." (zipWith (:) initials rest)
+    return $ Mod $ intercalate "." (zipWith (:) initials rest)
 
-instance Arbitrary Package where
-  arbitrary = fmap P (listOf1 (elements lower))
+instance Arbitrary Pkg where
+  arbitrary = fmap Pkg (listOf1 (elements lower))
