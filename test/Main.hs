@@ -36,8 +36,6 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Names are monomorphised" renderedNamesAreMonomorphised
   , testProperty "Arities are rendered"    renderedDefinitionSetsArity
   , testProperty "Clusters give names"     renderedClusterContainsNames
-  , testProperty "Modules import"          moduleImports
-  , testProperty "Modules are Main"        modulesAreMain
   , testProperty "Modules run QuickSpec"   moduleRunsQuickSpec
   , testProperty "JSON <-> Entry"          canHandleJSONEntries
   , testProperty "JSON <-> Cluster"        canHandleJSONClusters
@@ -144,16 +142,8 @@ renderedClusterContainsNames c = all (`isInfixOf` output) allowed
         line       = C (map mkEntryUC c)
         allowed    = map (\(_, n, a, t) -> show n) ss
 
-moduleImports t@(T _ ms _) =
-  all ((`elem` lines output) . ("import qualified " ++) . show) ms
-  where output = renderModule Nothing t
-
-modulesAreMain t = "module Main where" `elem` lines output
-  where output = renderModule Nothing t
-
 moduleRunsQuickSpec t =
-  "main = Test.QuickSpec.quickSpec (Helper.addVars theory)" `elem` lines output
-  where output = renderModule Nothing t
+  "main = Test.QuickSpec.quickSpec (Helper.addVars" `isPrefixOf` renderMain t
 
 canHandleJSONEntries :: Entry -> Bool
 canHandleJSONEntries entry =
