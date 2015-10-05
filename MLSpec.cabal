@@ -75,8 +75,10 @@ test-suite test
 -- of the required commands are available.
 executable mlspec-test-quickspec
   main-is:             Main.hs
-  hs-source-dirs:      quickspec-test, test, src
-  build-depends:       MLSpec
+  hs-source-dirs:      quickspec-test, test
+  build-depends:       base >= 4.8
+                     , MLSpec
+                     , nix-eval
                      , ArbitraryHaskell
                      , MissingH
                      , process

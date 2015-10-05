@@ -43,14 +43,17 @@ diffsOf = diffsOf' 0
 
 instance Arbitrary Theory where
   arbitrary = do
-    pkgs    <- arbitrary
-    mods    <- arbitrary
-    names   <- arbitrary
+    exprs   <- arbitrary
     types   <- arbitrary
     arities <- arbitrary
-    return $ T      pkgs
-                    mods
-               (zip4 mods names types arities)
+    return $ T (map E (zip3 exprs types arities))
+
+instance Arbitrary Expr where
+  arbitrary = do ps <- arbitrary
+                 ms <- arbitrary
+                 m  <- arbitrary
+                 n  <- arbitrary
+                 return $ withPkgs ps $ withMods ms $ qualified m n
 
 instance Arbitrary Arity where
   arbitrary = fmap (A . abs . (`mod` 6)) arbitrary
@@ -60,12 +63,6 @@ instance Arbitrary Type where
     size <- arbitrary
     name <- sizedTypeName (abs size `mod` 100)
     return (Ty name)
-
-instance Arbitrary Name where
-  arbitrary = do
-    initial <- elements lower
-    rest    <- listOf (elements (lower ++ upper))
-    return $ N (initial:rest)
 
 instance Arbitrary Mod where
   arbitrary = do

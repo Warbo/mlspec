@@ -31,7 +31,6 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
     testProperty "Theory gets packages"    canReadTheoryPkgs
   , testProperty "Theory gets modules"     canReadTheoryMods
   , testProperty "Theory gets names"       canReadTheoryNames
-  , testProperty "Type modules included"   typeModulesIncluded
   , testProperty "Names are rendered"      renderedDefinitionContainsNames
   , testProperty "Names are monomorphised" renderedNamesAreMonomorphised
   , testProperty "Arities are rendered"    renderedDefinitionSetsArity
@@ -53,57 +52,41 @@ impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
 -- Tests
 
 canReadTheoryPkgs ps ms ns ts as = p == nub (take count ps)
-  where T p _ _ = theory (C entries)
+  where T s     = theory (C entries)
+        p       = concatMap getPkg s
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
 
 canReadTheoryMods ps ms ns ts as = m == nub (take count ms)
-  where T p m s = theory (C entries)
+  where T s     = theory (C entries)
+        m       = concatMap getMod s
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
 
 canReadTheoryNames ps ms ns ts as =
-  map (\(m, n, _, _) -> qualify m n) s == take count names
-  where T p m s = theory (C entries)
+  zipWith (\m (E (n, _, _)) -> qualified m n) ms s == take count names
+  where T s     = theory (C entries)
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
-        names   = zipWith qualify ms ns
-        qualify (Mod m) (N n) = N (m ++ "." ++ n)
+        names   = zipWith qualified ms ns
 
-typeModulesIncluded :: [Pkg]
-                    -> [Mod]
-                    -> [Name]
-                    -> [QType]
-                    -> [Arity]
-                    ->  Bool
-typeModulesIncluded ps' ms' ns' ts' as' = equiv m (nub allMods)
-  where T p m s = addTypeMods (theory (C entries))
-        entries = zipWith5 mkEntry ps ms ns uts as
-        uts     = map renderQType ts
-        tms     = concatMap (\(QT (ms, _)) -> ms) ts
-        allMods = ms ++ tms
-        (ps, ms, ns, ts, as) = unzip5 (zip5 ps' ms' ns' ts' as')
-        equiv xs ys = length xs == length ys &&
-                          all (`elem` ys) xs &&
-                          all (`elem` xs) ys
-
-renderedDefinitionContainsNames :: [Symbol] -> Bool
+renderedDefinitionContainsNames :: [Entry] -> Bool
 renderedDefinitionContainsNames ss =
-  all (`isInfixOf` output) (map (\(_, n, _, _) -> show n) ss)
+  all (`isInfixOf` output) (map (\(n, _, _) -> show n) ss)
   where output = renderDef ss
 
-renderedDefinitionSetsArity :: [Symbol] -> Bool
-renderedDefinitionSetsArity ss = all arityExists (map (\(_, _, _, a) -> a) ss)
+renderedDefinitionSetsArity :: [Entry] -> Bool
+renderedDefinitionSetsArity ss = all arityExists (map (\(_, _, a) -> a) ss)
   where output        = renderDef ss
         exists        = (`isInfixOf` output)
         arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
 
-renderedNamesAreMonomorphised :: [Symbol] -> Property
+renderedNamesAreMonomorphised :: [Entry] -> Property
 renderedNamesAreMonomorphised ss = conjoin $ map (test . mono) ss
   where test m = counterexample (show m ++ " `isInfixOf` " ++ show output)
                                 (m `isInfixOf` output)
-        mono s = "Helper.mono (" ++ quote s ++ ")"
-        quote (Mod m, N n, _, _) = "'" ++ m ++ "." ++ n
+        mono s = qualified "Helper" "mono" $$ quote s
+        quote (Expr (ps, ms, e)) = Expr (ps, ms, '\'' : e)
         output = renderDef ss
 
 renderedModuleUsesTemplateHaskell :: Theory -> Bool
@@ -137,10 +120,10 @@ getExts x = map strip                         .
         stripL []                                  = []
 
 renderedClusterContainsNames c = all (`isInfixOf` output) allowed
-  where output     = renderModule Nothing (T ps ms ss)
-        T ps ms ss = theory line
-        line       = C (map mkEntryUC c)
-        allowed    = map (\(_, n, a, t) -> show n) ss
+  where output  = renderModule Nothing (T ss)
+        T ss    = theory line
+        line    = C (map mkEntryUC c)
+        allowed = map (\(E (n, a, t)) -> show n) ss
 
 moduleRunsQuickSpec t =
   "main = Test.QuickSpec.quickSpec (Helper.addVars" `isPrefixOf` renderMain t
@@ -179,7 +162,7 @@ canLimitTheorySize t n =
 
 -- Helpers
 
-mkEntry p m n t a = E (p, m, n, t, a)
+mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ n, t, a)
 
 -- Uncurried
 mkEntryUC (p, m, n, t, a) = mkEntry p m n t a
@@ -198,7 +181,7 @@ instance Arbitrary Cluster where
     ns <- vectorOf n arbitrary
     ts <- vectorOf n arbitrary
     as <- vectorOf n arbitrary
-    return $ C (zipWith5 (\p m n t a -> E (p, m, n, t, a)) ps ms ns ts as)
+    return $ C (zipWith5 (\p m n t a -> E (withPkgs [p] $ qualified m n, t, a)) ps ms ns ts as)
 
 mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 

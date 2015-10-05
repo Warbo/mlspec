@@ -20,9 +20,9 @@ let
           nix-eval QuickCheck quickspec stringable syb template-haskell
         ];
         executableHaskellDepends = [
-          aeson ArbitraryHaskell bytestring directory hashable
-          haskell-src-exts MissingH process QuickCheck quickspec stringable
-          syb tasty tasty-quickcheck temporary
+          aeson ArbitraryHaskell base bytestring directory hashable
+          haskell-src-exts MissingH nix-eval process QuickCheck quickspec
+          stringable syb tasty tasty-quickcheck temporary
         ];
         testHaskellDepends = [
           aeson ArbitraryHaskell base bytestring directory hashable

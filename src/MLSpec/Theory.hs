@@ -18,16 +18,14 @@ import           System.IO.Unsafe
 import qualified Test.Arbitrary.Cabal         as Cabal
 import           Test.Arbitrary.Haskell
 
-newtype Name    = N  String deriving (Eq, Ord)
-newtype Type    = Ty String deriving (Eq, Ord)
-newtype Arity   = A  Int    deriving (Eq, Ord)
+newtype Type  = Ty String deriving (Eq, Ord)
+newtype Arity = A  Int    deriving (Eq, Ord)
 
-unPkg  (Pkg  x) = x
-unMod  (Mod  x) = x
-unName (N  x) = x
-unType (Ty x) = x
+unPkg  (Pkg x) = x
+unMod  (Mod x) = x
+unType (Ty  x) = x
 
-newtype Entry = E (Pkg, Mod, Name, Type, Arity) deriving (Show, Eq)
+newtype Entry = E (Expr, Type, Arity) deriving (Show, Eq)
 
 instance FromJSON Entry where
   parseJSON (Object o) = do
@@ -36,14 +34,14 @@ instance FromJSON Entry where
     n <- o .: "name"
     t <- o .: "type"
     a <- o .: "arity"
-    return $ E (Pkg p, Mod m, N n, Ty t, A a)
+    return $ E (withPkgs [Pkg p] (qualified (Mod m) (raw n)), Ty t, A a)
   parseJSON _ = mzero
 
 instance ToJSON Entry where
-  toJSON (E (Pkg p, Mod m, N n, Ty t, A a)) = object [
+  toJSON (E (Expr (Pkg p:_, Mod m:_, n), Ty t, A a)) = object [
       "package" .= p
-    , "module"  .= m
-    , "name"    .= n
+    , "module"  .= (init . reverse . dropWhile (/= '.') . reverse $ m)
+    , "name"    .=        (reverse . takeWhile (/= '.') . reverse $ n)
     , "type"    .= t
     , "arity"   .= a
     ]
@@ -56,36 +54,40 @@ instance FromJSON Cluster where
 instance ToJSON Cluster where
   toJSON (C xs) = toJSON xs
 
-type Symbol = (Mod, Name, Type, Arity)
-
-instance Show Name where
-  show (N  x) = x
-
 instance Show Type where
   show (Ty x) = x
 
 instance Show Arity where
   show (A  x) = show x
 
-data Theory = T [Pkg] [Mod] [Symbol]
+data Theory = T [Entry] deriving (Show)
 
-instance Show Theory where
-  show t@(T pkgs mods syms) = show (pkgs, renderModule Nothing t)
+pkgsOf :: Expr -> [Pkg]
+pkgsOf (Expr (ps, _, _)) = ps
 
-getPkg :: Entry -> Pkg
-getPkg (E (p, _, _, _, _)) = p
+modsOf :: Expr -> [Mod]
+modsOf (Expr (_, ms, _)) = ms
 
-getMod :: Entry -> Mod
-getMod (E (_, m, _, _, _)) = m
+exprOf :: Expr -> String
+exprOf (Expr (_, _, e))  = e
 
-getName :: Entry -> Name
-getName (E (_, _, n, _, _)) = n
+getExpr :: Entry -> Expr
+getExpr (E (e, _, _)) = e
+
+getPkg :: Entry -> [Pkg]
+getPkg = pkgsOf . getExpr
+
+getMod :: Entry -> [Mod]
+getMod = modsOf . getExpr
+
+getName :: Entry -> String
+getName = exprOf . getExpr
 
 getType :: Entry -> Type
-getType (E (_, _, _, t, _)) = t
+getType (E (_, t, _)) = t
 
 getArity :: Entry -> Arity
-getArity (E (_, _, _, _, a)) = a
+getArity (E (_, _, a)) = a
 
 readMods :: Type -> [Mod]
 readMods x = concatMap readMods'' (typeBits x)
@@ -102,29 +104,55 @@ readMods' = concat . gmapQ (const [] `extQ` typeMod)
 
 typeMod (HES.ModuleName m) = [Mod m]
 
-theoryLine :: Symbol -> String
-theoryLine (  _,   _, _, A a) | a > 5 = ""  -- QuickSpec only goes up to fun5
-theoryLine (Mod m, N n, _,   a)         = concat [
-    "let f = $(Helper.mono ('", wrappedName, ")) ",
-    "in \"", qname, "\" `Test.QuickSpec.fun", show a, "` f"
-  ]
-  where qname = m ++ "." ++ n
-        wrappedName = if op n then "(" ++ qname ++ ")"
-                              else qname
-        op          = any isSym
+theoryLine :: Entry -> [Expr]
+theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
+theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
+  where name = "f"
+        val  = thUnquote (qualified "Helper" "mono" $$ thQuote (wrapOp e))
+        x    = func $$ quoted (asString e) $$ name
+        func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
+
+wrapOp :: Expr -> Expr
+wrapOp x@(Expr (ps, ms, e)) = if op e then parens x
+                                      else x
+  where op          = any isSym
         isSym c     = or [c `elem` ("!#$%&*+./<=>?@\\^|-~:" :: String),
                           isPunctuation c,
-                          isSymbol c]
+                          isSymbol      c]
+
+thQuote :: Expr -> Expr
+thQuote (Expr (p, m, e)) = Expr (p, m, "'" ++ e)
+
+wrapped :: String -> String -> Expr -> Expr
+wrapped o c (Expr (p, m, e)) = Expr (p, m, o ++ e ++ c)
+
+parens :: Expr -> Expr
+parens = wrapped "(" ")"
+
+thUnquote :: Expr -> Expr
+thUnquote = wrapped "$(" ")"
+
+quoted :: Expr -> Expr
+quoted = wrapped "\"" "\""
+
+-- | Let expressions. We use Expr on the left-hand-side, to allow
+--   pattern-matching on constructors from arbitrary packages.
+letIn :: [(Expr, Expr)] -> Expr -> Expr
+letIn []                 x   = x
+letIn nvs (Expr (ps, ms, x)) = Expr (nub ps', nub ms', expr)
+  where ps'  = ps ++ concatMap pkgsOf nves
+        ms'  = ms ++ concatMap modsOf nves
+        nves = map fst nvs ++ map snd nvs
+        expr = "let {" ++ intercalate ";" defs ++ "} in (" ++ x ++ ")"
+        defs = map mkDef nvs
+        mkDef (Expr (_, _, n), Expr (_, _, v)) = "(" ++ n ++ ") = (" ++ v ++ ")"
+
 
 theory :: Cluster -> Theory
-theory (C es) = T (nub pkgs) (nub mods) (nub symbols)
-  where pkgs     = map getPkg  es
-        mods     = map getMod      es
-        symbols  = [(m, n, t, a) | (E (_, m, n, t, a)) <- es]
+theory (C es) = T (nub es)
 
 addTypeMods :: Theory -> Theory
-addTypeMods (T ps ms ss) = T ps (nub (ms ++ tms)) ss
-  where tms = concat [readMods t | (_, _, t, _) <- ss]
+addTypeMods (T ss) = T ss
 
 addScope = withPkgs requiredDeps . withMods requiredMods
 
@@ -134,13 +162,6 @@ requiredDeps = map Pkg ["MLSpec", "quickspec", "QuickCheck"]
 requiredMods :: [Mod]
 requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec"]
 
-renderModule :: Maybe Int -> Theory -> String
-renderModule n (T pkgs mods symbols) = unlines [
-  renderDef (case n of
-               Nothing -> symbols
-               Just m  -> take m symbols)
-  ]
-
 renderMain :: String -> String
 renderMain x = "main = Test.QuickSpec.quickSpec (Helper.addVars (" ++ x ++ "))"
 
@@ -148,20 +169,18 @@ asList :: [Expr] -> Expr
 asList []     = "[]"
 asList (x:xs) = ("(:)" $$ x) $$ asList xs
 
-renderDef :: [Symbol] -> String
-renderDef symbols = concat [
-    "theory = Test.QuickSpec.signature ["
-  , "Test.QuickSpec.vars [\"i1\", \"i2\", \"i3\"] (undefined :: Integer)\n  , "
-  , "Test.QuickSpec.vars [\"s1\", \"s2\", \"s3\"] (undefined :: String)\n  , "
-  , intercalate "\n  , " (map theoryLine symbols)
-  , "]"
-  ]
+renderDef :: [Entry] -> Expr
+renderDef es = qualified "Test.QuickSpec" "signature" $$
+               asList (concatMap theoryLine es)
 
-theoriesFromClusters :: [Cluster] -> [Theory]
-theoriesFromClusters = map theory
-
-getProjects n s = let theories = theoriesFromClusters (readClusters s)
-                   in theories
+getProjects :: String -> [Theory]
+getProjects s = map theory (readClusters s)
 
 readClusters :: String -> [Cluster]
 readClusters x = fromMaybe [] (decode . fromString $ x)
+
+writeTheoriesFromClusters :: String -> IO [String]
+writeTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
+
+runTheory :: Theory -> IO (Maybe String)
+runTheory (T es) = eval (renderDef es)
