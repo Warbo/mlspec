@@ -1,4 +1,4 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TupleSections, OverloadedStrings #-}
 module Main where
 
 import           Common
@@ -42,7 +42,6 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can read real JSON"      canReadRealJSON
   , testProperty "Can parse type sigs"     canParseTypeSigs
   , testProperty "Can extract type's mods" canExtractTypeMods
-  , testProperty "Can limit theory size"   canLimitTheorySize
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -64,34 +63,36 @@ canReadTheoryMods ps ms ns ts as = m == nub (take count ms)
         count   = length entries
 
 canReadTheoryNames ps ms ns ts as =
-  zipWith (\m (E (n, _, _)) -> qualified m n) ms s == take count names
-  where T s     = theory (C entries)
+  counterexample (show (lhs, rhs)) (lhs == rhs)
+  where lhs     = asStrs (map getExpr s)
+        rhs     = asStrs (take count names)
+        asStrs  = map exprOf
+        T s     = theory (C entries)
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
-        names   = zipWith qualified ms ns
+        names   = map raw ns
 
 renderedDefinitionContainsNames :: [Entry] -> Bool
-renderedDefinitionContainsNames ss =
-  all (`isInfixOf` output) (map (\(n, _, _) -> show n) ss)
-  where output = renderDef ss
+renderedDefinitionContainsNames es =
+  all (`isInfixOf` output) (map (show . getExpr) es)
+  where Expr (_, _, output) = renderDef es
 
 renderedDefinitionSetsArity :: [Entry] -> Bool
-renderedDefinitionSetsArity ss = all arityExists (map (\(_, _, a) -> a) ss)
-  where output        = renderDef ss
-        exists        = (`isInfixOf` output)
-        arityExists a = exists ("`Test.QuickSpec.fun" ++ show a ++ "`")
+renderedDefinitionSetsArity ss = all arityExists (map getArity ss)
+  where Expr (_, _, output) = renderDef ss
+        arityExists a = ("Test.QuickSpec.fun" ++ show a) `isInfixOf` output
+
+renderedClusterContainsNames :: Theory -> Bool
+renderedClusterContainsNames (T es) = all inExpr (map getExpr es)
+  where inExpr (Expr (_, _, e)) = e `isInfixOf` output
+        Expr (_, _, output) = renderDef es
 
 renderedNamesAreMonomorphised :: [Entry] -> Property
-renderedNamesAreMonomorphised ss = conjoin $ map (test . mono) ss
-  where test m = counterexample (show m ++ " `isInfixOf` " ++ show output)
-                                (m `isInfixOf` output)
-        mono s = qualified "Helper" "mono" $$ quote s
-        quote (Expr (ps, ms, e)) = Expr (ps, ms, '\'' : e)
-        output = renderDef ss
-
-renderedModuleUsesTemplateHaskell :: Theory -> Bool
-renderedModuleUsesTemplateHaskell t =
-  "TemplateHaskell" `elem` getExts (renderModule Nothing t)
+renderedNamesAreMonomorphised ss = conjoin $ map (test . mono . getExpr) ss
+  where test (Expr (_, _, m)) = counterexample (show m ++ " `isInfixOf` " ++ show output)
+                                               (m `isInfixOf` output)
+        mono s = qualified "Helper" "mono" $$ thQuote (wrapOp s)
+        Expr (_, _, output) = renderDef ss
 
 getExts x = map strip                         .
               concatMap (split . stripL)      .
@@ -119,21 +120,17 @@ getExts x = map strip                         .
         stripL (c:s)                               = c : stripL s
         stripL []                                  = []
 
-renderedClusterContainsNames c = all (`isInfixOf` output) allowed
-  where output  = renderModule Nothing (T ss)
-        T ss    = theory line
-        line    = C (map mkEntryUC c)
-        allowed = map (\(E (n, a, t)) -> show n) ss
 
 moduleRunsQuickSpec t =
   "main = Test.QuickSpec.quickSpec (Helper.addVars" `isPrefixOf` renderMain t
 
-canHandleJSONEntries :: Entry -> Bool
+canHandleJSONEntries :: Entry -> Property
 canHandleJSONEntries entry =
-  case decode encoded of
-       Nothing -> error $ "Couldn't decode '" ++ S.toString encoded ++ "'"
-       Just x  -> x == entry
-   where encoded = encode entry
+  not (null (getPkg entry)) &&
+  not (null (getMod entry)) ==>
+    case decode (encode entry) of
+         Nothing -> error $ "Couldn't decode '" ++ S.toString (encode entry) ++ "'"
+         Just x  -> x == entry
 
 canHandleJSONClusters es =
   case decode encoded of
@@ -156,13 +153,9 @@ canParseTypeSigs t = length (typeBits t) == 1
 
 canExtractTypeMods (QT (ms, t)) = readMods t == ms
 
-canLimitTheorySize :: Theory -> Int -> Bool
-canLimitTheorySize t n =
-  length (renderModule (Just n) t) <= length (renderModule (Just (n+1)) t)
-
 -- Helpers
 
-mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ n, t, a)
+mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ raw n, t, a)
 
 -- Uncurried
 mkEntryUC (p, m, n, t, a) = mkEntry p m n t a

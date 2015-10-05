@@ -53,10 +53,10 @@ instance Arbitrary Expr where
                  ms <- arbitrary
                  m  <- arbitrary
                  n  <- arbitrary
-                 return $ withPkgs ps $ withMods ms $ qualified m n
+                 return $ withPkgs ps $ withMods ms $ qualified m (raw n)
 
 instance Arbitrary Arity where
-  arbitrary = fmap (A . abs . (`mod` 6)) arbitrary
+  arbitrary = fmap (A . abs . (`mod` 6) . (\(NonNegative x) -> x)) arbitrary
 
 instance Arbitrary Type where
   arbitrary = do

@@ -179,8 +179,8 @@ getProjects s = map theory (readClusters s)
 readClusters :: String -> [Cluster]
 readClusters x = fromMaybe [] (decode . fromString $ x)
 
-writeTheoriesFromClusters :: String -> IO [String]
-writeTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
+runTheoriesFromClusters :: String -> IO [String]
+runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
 runTheory :: Theory -> IO (Maybe String)
 runTheory (T es) = eval (renderDef es)
