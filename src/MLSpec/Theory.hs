@@ -108,9 +108,10 @@ theoryLine :: Entry -> [Expr]
 theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
 theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
   where name = "f"
-        val  = thUnquote (qualified "Helper" "mono" $$ thQuote (wrapOp e))
+        val  = thUnquote (mono $$ thQuote (wrapOp e))
         x    = func $$ quoted (asString e) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
+        mono = withPkgs ["mlspec"] $ qualified "Helper" "mono"
 
 wrapOp :: Expr -> Expr
 wrapOp x@(Expr (ps, ms, e)) = if op e then parens x
@@ -170,7 +171,7 @@ asList []     = "[]"
 asList (x:xs) = ("(:)" $$ x) $$ asList xs
 
 renderDef :: [Entry] -> Expr
-renderDef es = qualified "Test.QuickSpec" "signature" $$
+renderDef es = withPkgs ["quickspec"] (qualified "Test.QuickSpec" "signature") $$
                asList (concatMap theoryLine es)
 
 getProjects :: String -> [Theory]

@@ -10,7 +10,7 @@ let
       , tasty-quickcheck, template-haskell, temporary
       }:
       mkDerivation {
-        pname = "MLSpec";
+        pname = "mlspec";
         version = "0.1.0.0";
         src = ./.;
         isLibrary = true;

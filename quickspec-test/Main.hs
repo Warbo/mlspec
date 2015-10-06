@@ -29,18 +29,18 @@ noMissingTypes = monadicIO $ do
   where noMissingTypeMessages = not . (msg `isInfixOf`)
         msg = "WARNING: there are no variables of the following types"
 
--- Build a theory of Booleans and run it via Cabal
-runBools = run doRun
-  where doRun = eval thy
-        thy       = withPkgs ["containers"] (asList syms)
-        syms      = [
-            (qualified "Data.Bool" "True",  Ty "Bool", A 0)
-          , (qualified "Data.Bool" "False", Ty "Bool", A 0)
-          , (qualified "Data.Bool" "not",   Ty "Bool -> Bool", A 1)
-          , (qualified "Data.Bool" "||",    Ty "Bool -> Bool -> Bool", A 2)
-          , (qualified "Data.Bool" "&&",    Ty "Bool -> Bool -> Bool", A 2)
+-- Build a theory of Booleans and run it
+runBools = do run (print (renderDef syms))
+              run (runTheory (theory (C syms)))
+  where syms = [
+            E (f "True",  Ty "Bool",                 A 0)
+          , E (f "False", Ty "Bool",                 A 0)
+          , E (f "not",   Ty "Bool -> Bool",         A 1)
+          , E (f "||",    Ty "Bool -> Bool -> Bool", A 2)
+          , E (f "&&",    Ty "Bool -> Bool -> Bool", A 2)
           ]
+        f = withPkgs ["containers"] . qualified "Data.Bool"
 
-qs = withPkgs ["quickspec"] . qualified "Test.QuickSpec"
+qs = withPkgs ["quickspec"] . qualified "Test.QuickSpec" . raw
 
 [f0, f1, f2, f3, f4, f5] = map (qs . ("fun" ++)) ["0", "1", "2", "3", "4", "5"]
