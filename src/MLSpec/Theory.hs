@@ -34,14 +34,14 @@ instance FromJSON Entry where
     n <- o .: "name"
     t <- o .: "type"
     a <- o .: "arity"
-    return $ E (withPkgs [Pkg p] (qualified (Mod m) (raw n)), Ty t, A a)
+    return $ E (withPkgs [Pkg p] $ withMods [Mod m] $ raw n, Ty t, A a)
   parseJSON _ = mzero
 
 instance ToJSON Entry where
   toJSON (E (Expr (Pkg p:_, Mod m:_, n), Ty t, A a)) = object [
       "package" .= p
-    , "module"  .= (init . reverse . dropWhile (/= '.') . reverse $ m)
-    , "name"    .=        (reverse . takeWhile (/= '.') . reverse $ n)
+    , "module"  .= m
+    , "name"    .= n
     , "type"    .= t
     , "arity"   .= a
     ]

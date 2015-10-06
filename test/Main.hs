@@ -131,30 +131,42 @@ getExts x = map strip                         .
 moduleRunsQuickSpec t =
   "main = Test.QuickSpec.quickSpec (Helper.addVars" `isPrefixOf` renderMain t
 
-canHandleJSONEntries :: Entry -> Property
-canHandleJSONEntries entry =
-  not (null (getPkg entry)) &&
-  not (null (getMod entry)) ==>
-    case decode (encode entry) of
-         Nothing -> error $ "Couldn't decode '" ++ S.toString (encode entry) ++ "'"
-         Just x  -> x == entry
+--canHandleJSONEntries :: Entry -> Property
+canHandleJSONEntries m p e t a =
+  let entry = E (withMods [m] $ withPkgs [p] $ raw e, t, a)
+   in counterexample (show [Just entry, decode (encode entry)])
+                     (case decode (encode entry) of
+                           Nothing -> error $ "Couldn't decode '" ++ S.toString (encode entry) ++ "'"
+                           Just x  -> x == entry)
 
-canHandleJSONClusters es =
+canHandleJSONClusters es' =
   case decode encoded of
        Nothing -> error $ "Couldn't decode '" ++ S.toString encoded ++ "'"
        Just x  -> x == cluster
   where encoded = encode cluster
         cluster = C es
+        es      = map single (filter empty es')
+        empty x = not (null (getPkg x) || null (getMod x))
+        single (E (Expr (p:_, m:_, e), t, a)) = E (Expr ([p], [m], e), t, a)
 
 canReadJSONClusters :: [Cluster] -> Bool
 canReadJSONClusters cs' = readClusters encoded == cs
   where encoded = S.toString (encode cs)
-        cs      = take 10 cs'
+        cs      = take 10 (prune cs')
+        prune [] = []
+        prune (C es:cs) = let es' = pruneE es
+                           in if null es' then prune cs
+                                          else (C es'):prune cs
+        pruneE (E (Expr (p:_, m:_, e), t, a):es) = E (Expr ([p], [m], e), t, a) : pruneE es
+        pruneE (e:es) = pruneE es
+        pruneE [] = []
 
-canReadRealJSON = monadicIO readJSON
+canReadRealJSON = once $ monadicIO readJSON
   where readJSON = do
           str <- run $ readFile "test/data/data-stringmap.clusters.json"
+          mDebug (diff (readClusters str) (TestData.clusters))
           assert (readClusters str == TestData.clusters)
+        diff xs ys = (filter (`notElem` ys) xs, filter (`notElem` xs) ys)
 
 canParseTypeSigs t = length (typeBits t) == 1
 
