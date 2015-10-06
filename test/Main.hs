@@ -78,7 +78,7 @@ renderedDefinitionContainsNames (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
   where go :: [Entry] -> Bool
         go es = let output = eExpr (renderDef es)
-                 in all (`isInfixOf` output) (map (show . getExpr) es)
+                 in all (`isInfixOf` output) (map (eExpr . getExpr) es)
 
 renderedDefinitionSetsArity (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
@@ -162,7 +162,7 @@ canReadJSONClusters cs' = readClusters encoded == cs
         prune [] = []
         prune (C es:cs) = let es' = pruneE es
                            in if null es' then prune cs
-                                          else (C es'):prune cs
+                                          else C (take 5 es'):prune cs
         pruneE (E (Expr { ePkgs=p:_, eMods=m:_, eExpr=e}, t, a):es) = E (Expr {ePkgs=[p], eMods=[m], eExpr=e, eFlags=[]}, t, a) : pruneE es
         pruneE (e:es) = pruneE es
         pruneE [] = []

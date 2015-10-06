@@ -12,6 +12,7 @@ import           Data.Maybe
 import           Data.Stringable
 import           Data.Typeable
 import           Language.Eval
+import           Language.Eval.Internal
 import qualified Language.Haskell.Exts.Parser as HEP
 import qualified Language.Haskell.Exts.Syntax as HES
 import           System.IO.Unsafe
@@ -101,9 +102,11 @@ theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
 theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
   where name = "f"
         val  = thUnquote (mono $$ thQuote (wrapOp e))
-        x    = func $$ quoted (asString e) $$ name
+        x    = (func $$ quoted (raw (eExpr e))) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
-        mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
+        mono = withFlags ["-XTemplateHaskell"] $
+               withPkgs ["mlspec-helper"]      $
+               qualified "MLSpec.Helper" "mono"
 
 -- | Wraps operators in parentheses, eg. "(<>)", leaves alphanumeric names alone
 wrapOp :: Expr -> Expr
@@ -186,4 +189,4 @@ runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
 runTheory :: Theory -> IO (Maybe String)
-runTheory (T es) = eval (renderDef es)
+runTheory (T es) = eval' renderMain (renderDef es)

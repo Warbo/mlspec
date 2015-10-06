@@ -7,6 +7,7 @@ import           Data.Either
 import           Data.List
 import           Data.List.Utils
 import           Language.Eval
+import           Language.Eval.Internal
 import           MLSpec.Theory
 import           System.Directory
 import           System.Exit
@@ -30,8 +31,14 @@ noMissingTypes = monadicIO $ do
         msg = "WARNING: there are no variables of the following types"
 
 -- Build a theory of Booleans and run it
-runBools = do run (print (renderDef syms))
-              run (runTheory (theory (C syms)))
+runBools = do let r = renderDef syms
+              run (print (unlines [mkImports  (eMods r),
+                                   renderMain (eExpr r)]))
+              run (do x <- runTheory (theory (C syms))
+                      putStrLn (case x of
+                                     Just s  -> s
+                                     Nothing -> "Got Nothing")
+                      return x)
   where syms = [
             E (f "True",  Ty "Bool",                 A 0)
           , E (f "False", Ty "Bool",                 A 0)
