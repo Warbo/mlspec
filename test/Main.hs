@@ -62,37 +62,44 @@ canReadTheoryMods ps ms ns ts as = m == nub (take count ms)
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
 
-canReadTheoryNames ps ms ns ts as =
-  counterexample (show (lhs, rhs)) (lhs == rhs)
-  where lhs     = asStrs (map getExpr s)
-        rhs     = asStrs (take count names)
-        asStrs  = map exprOf
+canReadTheoryNames (Positive count') = do
+    let count = count' `mod` 10
+    ns <- vectorOf count arbitrary
+    xs <- vectorOf count arbitrary
+    let entries = zipWith (\n (p, m, t, a) -> mkEntry p m n t a) ns xs
         T s     = theory (C entries)
-        entries = zipWith5 mkEntry ps ms ns ts as
-        count   = length entries
-        names   = map raw ns
+        lhs     = map (exprOf . getExpr) s
+        rhs     = ns
+    return $ counterexample (show (lhs, rhs))
+                            (lhs == rhs)
 
-renderedDefinitionContainsNames :: [Entry] -> Bool
-renderedDefinitionContainsNames es =
-  all (`isInfixOf` output) (map (show . getExpr) es)
-  where Expr (_, _, output) = renderDef es
+renderedDefinitionContainsNames (Positive n) =
+    forAll (vectorOf (n `mod` 10) arbitrary) go
+  where go :: [Entry] -> Bool
+        go es = let Expr (_, _, output) = renderDef es
+                 in all (`isInfixOf` output) (map (show . getExpr) es)
 
-renderedDefinitionSetsArity :: [Entry] -> Bool
-renderedDefinitionSetsArity ss = all arityExists (map getArity ss)
-  where Expr (_, _, output) = renderDef ss
-        arityExists a = ("Test.QuickSpec.fun" ++ show a) `isInfixOf` output
+renderedDefinitionSetsArity (Positive n) =
+    forAll (vectorOf (n `mod` 10) arbitrary) go
+  where go :: [Entry] -> Bool
+        go ss = let Expr (_, _, output) = renderDef ss
+                    arityExists a = ("Test.QuickSpec.fun" ++ show a) `isInfixOf` output
+                 in all arityExists (map getArity ss)
 
-renderedClusterContainsNames :: Theory -> Bool
-renderedClusterContainsNames (T es) = all inExpr (map getExpr es)
-  where inExpr (Expr (_, _, e)) = e `isInfixOf` output
-        Expr (_, _, output) = renderDef es
+renderedClusterContainsNames (Positive count) = do
+    es <- vectorOf (count `mod` 10) arbitrary
+    let Expr (_, _, output) = renderDef es
+        inExpr (Expr (_, _, e)) = e `isInfixOf` output
+    return $ all inExpr (map getExpr es)
 
-renderedNamesAreMonomorphised :: [Entry] -> Property
-renderedNamesAreMonomorphised ss = conjoin $ map (test . mono . getExpr) ss
-  where test (Expr (_, _, m)) = counterexample (show m ++ " `isInfixOf` " ++ show output)
-                                               (m `isInfixOf` output)
-        mono s = qualified "Helper" "mono" $$ thQuote (wrapOp s)
-        Expr (_, _, output) = renderDef ss
+renderedNamesAreMonomorphised (Positive n) =
+    forAll (vectorOf (n `mod` 10) arbitrary) go
+  where go :: [Entry] -> Property
+        go ss = let test (Expr (_, _, m)) = counterexample (show m ++ " `isInfixOf` " ++ show output)
+                                                           (m `isInfixOf` output)
+                    mono s = qualified "Helper" "mono" $$ thQuote (wrapOp s)
+                    Expr (_, _, output) = renderDef ss
+                 in conjoin $ map (test . mono . getExpr) ss
 
 getExts x = map strip                         .
               concatMap (split . stripL)      .

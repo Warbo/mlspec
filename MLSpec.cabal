@@ -75,6 +75,7 @@ test-suite test
 -- just build the executables, and use a separate system like Nix to ensure all
 -- of the required commands are available.
 executable mlspec-test-quickspec
+  default-language:    Haskell2010
   main-is:             Main.hs
   hs-source-dirs:      quickspec-test, test
   build-depends:       base >= 4.8
