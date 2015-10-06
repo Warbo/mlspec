@@ -42,6 +42,7 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can read real JSON"      canReadRealJSON
   , testProperty "Can parse type sigs"     canParseTypeSigs
   , testProperty "Can extract type's mods" canExtractTypeMods
+  , testProperty "Template Haskell quotes" thQuotes
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -68,7 +69,7 @@ canReadTheoryNames (Positive count') = do
     xs <- vectorOf count arbitrary
     let entries = zipWith (\n (p, m, t, a) -> mkEntry p m n t a) ns xs
         T s     = theory (C entries)
-        lhs     = map (exprOf . getExpr) s
+        lhs     = map (eExpr . getExpr) s
         rhs     = ns
     return $ counterexample (show (lhs, rhs))
                             (lhs == rhs)
@@ -76,29 +77,31 @@ canReadTheoryNames (Positive count') = do
 renderedDefinitionContainsNames (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
   where go :: [Entry] -> Bool
-        go es = let Expr (_, _, output) = renderDef es
+        go es = let output = eExpr (renderDef es)
                  in all (`isInfixOf` output) (map (show . getExpr) es)
 
 renderedDefinitionSetsArity (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
   where go :: [Entry] -> Bool
-        go ss = let Expr (_, _, output) = renderDef ss
+        go ss = let output        = eExpr (renderDef ss)
                     arityExists a = ("Test.QuickSpec.fun" ++ show a) `isInfixOf` output
                  in all arityExists (map getArity ss)
 
 renderedClusterContainsNames (Positive count) = do
     es <- vectorOf (count `mod` 10) arbitrary
-    let Expr (_, _, output) = renderDef es
-        inExpr (Expr (_, _, e)) = e `isInfixOf` output
+    let output   = eExpr (renderDef es)
+        inExpr e = eExpr e `isInfixOf` output
     return $ all inExpr (map getExpr es)
 
 renderedNamesAreMonomorphised (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
   where go :: [Entry] -> Property
-        go ss = let test (Expr (_, _, m)) = counterexample (show m ++ " `isInfixOf` " ++ show output)
-                                                           (m `isInfixOf` output)
-                    mono s = qualified "Helper" "mono" $$ thQuote (wrapOp s)
-                    Expr (_, _, output) = renderDef ss
+        go ss = let test x = let m = eExpr x
+                              in counterexample (show m ++ " `isInfixOf` " ++ show output)
+                                                (m `isInfixOf` output)
+                    mono s = qualified "MLSpec.Helper" "mono" $$
+                             thQuote (wrapOp s)
+                    output = eExpr (renderDef ss)
                  in conjoin $ map (test . mono . getExpr) ss
 
 getExts x = map strip                         .
@@ -129,7 +132,7 @@ getExts x = map strip                         .
 
 
 moduleRunsQuickSpec t =
-  "main = Test.QuickSpec.quickSpec (Helper.addVars" `isPrefixOf` renderMain t
+  "main = Test.QuickSpec.quickSpec (MLSpec.Helper.addVars" `isPrefixOf` renderMain t
 
 --canHandleJSONEntries :: Entry -> Property
 canHandleJSONEntries m p e t a =
@@ -147,7 +150,10 @@ canHandleJSONClusters es' =
         cluster = C es
         es      = map single (filter empty es')
         empty x = not (null (getPkg x) || null (getMod x))
-        single (E (Expr (p:_, m:_, e), t, a)) = E (Expr ([p], [m], e), t, a)
+        single (E (e, t, a)) = E (e { ePkgs = take 1 (ePkgs e),
+                                      eMods = take 1 (eMods e)},
+                                  t,
+                                  a)
 
 canReadJSONClusters :: [Cluster] -> Bool
 canReadJSONClusters cs' = readClusters encoded == cs
@@ -157,7 +163,7 @@ canReadJSONClusters cs' = readClusters encoded == cs
         prune (C es:cs) = let es' = pruneE es
                            in if null es' then prune cs
                                           else (C es'):prune cs
-        pruneE (E (Expr (p:_, m:_, e), t, a):es) = E (Expr ([p], [m], e), t, a) : pruneE es
+        pruneE (E (Expr { ePkgs=p:_, eMods=m:_, eExpr=e}, t, a):es) = E (Expr {ePkgs=[p], eMods=[m], eExpr=e, eFlags=[]}, t, a) : pruneE es
         pruneE (e:es) = pruneE es
         pruneE [] = []
 
@@ -171,6 +177,16 @@ canReadRealJSON = once $ monadicIO readJSON
 canParseTypeSigs t = length (typeBits t) == 1
 
 canExtractTypeMods (QT (ms, t)) = readMods t == ms
+
+thQuotes :: Expr -> Property
+thQuotes x =
+    counterexample (show (eExpr x, e', q))
+                   (if hasOp then wrapped else not wrapped)
+  where hasOp   = any isSym e'
+        wrapped = "'(" `isInfixOf` q
+        q       = eExpr (thQuote (wrapOp (raw e')))
+        e'      = filter (/= '.') e
+        e       = eExpr x
 
 -- Helpers
 

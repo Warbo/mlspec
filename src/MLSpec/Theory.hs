@@ -21,9 +21,10 @@ import           Test.Arbitrary.Haskell
 newtype Type  = Ty String deriving (Eq, Ord)
 newtype Arity = A  Int    deriving (Eq, Ord)
 
-unPkg  (Pkg x) = x
-unMod  (Mod x) = x
-unType (Ty  x) = x
+unPkg  (Pkg  x) = x
+unMod  (Mod  x) = x
+unFlag (Flag x) = x
+unType (Ty   x) = x
 
 newtype Entry = E (Expr, Type, Arity) deriving (Show, Eq)
 
@@ -38,10 +39,10 @@ instance FromJSON Entry where
   parseJSON _ = mzero
 
 instance ToJSON Entry where
-  toJSON (E (Expr (Pkg p:_, Mod m:_, n), Ty t, A a)) = object [
-      "package" .= p
-    , "module"  .= m
-    , "name"    .= n
+  toJSON (E (e, Ty t, A a)) = object [
+      "package" .= unPkg (head (ePkgs e))
+    , "module"  .= unMod (head (eMods e))
+    , "name"    .= eExpr e
     , "type"    .= t
     , "arity"   .= a
     ]
@@ -62,26 +63,17 @@ instance Show Arity where
 
 data Theory = T [Entry] deriving (Show)
 
-pkgsOf :: Expr -> [Pkg]
-pkgsOf (Expr (ps, _, _)) = ps
-
-modsOf :: Expr -> [Mod]
-modsOf (Expr (_, ms, _)) = ms
-
-exprOf :: Expr -> String
-exprOf (Expr (_, _, e))  = e
-
 getExpr :: Entry -> Expr
 getExpr (E (e, _, _)) = e
 
 getPkg :: Entry -> [Pkg]
-getPkg = pkgsOf . getExpr
+getPkg = ePkgs . getExpr
 
 getMod :: Entry -> [Mod]
-getMod = modsOf . getExpr
+getMod = eMods . getExpr
 
 getName :: Entry -> String
-getName = exprOf . getExpr
+getName = eExpr . getExpr
 
 getType :: Entry -> Type
 getType (E (_, t, _)) = t
@@ -111,21 +103,24 @@ theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
         val  = thUnquote (mono $$ thQuote (wrapOp e))
         x    = func $$ quoted (asString e) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
-        mono = withPkgs ["mlspec"] $ qualified "Helper" "mono"
+        mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
 
+-- | Wraps operators in parentheses, eg. "(<>)", leaves alphanumeric names alone
 wrapOp :: Expr -> Expr
-wrapOp x@(Expr (ps, ms, e)) = if op e then parens x
-                                      else x
-  where op          = any isSym
-        isSym c     = or [c `elem` ("!#$%&*+./<=>?@\\^|-~:" :: String),
-                          isPunctuation c,
-                          isSymbol      c]
+wrapOp x = if any isSym (eExpr x) then parens x
+                                  else x
 
+isSym '.' = False -- To avoid module qualification
+isSym c   = or [c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String),
+                isPunctuation c,
+                isSymbol      c]
+
+-- | Add a preceding quote "'" to an Expr. Should be used with wrapOp.
 thQuote :: Expr -> Expr
-thQuote (Expr (p, m, e)) = Expr (p, m, "'" ++ e)
+thQuote x = x { eExpr = "'" ++ eExpr x }
 
 wrapped :: String -> String -> Expr -> Expr
-wrapped o c (Expr (p, m, e)) = Expr (p, m, o ++ e ++ c)
+wrapped o c x = x { eExpr = o ++ eExpr x ++ c }
 
 parens :: Expr -> Expr
 parens = wrapped "(" ")"
@@ -140,13 +135,20 @@ quoted = wrapped "\"" "\""
 --   pattern-matching on constructors from arbitrary packages.
 letIn :: [(Expr, Expr)] -> Expr -> Expr
 letIn []                 x   = x
-letIn nvs (Expr (ps, ms, x)) = Expr (nub ps', nub ms', expr)
-  where ps'  = ps ++ concatMap pkgsOf nves
-        ms'  = ms ++ concatMap modsOf nves
+letIn nvs e = Expr {
+      ePkgs  = nub ps'
+    , eMods  = nub ms'
+    , eFlags = nub fs'
+    , eExpr  = expr
+    }
+  where ps'  = ePkgs  e ++ concatMap ePkgs  nves
+        ms'  = eMods  e ++ concatMap eMods  nves
+        fs'  = eFlags e ++ concatMap eFlags nves
+        x    = eExpr e
         nves = map fst nvs ++ map snd nvs
         expr = "let {" ++ intercalate ";" defs ++ "} in (" ++ x ++ ")"
         defs = map mkDef nvs
-        mkDef (Expr (_, _, n), Expr (_, _, v)) = "(" ++ n ++ ") = (" ++ v ++ ")"
+        mkDef (n, v) = "(" ++ eExpr n ++ ") = (" ++ eExpr v ++ ")"
 
 
 theory :: Cluster -> Theory
@@ -164,7 +166,7 @@ requiredMods :: [Mod]
 requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec"]
 
 renderMain :: String -> String
-renderMain x = "main = Test.QuickSpec.quickSpec (Helper.addVars (" ++ x ++ "))"
+renderMain x = "main = Test.QuickSpec.quickSpec (MLSpec.Helper.addVars (" ++ x ++ "))"
 
 asList :: [Expr] -> Expr
 asList []     = "[]"
