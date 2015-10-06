@@ -104,9 +104,7 @@ theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
         val  = thUnquote (mono $$ thQuote (wrapOp e))
         x    = (func $$ quoted (raw (eExpr e))) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
-        mono = withFlags ["-XTemplateHaskell"] $
-               withPkgs ["mlspec-helper"]      $
-               qualified "MLSpec.Helper" "mono"
+        mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
 
 -- | Wraps operators in parentheses, eg. "(<>)", leaves alphanumeric names alone
 wrapOp :: Expr -> Expr
@@ -120,7 +118,7 @@ isSym c   = or [c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String),
 
 -- | Add a preceding quote "'" to an Expr. Should be used with wrapOp.
 thQuote :: Expr -> Expr
-thQuote x = x { eExpr = "'" ++ eExpr x }
+thQuote x = withFlags ["-XTemplateHaskell"] $ x { eExpr = "'" ++ eExpr x }
 
 wrapped :: String -> String -> Expr -> Expr
 wrapped o c x = x { eExpr = o ++ eExpr x ++ c }
@@ -129,7 +127,7 @@ parens :: Expr -> Expr
 parens = wrapped "(" ")"
 
 thUnquote :: Expr -> Expr
-thUnquote = wrapped "$(" ")"
+thUnquote = withFlags ["-XTemplateHaskell"] . wrapped "$(" ")"
 
 quoted :: Expr -> Expr
 quoted = wrapped "\"" "\""
@@ -152,7 +150,6 @@ letIn nvs e = Expr {
         expr = "let {" ++ intercalate ";" defs ++ "} in (" ++ x ++ ")"
         defs = map mkDef nvs
         mkDef (n, v) = "(" ++ eExpr n ++ ") = (" ++ eExpr v ++ ")"
-
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub es)
