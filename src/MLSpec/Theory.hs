@@ -112,9 +112,9 @@ wrapOp x = if any isSym (eExpr x) then parens x
                                   else x
 
 isSym '.' = False -- To avoid module qualification
-isSym c   = or [c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String),
-                isPunctuation c,
-                isSymbol      c]
+isSym c   = c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String) ||
+              isPunctuation c                           ||
+              isSymbol      c
 
 -- | Add a preceding quote "'" to an Expr. Should be used with wrapOp.
 thQuote :: Expr -> Expr
@@ -169,8 +169,7 @@ renderMain :: String -> String
 renderMain x = "main = Test.QuickSpec.quickSpec (MLSpec.Helper.addVars (" ++ x ++ "))"
 
 asList :: [Expr] -> Expr
-asList []     = "[]"
-asList (x:xs) = ("(:)" $$ x) $$ asList xs
+asList = foldr (\x -> (("(:)" $$ x) $$)) "[]"
 
 renderDef :: [Entry] -> Expr
 renderDef es = withPkgs ["quickspec"] (qualified "Test.QuickSpec" "signature") $$

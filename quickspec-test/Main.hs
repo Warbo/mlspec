@@ -6,6 +6,7 @@ import           Control.Exception (try, SomeException)
 import           Data.Either
 import           Data.List
 import           Data.List.Utils
+import           Data.Maybe
 import           Language.Eval
 import           Language.Eval.Internal
 import           MLSpec.Theory
@@ -35,9 +36,7 @@ runBools = do let r = renderDef syms
               run (print (unlines [mkImports  (eMods r),
                                    renderMain (eExpr r)]))
               run (do x <- runTheory (theory (C syms))
-                      putStrLn (case x of
-                                     Just s  -> s
-                                     Nothing -> "Got Nothing")
+                      putStrLn (fromMaybe "Got Nothing" x)
                       return x)
   where syms = [
             E (f "True",  Ty "Bool",                 A 0)

@@ -170,7 +170,7 @@ canReadJSONClusters cs' = readClusters encoded == cs
 canReadRealJSON = once $ monadicIO readJSON
   where readJSON = do
           str <- run $ readFile "test/data/data-stringmap.clusters.json"
-          mDebug (diff (readClusters str) (TestData.clusters))
+          mDebug (diff (readClusters str) TestData.clusters)
           assert (readClusters str == TestData.clusters)
         diff xs ys = (filter (`notElem` ys) xs, filter (`notElem` xs) ys)
 
