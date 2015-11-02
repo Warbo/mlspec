@@ -64,6 +64,9 @@ instance Show Arity where
 
 data Theory = T [Entry] deriving (Show)
 
+instance Eq Theory where
+  T xs == T ys = all (`elem` ys) xs && all (`elem` xs) ys
+
 getExpr :: Entry -> Expr
 getExpr (E (e, _, _)) = e
 
@@ -153,9 +156,6 @@ letIn nvs e = Expr {
 
 theory :: Cluster -> Theory
 theory (C es) = T (nub es)
-
-addTypeMods :: Theory -> Theory
-addTypeMods (T ss) = T ss
 
 addScope = withPkgs requiredDeps . withMods requiredMods
 

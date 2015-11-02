@@ -43,6 +43,10 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can parse type sigs"     canParseTypeSigs
   , testProperty "Can extract type's mods" canExtractTypeMods
   , testProperty "Template Haskell quotes" thQuotes
+  , testProperty "Template Haskell deps"   thDeps
+  , testProperty "getProjects"             getProjectsTest
+  , testProperty "addScope"                addScopeTest
+  , testProperty "letIn"                   letInTest
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -187,6 +191,35 @@ thQuotes x =
         q       = eExpr (thQuote (wrapOp (raw e')))
         e'      = filter (/= '.') e
         e       = eExpr x
+
+thDeps :: Expr -> Bool
+thDeps e = "-XTemplateHaskell" `elem` eFlags (thUnquote e) &&
+           "-XTemplateHaskell" `elem` eFlags (thQuote   e)
+
+runTheoryTest = runTheory
+
+runTheoriesFromClustersTest = runTheoriesFromClusters
+
+-- | We use `single` since our JSON encoding only allows one mod/pkg
+getProjectsTest :: Cluster -> Property
+getProjectsTest (C es) = not (null es) ==>
+                         let c  = C (map single es)
+                             j  = S.toString (encode (toJSON [c]))
+                             ps = getProjects j
+                             ts = [theory c]
+                             single (E (e, t, a)) = E (single' e, t, a)
+                             single' e = e {
+                               eMods = take 1 (eMods e),
+                               ePkgs = take 1 (ePkgs e)
+                             }
+                          in counterexample (show (j, ts, ps)) (ps == ts)
+
+addScopeTest x = let x' = addScope x
+                  in all (`elem` (ePkgs x')) requiredDeps &&
+                     all (`elem` (eMods x')) requiredMods
+
+letInTest = let e = eExpr (letIn [(raw "x", raw "1")] (raw "y"))
+             in counterexample e (e == "let {(x) = (1)} in (y)")
 
 -- Helpers
 
