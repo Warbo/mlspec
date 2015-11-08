@@ -215,8 +215,8 @@ getProjectsTest (C es) = not (null es) ==>
                           in counterexample (show (j, ts, ps)) (ps == ts)
 
 addScopeTest x = let x' = addScope x
-                  in all (`elem` (ePkgs x')) requiredDeps &&
-                     all (`elem` (eMods x')) requiredMods
+                  in all (`elem` ePkgs x') requiredDeps &&
+                     all (`elem` eMods x') requiredMods
 
 letInTest = let e = eExpr (letIn [(raw "x", raw "1")] (raw "y"))
              in counterexample e (e == "let {(x) = (1)} in (y)")
