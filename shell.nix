@@ -35,8 +35,8 @@ let
       };
 
   haskellPackages = if compiler == "default"
-                      then pkgs.haskellPackages
-                      else pkgs.haskell.packages.${compiler};
+                       then pkgs.haskellPackages
+                       else pkgs.haskell.packages.${compiler};
 
   drv = haskellPackages.callPackage f {};
 

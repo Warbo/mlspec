@@ -55,11 +55,12 @@ impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
 
 -- Tests
 
-canReadTheoryPkgs ps ms ns ts as = p == nub (take count ps)
+canReadTheoryPkgs ps' ms ns ts as = p == nub (take count ps)
   where T s     = theory (C entries)
         p       = concatMap getPkg s
         entries = zipWith5 mkEntry ps ms ns ts as
         count   = length entries
+        ps      = nub ps'
 
 canReadTheoryMods ps ms ns ts as = m == nub (take count ms)
   where T s     = theory (C entries)
