@@ -105,7 +105,7 @@ theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
 theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
   where name = "f"
         val  = thUnquote (mono $$ thQuote (wrapOp e))
-        x    = (func $$ quoted (raw (eExpr e))) $$ name
+        x    = (func $$ quoted e) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
         mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
 
