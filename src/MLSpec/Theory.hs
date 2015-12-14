@@ -105,7 +105,7 @@ theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
 theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
   where name = "f"
         val  = thUnquote (mono $$ thQuote (wrapOp e))
-        x    = (func $$ quoted e) $$ name
+        x    = (func $$ quoted (raw (eExpr e))) $$ name
         func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
         mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
 
@@ -114,10 +114,12 @@ wrapOp :: Expr -> Expr
 wrapOp x = if any isSym (eExpr x) then parens x
                                   else x
 
-isSym '.' = False -- To avoid module qualification
-isSym c   = c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String) ||
-              isPunctuation c                           ||
-              isSymbol      c
+isSym '.'  = False -- To avoid module qualification
+isSym '\'' = False -- "Prime" mark
+isSym '_'  = False -- Counts as a letter
+isSym c    = c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String) ||
+               isPunctuation c                           ||
+               isSymbol      c
 
 -- | Add a preceding quote "'" to an Expr. Should be used with wrapOp.
 thQuote :: Expr -> Expr
