@@ -123,7 +123,13 @@ isSym c    = c `elem` ("!#$%&*+/<=>?@\\^|-~:" :: String) ||
 
 -- | Add a preceding quote "'" to an Expr. Should be used with wrapOp.
 thQuote :: Expr -> Expr
-thQuote x = withFlags ["-XTemplateHaskell"] $ x { eExpr = "'" ++ eExpr x }
+thQuote x = withFlags ["-XTemplateHaskell"] $ x { eExpr = "'" ++ exp }
+  where exp = if '.' `elem` eExpr x
+                 then eExpr x
+                 else mod ++ eExpr x
+        mod = case eMods x of
+                   (Mod m:_) -> m ++ "."
+                   []        -> ""
 
 wrapped :: String -> String -> Expr -> Expr
 wrapped o c x = x { eExpr = o ++ eExpr x ++ c }
