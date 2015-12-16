@@ -174,7 +174,7 @@ requiredMods :: [Mod]
 requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec"]
 
 renderMain :: String -> String
-renderMain x = "main = Test.QuickSpec.quickSpec (MLSpec.Helper.addVars (" ++ x ++ "))"
+renderMain x = "main = Test.QuickSpec.quickSpec (Test.QuickSpec.without (MLSpec.Helper.addVars (" ++ x ++ ")) [\"undefined\"])"
 
 asList :: [Expr] -> Expr
 asList = foldr (\x -> (("(:)" $$ x) $$)) "[]"

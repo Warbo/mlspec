@@ -21,31 +21,43 @@ import           Test.Tasty.QuickCheck
 
 main = go $ testGroup "Tests depending on QuickSpec" [
     testProperty "No missing types"            noMissingTypes
+  , testProperty "Variables are distinct"      getDistinctArbitraries
   ]
   where go = defaultMain . localOption (QuickCheckTests 1)
 
 noMissingTypes = monadicIO $ do
-  Just out <- runBools
+  Just out <- theoryGo bools
   mDebug out
   assert (noMissingTypeMessages out)
   where noMissingTypeMessages = not . (msg `isInfixOf`)
         msg = "WARNING: there are no variables of the following types"
 
--- Build a theory of Booleans and run it
-runBools = do let r = renderDef syms
-              run (print (unlines [mkImports  (eMods r),
-                                   renderMain (eExpr r)]))
-              run (do x <- runTheory (theory (C syms))
-                      putStrLn (fromMaybe "Got Nothing" x)
-                      return x)
-  where syms = [
-            E (f "True",  Ty "Bool",                 A 0)
-          , E (f "False", Ty "Bool",                 A 0)
-          , E (f "not",   Ty "Bool -> Bool",         A 1)
-          , E (f "||",    Ty "Bool -> Bool -> Bool", A 2)
-          , E (f "&&",    Ty "Bool -> Bool -> Bool", A 2)
-          ]
-        f = withPkgs ["containers"] . qualified "Data.Bool"
+getDistinctArbitraries = monadicIO $ do
+    Just out <- theoryGo ints
+    mDebug out
+    assert (noEqualVars out)
+  where noEqualVars = not . ("==" `isInfixOf`)
+
+-- Build and run theories
+ints = [
+    E (withPkgs ["containers"] "fromInteger",  Ty "Integer -> Int", A 1)
+  ]
+
+theoryGo syms = do let r = renderDef syms
+                   run (print (unlines [mkImports  (eMods r),
+                                        renderMain (eExpr r)]))
+                   run (do x <- runTheory (theory (C syms))
+                           putStrLn (fromMaybe "Got Nothing" x)
+                           return x)
+
+bools = let f = withPkgs ["containers"] . qualified "Data.Bool"
+         in [
+    E (f "True",  Ty "Bool",                 A 0)
+  , E (f "False", Ty "Bool",                 A 0)
+  , E (f "not",   Ty "Bool -> Bool",         A 1)
+  , E (f "||",    Ty "Bool -> Bool -> Bool", A 2)
+  , E (f "&&",    Ty "Bool -> Bool -> Bool", A 2)
+  ]
 
 qs = withPkgs ["quickspec"] . qualified "Test.QuickSpec" . raw
 
