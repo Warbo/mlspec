@@ -136,8 +136,8 @@ getExts x = map strip                         .
         stripL []                                  = []
 
 
-moduleRunsQuickSpec t =
-  "main = Test.QuickSpec.quickSpec" `isPrefixOf` renderMain t
+moduleRunsQuickSpec t ts =
+  "main = Test.QuickSpec.quickSpec" `isPrefixOf` renderMain ts t
 
 --canHandleJSONEntries :: Entry -> Property
 canHandleJSONEntries m p e t a =
@@ -168,7 +168,17 @@ canReadJSONClusters cs' = readClusters encoded == cs
         prune (C es:cs) = let es' = pruneE es
                            in if null es' then prune cs
                                           else C (take 5 es'):prune cs
-        pruneE (E (Expr { ePkgs=p:_, eMods=m:_, eExpr=e}, t, a):es) = E (Expr {ePkgs=[p], eMods=[m], eExpr=e, eFlags=[]}, t, a) : pruneE es
+        pruneE (E (Expr {
+                      ePkgs=p:_,
+                      eMods=m:_,
+                      eExpr=e
+                   }, t, a):es) = E (Expr {
+                                        ePkgs=[p],
+                                        eMods=[m],
+                                        eExpr=e,
+                                        eFlags=[],
+                                        ePreamble=[]
+                                     }, t, a) : pruneE es
         pruneE (e:es) = pruneE es
         pruneE [] = []
 

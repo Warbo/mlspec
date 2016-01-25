@@ -26,9 +26,9 @@ main = go $ testGroup "Tests depending on QuickSpec" [
   where go = defaultMain . localOption (QuickCheckTests 1)
 
 noMissingTypes = monadicIO $ do
-  Just out <- theoryGo bools
-  mDebug out
-  assert (noMissingTypeMessages out)
+    Just out <- theoryGo bools
+    mDebug out
+    assert (noMissingTypeMessages out)
   where noMissingTypeMessages = not . (msg `isInfixOf`)
         msg = "WARNING: there are no variables of the following types"
 
@@ -36,16 +36,17 @@ getDistinctArbitraries = monadicIO $ do
     Just out <- theoryGo ints
     mDebug out
     assert (noEqualVars out)
-  where noEqualVars = not . ("==" `isInfixOf`)
+  where noEqualVars = ("0 raw equations" `isInfixOf`)
 
 -- Build and run theories
 ints = [
-    E (withPkgs ["containers"] "fromInteger",  Ty "Integer -> Int", A 1)
+    E (withPkgs ["containers"] "show",  Ty "Integer -> String", A 1)
   ]
 
-theoryGo syms = do let r = renderDef syms
-                   run (print (unlines [mkImports  (eMods r),
-                                        renderMain (eExpr r)]))
+theoryGo syms = do let r       = renderDef syms
+                       imports = map mkImport (eMods r)
+                       main    = unlines (ePreamble r ++ [renderMain [] (eExpr r)])
+                   run (putStrLn (unlines ("":(imports ++ [main]))))
                    run (do x <- runTheory (theory (C syms))
                            putStrLn (fromMaybe "Got Nothing" x)
                            return x)

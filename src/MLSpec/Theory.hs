@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, ScopedTypeVariables #-}
 module MLSpec.Theory where
 
 import           Control.Monad
@@ -148,14 +148,16 @@ quoted = wrapped "\"" "\""
 letIn :: [(Expr, Expr)] -> Expr -> Expr
 letIn []                 x   = x
 letIn nvs e = Expr {
-      ePkgs  = nub ps'
-    , eMods  = nub ms'
-    , eFlags = nub fs'
-    , eExpr  = expr
+      ePkgs     = nub ps'
+    , eMods     = nub ms'
+    , eFlags    = nub fs'
+    , ePreamble = pre
+    , eExpr     = expr
     }
-  where ps'  = ePkgs  e ++ concatMap ePkgs  nves
-        ms'  = eMods  e ++ concatMap eMods  nves
-        fs'  = eFlags e ++ concatMap eFlags nves
+  where ps'  = ePkgs     e ++ concatMap ePkgs     nves
+        ms'  = eMods     e ++ concatMap eMods     nves
+        fs'  = eFlags    e ++ concatMap eFlags    nves
+        pre  = ePreamble e ++ concatMap ePreamble nves
         x    = eExpr e
         nves = map fst nvs ++ map snd nvs
         expr = "let {" ++ intercalate ";" defs ++ "} in (" ++ x ++ ")"
@@ -168,20 +170,42 @@ theory (C es) = T (nub es)
 addScope = withPkgs requiredDeps . withMods requiredMods
 
 requiredDeps :: [Pkg]
-requiredDeps = map Pkg ["MLSpec", "quickspec", "QuickCheck"]
+requiredDeps = map Pkg ["mlspec-helper", "quickspec", "QuickCheck", "runtime-arbitrary"]
 
 requiredMods :: [Mod]
-requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec"]
+requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec", "RuntimeArbitrary"]
 
-renderMain :: String -> String
-renderMain x = "main = Test.QuickSpec.quickSpec (Test.QuickSpec.without (MLSpec.Helper.addVars (" ++ x ++ ")) [\"undefined\"])"
+withoutUndef' :: String -> String
+withoutUndef' x = "(Test.QuickSpec.without (" ++ x ++ ") [\"undefined\"])"
+
+quickSpec' :: String -> String
+quickSpec' x = "Test.QuickSpec.quickSpec (" ++ x ++ ")"
+
+renderMain :: [String] -> String -> String
+renderMain ts x = "main = " ++ quickSpec' (withoutUndef' (renderWithVariables x ts))
+
+renderMainShowVarTypes :: String -> String
+renderMainShowVarTypes x = "main = " ++ intercalate " >> " [
+    pre',
+    "putStrLn (MLSpec.Helper.showReqVarTypes (" ++ withoutUndef' x ++ "))",
+    post']
+  where pre'  = "putStrLn \"BEGIN TYPES\""
+        post' = "putStrLn \"END TYPES\""
 
 asList :: [Expr] -> Expr
 asList = foldr (\x -> (("(:)" $$ x) $$)) "[]"
 
 renderDef :: [Entry] -> Expr
-renderDef es = withPkgs ["quickspec"] (qualified "Test.QuickSpec" "signature") $$
-               asList (concatMap theoryLine es)
+renderDef es = addScope $ withInstances $ signature' $$ sig
+  where signature' = withPkgs ["quickspec"] . qualified "Test.QuickSpec" $
+                       "signature"
+        sig        = asList (concatMap theoryLine es)
+        withInstances = withPkgs ["runtime-arbitrary", "QuickCheck", "ifcxt"] .
+                        withMods ["IfCxt", "Test.QuickCheck"]                 .
+                        withFlags flags                                       .
+                        withPreamble "mkIfCxtInstances ''Arbitrary"
+        flags      = ["-XTemplateHaskell",
+                      "-XFlexibleInstances"]
 
 getProjects :: String -> [Theory]
 getProjects s = map theory (readClusters s)
@@ -193,4 +217,39 @@ runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
 runTheory :: Theory -> IO (Maybe String)
-runTheory (T es) = eval' renderMain (renderDef es)
+runTheory (T es) = do
+  putStrLn "BEGIN renderDef es"
+  putStrLn (show (renderDef es))
+  putStrLn "END renderDef es"
+
+  Just stdout <- eval' renderMainShowVarTypes (renderDef es)
+
+  putStrLn "BEGIN stdout"
+  putStrLn stdout
+  putStrLn "END stdout"
+
+  let types = extractTypesFromOutput stdout
+
+  putStrLn "BEGIN types"
+  putStrLn (unlines types)
+  putStrLn "END types"
+
+  eval' (renderMain types) (renderDef es)
+
+renderWithVariables :: String -> [String] -> String
+renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
+
+addVars' :: [String] -> String -> String
+addVars' []     x = x
+addVars' (t:ts) x = concat [
+  "(MLSpec.Helper.addVars ",
+  show t,
+  " (RuntimeArbitrary.getArbGen [undefined :: " ++ t ++ "])",
+  " (" ++ addVars' ts x ++ "))"]
+
+extractTypesFromOutput :: String -> [String]
+extractTypesFromOutput = filter notSpace . dropStart . dropEnd . lines
+  where dropStart =           drop 1 . dropWhile (/= "BEGIN TYPES")
+        dropEnd   = reverse . drop 1 . dropWhile (/= "END TYPES") . reverse
+        notSpace "" = False
+        notSpace xs = not (all isSpace xs)
