@@ -203,7 +203,8 @@ renderDef es = addScope $ withInstances $ signature' $$ sig
         withInstances = withPkgs ["runtime-arbitrary", "QuickCheck", "ifcxt"] .
                         withMods ["IfCxt", "Test.QuickCheck"]                 .
                         withFlags flags                                       .
-                        withPreamble "mkIfCxtInstances ''Arbitrary"
+                        withPreamble "mkIfCxtInstances ''Arbitrary"           .
+                        withPreamble "mkIfCxtInstances ''Ord"
         flags      = ["-XTemplateHaskell",
                       "-XFlexibleInstances"]
 

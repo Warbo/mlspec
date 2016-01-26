@@ -20,8 +20,8 @@ import           Test.Tasty             (defaultMain, testGroup, localOption)
 import           Test.Tasty.QuickCheck
 
 main = go $ testGroup "Tests depending on QuickSpec" [
-    testProperty "No missing types"            noMissingTypes
-  , testProperty "Variables are distinct"      getDistinctArbitraries
+    testProperty "No missing types"                noMissingTypes
+  , testProperty "Variables are distinct"          getDistinctArbitraries
   ]
   where go = defaultMain . localOption (QuickCheckTests 1)
 
