@@ -179,10 +179,14 @@ withoutUndef' :: String -> String
 withoutUndef' x = "(Test.QuickSpec.without (" ++ x ++ ") [\"undefined\"])"
 
 quickSpec' :: String -> String
-quickSpec' x = "Test.QuickSpec.quickSpec (" ++ x ++ ")"
+quickSpec' x = "MLSpec.Helper.quickSpecRaw (" ++ x ++ ")"
+
+quickSpecPrint' :: String -> String
+quickSpecPrint' x =
+  "do { eqs <- " ++ quickSpec' x ++ "; putStrLn (unlines (map show eqs)); }"
 
 renderMain :: [String] -> String -> String
-renderMain ts x = "main = " ++ quickSpec' (withoutUndef' (renderWithVariables x ts))
+renderMain ts x = "main = " ++ quickSpecPrint' (withoutUndef' (renderWithVariables x ts))
 
 renderMainShowVarTypes :: String -> String
 renderMainShowVarTypes x = "main = " ++ intercalate " >> " [
@@ -219,22 +223,8 @@ runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
 runTheory :: Theory -> IO (Maybe String)
 runTheory (T es) = do
-  putStrLn "BEGIN renderDef es"
-  putStrLn (show (renderDef es))
-  putStrLn "END renderDef es"
-
   Just stdout <- eval' renderMainShowVarTypes (renderDef es)
-
-  putStrLn "BEGIN stdout"
-  putStrLn stdout
-  putStrLn "END stdout"
-
   let types = extractTypesFromOutput stdout
-
-  putStrLn "BEGIN types"
-  putStrLn (unlines types)
-  putStrLn "END types"
-
   eval' (renderMain types) (renderDef es)
 
 renderWithVariables :: String -> [String] -> String

@@ -137,7 +137,7 @@ getExts x = map strip                         .
 
 
 moduleRunsQuickSpec t ts =
-  "main = Test.QuickSpec.quickSpec" `isPrefixOf` renderMain ts t
+  "main = " `isPrefixOf` renderMain ts t
 
 --canHandleJSONEntries :: Entry -> Property
 canHandleJSONEntries m p e t a =

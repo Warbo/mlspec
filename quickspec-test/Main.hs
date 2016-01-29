@@ -3,10 +3,12 @@ module Main where
 
 import           Common
 import           Control.Exception (try, SomeException)
+import           Data.Aeson
 import           Data.Either
 import           Data.List
 import           Data.List.Utils
 import           Data.Maybe
+import qualified Data.Stringable as S
 import           Language.Eval
 import           Language.Eval.Internal
 import           MLSpec.Theory
@@ -20,36 +22,51 @@ import           Test.Tasty             (defaultMain, testGroup, localOption)
 import           Test.Tasty.QuickCheck
 
 main = go $ testGroup "Tests depending on QuickSpec" [
-    testProperty "No missing types"                noMissingTypes
-  , testProperty "Variables are distinct"          getDistinctArbitraries
+    testProperty "No missing types"       noMissingTypes
+  , testProperty "Variables are distinct" getDistinctArbitraries
+  , testProperty "Get equations"          getEquations
   ]
   where go = defaultMain . localOption (QuickCheckTests 1)
 
 noMissingTypes = monadicIO $ do
     Just out <- theoryGo bools
-    mDebug out
+    monitor (counterexample out)
     assert (noMissingTypeMessages out)
   where noMissingTypeMessages = not . (msg `isInfixOf`)
         msg = "WARNING: there are no variables of the following types"
 
 getDistinctArbitraries = monadicIO $ do
     Just out <- theoryGo ints
-    mDebug out
+    monitor (counterexample out)
     assert (noEqualVars out)
   where noEqualVars = ("0 raw equations" `isInfixOf`)
+
+getEquations  = monadicIO $ do
+    Just out <- theoryGo bools
+    monitor (counterexample out)
+    gotJson out
+  where json :: String -> [Maybe Value]
+        json       = map (decode . S.fromString) . filter seemsJson  . lines
+        gotJson xs = let j = json xs
+                      in do assert (all isJust j)
+                            assert (not (null  j))
+        seemsJson ""      = False
+        seemsJson ('D':_) = False
+        seemsJson _       = True
 
 -- Build and run theories
 ints = [
     E (withPkgs ["containers"] "show",  Ty "Integer -> String", A 1)
   ]
 
-theoryGo syms = do let r       = renderDef syms
-                       imports = map mkImport (eMods r)
-                       main    = unlines (ePreamble r ++ [renderMain [] (eExpr r)])
-                   run (putStrLn (unlines ("":(imports ++ [main]))))
-                   run (do x <- runTheory (theory (C syms))
-                           putStrLn (fromMaybe "Got Nothing" x)
-                           return x)
+theoryGo syms = do
+    monitor (counterexample (unlines ("":(imports ++ [main]))))
+    x <- run (runTheory (theory (C syms)))
+    monitor (counterexample (fromMaybe "Got Nothing" x))
+    return x
+  where r       = renderDef syms
+        imports = map mkImport (eMods r)
+        main    = unlines (ePreamble r ++ [renderMain [] (eExpr r)])
 
 bools = let f = withPkgs ["containers"] . qualified "Data.Bool"
          in [
