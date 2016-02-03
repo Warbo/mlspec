@@ -228,11 +228,7 @@ runTheory (T es) = do
   eval' (renderMain types) (renderDef es)
 
 renderWithVariables :: String -> [String] -> String
-renderWithVariables sig ts = "(" ++ addVars' (stripBroken ts) sig ++ ")"
-
--- FIXME: This is very hacky. Try GHCi or something instead?
-stripBroken = filter (not . (`elem` broken))
-  where broken = ["[Integer -> Integer]"]
+renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
 
 addVars' :: [String] -> String -> String
 addVars' []     x = x
