@@ -210,13 +210,15 @@ renderDef es = addScope $ withInstances $ signature' $$ sig
                         withPreamble "mkIfCxtInstances ''Arbitrary"           .
                         withPreamble "mkIfCxtInstances ''Ord"
         flags      = ["-XTemplateHaskell",
-                      "-XFlexibleInstances"]
+                      "-XFlexibleInstances",
+                      "-XFlexibleContexts",
+                      "-XScopedTypeVariables"]
 
 getProjects :: String -> [Theory]
 getProjects s = map theory (readClusters s)
 
 readClusters :: String -> [Cluster]
-readClusters x = fromMaybe [] (decode . fromString $ x)
+readClusters x = fromMaybe (error "No clusters found") (decode . fromString $ x)
 
 runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
