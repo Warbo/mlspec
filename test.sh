@@ -28,7 +28,22 @@ echo "Running MLSpec on example data"
 
 for FILE in test-data/*format*
 do
-    OUTPUT=$(cabal run MLSpec < "$FILE") || fail "MLSpec failed for '$FILE'"
-    echo "$OUTPUT" | grep "^{" > /dev/null || fail "Found no JSON for '$FILE'"
+    rm -f *.tix
+
+    echo "Checking '$FILE' is valid JSON"
+    LENGTH=$(nix-shell -p jq --run "jq 'length'" < "$FILE") ||
+        fail "Couldn't read '$FILE' as JSON"
+
+    EXPECT=$(basename "$FILE" | rev | cut -d '.' -f1 | rev)
+    [[ "$EXPECT" -eq "$LENGTH" ]] ||
+        fail "'$FILE' should have '$EXPECT' entries, found '$LENGTH'"
+
+    echo "Running MLSpec on '$FILE'"
+    OUTPUT=$(cabal run -v0 MLSpec < "$FILE") ||
+        fail "MLSpec failed for '$FILE'"
+    JSON=$(echo "$OUTPUT" | grep -v "^Depth")
+    EQS=$(echo "$JSON" | nix-shell -p jq --run "jq -s 'length'") ||
+        fail "Found no JSON for '$FILE'. Got '$JSON'"
+    echo "Found '$EQS' equations from '$FILE'"
 done
 echo "Successfully processed example data"
