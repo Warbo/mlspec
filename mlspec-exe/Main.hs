@@ -1,10 +1,12 @@
 module Main where
 
-import Data.Text    as T
-import Data.Text.IO as TIO
 import MLSpec.Theory
+import System.Environment
 import System.IO
 
-main = do contents <- TIO.getContents
-          outs     <- runTheoriesFromClusters (T.unpack contents)
-          mapM (TIO.putStrLn . T.pack) outs
+main = do args <- getArgs
+          contents <- case args of
+            []    -> getContents
+            (f:_) -> readFile f
+          outs     <- runTheoriesFromClusters contents
+          mapM putStrLn outs

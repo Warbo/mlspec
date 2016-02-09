@@ -38,12 +38,20 @@ do
     [[ "$EXPECT" -eq "$LENGTH" ]] ||
         fail "'$FILE' should have '$EXPECT' entries, found '$LENGTH'"
 
-    echo "Running MLSpec on '$FILE'"
+    echo "Running '$FILE' through MLSpec"
     OUTPUT=$(cabal run -v0 MLSpec < "$FILE") ||
-        fail "MLSpec failed for '$FILE'"
+        fail "MLSpec failed for stdin from '$FILE'"
     JSON=$(echo "$OUTPUT" | grep -v "^Depth")
     EQS=$(echo "$JSON" | nix-shell -p jq --run "jq -s 'length'") ||
-        fail "Found no JSON for '$FILE'. Got '$JSON'"
+        fail "Found no JSON for stdin '$FILE'. Got '$JSON'"
+    echo "Found '$EQS' equations from '$FILE'"
+
+    echo "Running MLSpec on '$FILE'"
+    OUTPUT=$(cabal run -v0 MLSpec "$FILE") ||
+        fail "MLSpec failed for argument '$FILE'"
+    JSON=$(echo "$OUTPUT" | grep -v "^Depth")
+    EQS=$(echo "$JSON" | nix-shell -p jq --run "jq -s 'length'") ||
+        fail "Found no JSON for argument '$FILE'. Got '$JSON'"
     echo "Found '$EQS' equations from '$FILE'"
 done
 echo "Successfully processed example data"
