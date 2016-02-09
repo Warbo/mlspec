@@ -1,10 +1,10 @@
 module Main where
 
+import Data.Text    as T
+import Data.Text.IO as TIO
 import MLSpec.Theory
 import System.IO
 
-main = do hSetEncoding stdin  utf8
-          hSetEncoding stdout utf8
-          contents <- getContents
-          outs  <- runTheoriesFromClusters contents
-          mapM putStrLn outs
+main = do contents <- TIO.getContents
+          outs     <- runTheoriesFromClusters (T.unpack contents)
+          mapM (TIO.putStrLn . T.pack) outs
