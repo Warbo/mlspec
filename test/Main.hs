@@ -28,25 +28,28 @@ import           Test.Tasty.QuickCheck
 main = defaultMain $ testGroup "All tests" [pureTests, impureTests]
 
 pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
-    testProperty "Theory gets packages"    canReadTheoryPkgs
-  , testProperty "Theory gets modules"     canReadTheoryMods
-  , testProperty "Theory gets names"       canReadTheoryNames
-  , testProperty "Names are rendered"      renderedDefinitionContainsNames
-  , testProperty "Names are monomorphised" renderedNamesAreMonomorphised
-  , testProperty "Arities are rendered"    renderedDefinitionSetsArity
-  , testProperty "Clusters give names"     renderedClusterContainsNames
-  , testProperty "Modules run QuickSpec"   moduleRunsQuickSpec
-  , testProperty "JSON <-> Entry"          canHandleJSONEntries
-  , testProperty "JSON <-> Cluster"        canHandleJSONClusters
-  , testProperty "Can read JSON clusters"  canReadJSONClusters
-  , testProperty "Can read real JSON"      canReadRealJSON
-  , testProperty "Can parse type sigs"     canParseTypeSigs
-  , testProperty "Can extract type's mods" canExtractTypeMods
-  , testProperty "Template Haskell quotes" thQuotes
-  , testProperty "Template Haskell deps"   thDeps
-  , testProperty "getProjects"             getProjectsTest
-  , testProperty "addScope"                addScopeTest
-  , testProperty "letIn"                   letInTest
+    testProperty "Theory gets packages"     canReadTheoryPkgs
+  , testProperty "Theory gets modules"      canReadTheoryMods
+  , testProperty "Theory gets names"        canReadTheoryNames
+  , testProperty "Names are rendered"       renderedDefinitionContainsNames
+  , testProperty "Names are monomorphised"  renderedNamesAreMonomorphised
+  , testProperty "Arities are rendered"     renderedDefinitionSetsArity
+  , testProperty "Clusters give names"      renderedClusterContainsNames
+  , testProperty "Modules run QuickSpec"    moduleRunsQuickSpec
+  , testProperty "JSON <-> Entry"           canHandleJSONEntries
+  , testProperty "JSON <-> Cluster"         canHandleJSONClusters
+  , testProperty "Can read JSON clusters"   canReadJSONClusters
+  , testProperty "Can read real JSON"       canReadRealJSON
+  , testProperty "Can parse type sigs"      canParseTypeSigs
+  , testProperty "Can extract type's mods"  canExtractTypeMods
+  , testProperty "JSON <-> type for Bool"   checkBoolJsonToType
+  , testProperty "JSON <-> type for [Bool]" checkListJsonToType
+  , testProperty "Package key dropped"      checkUnknownPackageSkipped
+  , testProperty "Template Haskell quotes"  thQuotes
+  , testProperty "Template Haskell deps"    thDeps
+  , testProperty "getProjects"              getProjectsTest
+  , testProperty "addScope"                 addScopeTest
+  , testProperty "letIn"                    letInTest
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -192,6 +195,24 @@ canReadRealJSON = once $ monadicIO readJSON
 canParseTypeSigs t = length (typeBits t) == 1
 
 canExtractTypeMods (QT (ms, t)) = readMods t == ms
+
+checkBoolJsonToType = "(GHC.Types.Bool)" === t  .&&.
+                      [Mod "GHC.Types"]  === ms .&&.
+                      [Pkg "ghc-prim"]   === ps
+  where j = "{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}"
+        Just (t, ms, ps) = jsonToTypeModPkgs j
+
+checkListJsonToType = "[(GHC.Types.Bool)]" === t  .&&.
+                      [Mod "GHC.Types"]    === ms .&&.
+                      [Pkg "ghc-prim"]     === ps
+  where j = "{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
+        Just (t, ms, ps) = jsonToTypeModPkgs j
+
+checkUnknownPackageSkipped = "(GHC.Types.Bool)" === t  .&&.
+                             [Mod "GHC.Types"]  === ms .&&.
+                             []                 === ps
+  where j = "{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"key_foo\"},\"args\":[]}"
+        Just (t, ms, ps) = jsonToTypeModPkgs j
 
 thQuotes :: Expr -> Property
 thQuotes x =
