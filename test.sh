@@ -16,7 +16,7 @@ echo "Running MLSpec test suite"
 cabal test --show-details=streaming || fail "cabal test failed"
 echo "Successfully ran test suite"
 
-rm -f *.tix
+rm -f ./*.tix
 
 echo "Running integration test executable"
 cabal run mlspec-test-quickspec || fail "mlspec-test-quickspec failed"
@@ -28,7 +28,7 @@ echo "Running MLSpec on example data"
 
 for FILE in test-data/*format*
 do
-    rm -f *.tix
+    rm -f ./*.tix
 
     echo "Checking '$FILE' is valid JSON"
     LENGTH=$(nix-shell -p jq --run "jq 'length'" < "$FILE") ||
