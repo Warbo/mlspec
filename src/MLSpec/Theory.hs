@@ -246,12 +246,11 @@ addVars' (t:ts) x = concat [
   " (" ++ addVars' ts x ++ "))"]
 
 extractTypesFromOutput :: String -> ([String], [Mod], [Pkg])
-extractTypesFromOutput = collate               .
-                         catMaybes             .
-                         map jsonToTypeModPkgs .
-                         filter looksJson      .
-                         dropStart             .
-                         dropEnd               .
+extractTypesFromOutput = collate                    .
+                         mapMaybe jsonToTypeModPkgs .
+                         filter looksJson           .
+                         dropStart                  .
+                         dropEnd                    .
                          lines
   where dropStart =           drop 1 . dropWhile (/= "BEGIN TYPES")
         dropEnd   = reverse . drop 1 . dropWhile (/= "END TYPES") . reverse
@@ -300,10 +299,10 @@ typeString :: String -> String -> [Value] -> Maybe String
 typeString mod name args =
     if null args
        then Just tcString
-       else wrap <$> (intercalate " " <$> rArgs)
+       else wrap <$> (unwords <$> rArgs)
   where tcString = "(" ++ mod ++ "." ++ name ++ ")" :: String
         rArgs    = mapM renderArg args
-        wrap x   = ("(" ++ tcString ++ " " ++ x ++ ")")
+        wrap x   = "(" ++ tcString ++ " " ++ x ++ ")"
 
 renderArg :: Value -> Maybe String
 renderArg v = case jsonToTypeModPkgs . toString . encode $ v of
