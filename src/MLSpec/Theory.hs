@@ -224,7 +224,9 @@ getProjects s = map theory (readClusters s)
 readClusters :: String -> [Cluster]
 readClusters x = case eitherDecode' (fromString x) of
   Right cs -> cs
-  Left  e  -> error ("Failed to read clusters: " ++ e)
+  Left  e  -> case eitherDecode' (fromString x) of
+    Right c -> [c]
+    Left  e -> error ("Failed to read cluster(s): " ++ e)
 
 runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
