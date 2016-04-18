@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                mlspec
-version:             0.1.0.3
+version:             0.1.0.4
 synopsis:            Runs QuickSpec on sub-sets of Haskell definitions
 -- description:         
 homepage:            http://chriswarbo.net/git/mlspec
