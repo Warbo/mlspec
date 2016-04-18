@@ -299,6 +299,13 @@ switchHidden "[]" (Mod "GHC.Types") (Pkg "ghc-prim") [a] =
        Just a' -> Just ("ghc-prim", "GHC.Types", "[" ++ a' ++ "]")
        Nothing -> err (show ("renderArg failed", a)) Nothing
 
+switchHidden "(->)" (Mod "GHC.Prim") (Pkg "ghc-prim") [a, b] =
+  case (renderArg a, renderArg b) of
+       (Just a', Just b') -> Just ("ghc-prim",
+                                   "GHC.Types",
+                                   concat ["((->) ", a', " ", b', ")"])
+       _                  -> err (show ("renderArg failed", a, b)) Nothing
+
 switchHidden n (Mod m) p args =
   case typeString m n args of
        Just t  -> Just (p, Mod m, t)

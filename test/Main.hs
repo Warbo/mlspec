@@ -52,7 +52,8 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "addScope"                 addScopeTest
   , testProperty "letIn"                    letInTest
   , testProperty "Can render JSON to types" canRenderJsonToTypes
-  , testProperty "Can handle simple type"   canHandleSimpleType
+  , testProperty "Can handle Integer"       canHandleIntegerType
+  , testProperty "Can handle (->)"          canHandleFunctionType
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -212,9 +213,9 @@ checkListJsonToType = "[(GHC.Types.Bool)]" === t  .&&.
         Just (t, ms, ps) = jsonToTypeModPkgs j
 
 checkFunctionJsonToType =
-    "((GHC.Prim.(->)) (GHC.Types.Bool) (GHC.Types.Bool))" === t  .&&.
-    [Mod "GHC.Prim", Mod "GHC.Types"]                     === ms .&&.
-    [Pkg "ghc-prim"]                                      === ps
+    "((->) (GHC.Types.Bool) (GHC.Types.Bool))" === t  .&&.
+    [Mod "GHC.Types"]                          === ms .&&.
+    [Pkg "ghc-prim"]                           === ps
   where j = "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}, {\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
         Just (t, ms, ps) = jsonToTypeModPkgs j
 
@@ -271,7 +272,7 @@ canRenderJsonToTypes (JsonType s) = test
           Nothing        -> error "Failed to extract types/mods/pkgs"
           Just (t, m, p) -> True
 
-canHandleSimpleType = test || error dbg
+canHandleIntegerType = test || error dbg
   where name    = "\"name\": \"Integer\""
         mod     = "\"module\": \"GHC.Integer.Type\""
         package = "\"package\": \"integer-gmp\""
@@ -284,6 +285,21 @@ canHandleSimpleType = test || error dbg
                        Just (n, [Mod m], [Pkg p]) -> n == "Prelude.Integer" &&
                                                      m == "Prelude"  &&
                                                      p == "base"
+
+canHandleFunctionType = test || error dbg
+  where typ     = "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}"
+        result  = jsonToTypeModPkgs typ
+        dbg     = show (("result", result), ("typ", typ))
+        test    = case result of
+                       Nothing          -> False
+                       Just (n, ms, ps) -> and [
+                           n == "((->) Prelude.Integer Prelude.Integer)",
+                           "Prelude" `elem` ms,
+                           "base"    `elem` ps
+                         ] || error (show (("dbg", dbg),
+                                           ("n",   n),
+                                           ("ms",  ms),
+                                           ("ps",  ps)))
 
 -- Helpers
 
