@@ -44,7 +44,8 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can extract type's mods"  canExtractTypeMods
   , testProperty "JSON <-> type for Bool"   checkBoolJsonToType
   , testProperty "JSON <-> type for [Bool]" checkListJsonToType
-  , testProperty "JSON <-> type for func"   checkFunctionJsonToType
+  , testProperty "JSON <-> type for (->)"   checkFunctionJsonToType
+  , testProperty "JSON <-> type for (,)"    checkTupleJsonToType
   , testProperty "Package key dropped"      checkUnknownPackageSkipped
   , testProperty "Template Haskell quotes"  thQuotes
   , testProperty "Template Haskell deps"    thDeps
@@ -219,6 +220,12 @@ checkFunctionJsonToType =
   where j = "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}, {\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
         Just (t, ms, ps) = jsonToTypeModPkgs j
 
+checkTupleJsonToType =
+    "((,) (GHC.Types.Bool) (GHC.Types.Bool))" === t  .&&.
+    [Mod "GHC.Tuple", Mod "GHC.Types"]        === ms .&&.
+    [Pkg "ghc-prim"]                          === ps
+  where j = "{\"tycon\":{\"name\":\"(,)\",\"module\":\"GHC.Tuple\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}, {\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
+        Just (t, ms, ps) = jsonToTypeModPkgs j
 
 checkUnknownPackageSkipped = "(GHC.Types.Bool)" === t  .&&.
                              [Mod "GHC.Types"]  === ms .&&.

@@ -241,10 +241,10 @@ renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
 addVars' :: [String] -> String -> String
 addVars' []     x = x
 addVars' (t:ts) x = concat [
-  "(MLSpec.Helper.addVars ",
+  "\n(MLSpec.Helper.addVars \n",
   show t,
-  " (RuntimeArbitrary.getArbGen [undefined :: " ++ t ++ "])",
-  " (" ++ addVars' ts x ++ "))"]
+  "\n (RuntimeArbitrary.getArbGen [undefined :: " ++ t ++ "])",
+  "\n (" ++ addVars' ts x ++ "))"]
 
 extractTypesFromOutput :: String -> ([String], [Mod], [Pkg])
 extractTypesFromOutput = collate                    .
@@ -305,6 +305,13 @@ switchHidden "(->)" (Mod "GHC.Prim") (Pkg "ghc-prim") [a, b] =
                                    "GHC.Types",
                                    concat ["((->) ", a', " ", b', ")"])
        _                  -> err (show ("renderArg failed", a, b)) Nothing
+
+switchHidden n (Mod "GHC.Tuple") p args | all (`elem` ("()," :: String)) n =
+  case mapM renderArg args of
+       Just args' -> Just ("ghc-prim",
+                           "GHC.Tuple",
+                           concat ["(", unwords (n:args'), ")"])
+       _          -> err (show ("renderArg failed", n, args)) Nothing
 
 switchHidden n (Mod m) p args =
   case typeString m n args of
