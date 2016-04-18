@@ -17,6 +17,7 @@ import           Language.Eval
 import           Language.Eval.Internal
 import qualified Language.Haskell.Exts.Parser as HEP
 import qualified Language.Haskell.Exts.Syntax as HES
+import           System.IO
 import           System.IO.Unsafe
 import           System.Process
 import qualified Test.Arbitrary.Cabal         as Cabal
@@ -273,27 +274,35 @@ jsonToTypeModPkgs' s = eitherDecode' (fromString s) >>= parseEither parseTypeMod
           tcName <- tc .: "name"
           tcMod  <- tc .: "module"
           tcPkg  <- tc .: "package"
-          return $ case switchHidden tcName tcMod tcPkg args of
-            Nothing -> Nothing
-            Just (tcMod', name) -> if not (keepPkg (Pkg tcPkg)) ||
-                                      Mod tcMod' `exposedInPkg` Pkg tcPkg
-                                      then do mods <- mapM argMod args
-                                              pkgs <- mapM argPkg args
-                                              Just (name,
-                                                    nub $ Mod tcMod' : concat mods,
-                                                    nub $ filter keepPkg (Pkg tcPkg  : concat pkgs))
-                                   else Nothing  -- Type is hidden; ignore it
+          return $ case switchHidden tcName (Mod tcMod) (Pkg tcPkg) args of
+            Nothing -> err (show ("switchHidden", tcName, tcMod, tcPkg, args))
+                           Nothing
+            Just (tcPkg', tcMod', name) ->
+              if not (keepPkg (Pkg tcPkg)) || tcMod' `exposedInPkg` tcPkg'
+                 then do mods <- mapM argMod args
+                         pkgs <- mapM argPkg args
+                         Just (name,
+                               nub $ tcMod' : concat mods,
+                               nub $ filter keepPkg (tcPkg' : concat pkgs))
+                 else err ("Ignoring hidden: " ++ show (tcMod', name))
+                      Nothing
 
 -- Switch some known types whose canonical name is hidden, and therefore cannot
 -- be imported. Since we use Integer to monomorphise, we're basically forced to
 -- special-case it.
-switchHidden "Integer" "GHC.Integer.Type" "integer-gmp" []   = Just ("Prelude", "Prelude.Integer")
-switchHidden "[]"      "GHC.Types"        "ghc-prim"    [a]  = case renderArg a of
-  Just a' -> Just ("GHC.Types", "[" ++ a' ++ "]")
-  Nothing -> Nothing
-switchHidden n         m                  p             args = case typeString m n args of
-  Just t  -> Just (m, t)
-  Nothing -> Nothing
+switchHidden :: String -> Mod -> Pkg -> [Value] -> Maybe (Pkg, Mod, String)
+switchHidden "Integer" (Mod "GHC.Integer.Type") (Pkg "integer-gmp") [] =
+  Just ("base", "Prelude", "Prelude.Integer")
+
+switchHidden "[]" (Mod "GHC.Types") (Pkg "ghc-prim") [a] =
+  case renderArg a of
+       Just a' -> Just ("ghc-prim", "GHC.Types", "[" ++ a' ++ "]")
+       Nothing -> err (show ("renderArg failed", a)) Nothing
+
+switchHidden n (Mod m) p args =
+  case typeString m n args of
+       Just t  -> Just (p, Mod m, t)
+       Nothing -> err (show ("typeString failed", m, n, args)) Nothing
 
 typeString :: String -> String -> [Value] -> Maybe String
 typeString mod name args =
@@ -307,7 +316,10 @@ typeString mod name args =
 renderArg :: Value -> Maybe String
 renderArg v = case jsonToTypeModPkgs . toString . encode $ v of
                    Just (s, _,  _) -> Just s
-                   Nothing         -> Nothing
+                   Nothing         -> err (show ("renderArg",
+                                                 ("v", v),
+                                                 ("encode v", encode v)))
+                                          Nothing
 argMod    v = case jsonToTypeModPkgs . toString . encode $ v of
                    Just (_, ms, _) -> Just ms
                    Nothing         -> Nothing
@@ -328,3 +340,8 @@ exposedInPkg' (mod, pkg) = mod `elem` modlist
   where output  = readProcess "ghc-pkg" ["field", pkg, "exposed-modules"] ""
         output' = unsafePerformIO output
         modlist = words . unlines . filter ((== " ") . take 1) . lines $ output'
+
+err :: String -> a -> a
+err m x = unsafePerformIO $ do
+            hPutStrLn stderr m
+            return x

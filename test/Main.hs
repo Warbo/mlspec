@@ -44,12 +44,15 @@ pureTests = localOption (QuickCheckTests 10) $ testGroup "Pure tests" [
   , testProperty "Can extract type's mods"  canExtractTypeMods
   , testProperty "JSON <-> type for Bool"   checkBoolJsonToType
   , testProperty "JSON <-> type for [Bool]" checkListJsonToType
+  , testProperty "JSON <-> type for func"   checkFunctionJsonToType
   , testProperty "Package key dropped"      checkUnknownPackageSkipped
   , testProperty "Template Haskell quotes"  thQuotes
   , testProperty "Template Haskell deps"    thDeps
   , testProperty "getProjects"              getProjectsTest
   , testProperty "addScope"                 addScopeTest
   , testProperty "letIn"                    letInTest
+  , testProperty "Can render JSON to types" canRenderJsonToTypes
+  , testProperty "Can handle simple type"   canHandleSimpleType
   ]
 
 impureTests = localOption (QuickCheckTests 10) $ testGroup "Impure tests" [
@@ -112,10 +115,10 @@ renderedNamesAreMonomorphised (Positive n) =
                     output = eExpr (renderDef ss)
                  in conjoin $ map (test . mono . getExpr) ss
 
-getExts x = map strip                         .
-              concatMap (split . stripL)      .
-              filter ("LANGUAGE" `isInfixOf`) .
-              takePragmas $ x
+getExts = map strip                         .
+            concatMap (split . stripL)      .
+            filter ("LANGUAGE" `isInfixOf`) .
+            takePragmas
   where takePragmas ('{':'-':'#':s) = let (p, s') = pragmaFrom s
                                        in p : takePragmas s'
         takePragmas (c:s)           = takePragmas s
@@ -208,6 +211,14 @@ checkListJsonToType = "[(GHC.Types.Bool)]" === t  .&&.
   where j = "{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
         Just (t, ms, ps) = jsonToTypeModPkgs j
 
+checkFunctionJsonToType =
+    "((GHC.Prim.(->)) (GHC.Types.Bool) (GHC.Types.Bool))" === t  .&&.
+    [Mod "GHC.Prim", Mod "GHC.Types"]                     === ms .&&.
+    [Pkg "ghc-prim"]                                      === ps
+  where j = "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}, {\"tycon\":{\"name\":\"Bool\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}"
+        Just (t, ms, ps) = jsonToTypeModPkgs j
+
+
 checkUnknownPackageSkipped = "(GHC.Types.Bool)" === t  .&&.
                              [Mod "GHC.Types"]  === ms .&&.
                              []                 === ps
@@ -253,6 +264,27 @@ addScopeTest x = let x' = addScope x
 letInTest = let e = eExpr (letIn [(raw "x", raw "1")] (raw "y"))
              in counterexample e (e == "let {(x) = (1)} in (y)")
 
+canRenderJsonToTypes (JsonType s) = test
+  where result = jsonToTypeModPkgs s
+        dbg    = show ("result", result)
+        test   = case result of
+          Nothing        -> error "Failed to extract types/mods/pkgs"
+          Just (t, m, p) -> True
+
+canHandleSimpleType = test || error dbg
+  where name    = "\"name\": \"Integer\""
+        mod     = "\"module\": \"GHC.Integer.Type\""
+        package = "\"package\": \"integer-gmp\""
+        tycon   = "\"tycon\": {" ++ name ++ ", " ++ mod ++ ", " ++ package ++ "}"
+        typ     = "{" ++ tycon ++ ", \"args\":[]}"
+        result  = jsonToTypeModPkgs typ
+        dbg     = show (("result", result), ("test", test), ("typ", typ))
+        test    = case result of
+                       Nothing        -> False
+                       Just (n, [Mod m], [Pkg p]) -> n == "Prelude.Integer" &&
+                                                     m == "Prelude"  &&
+                                                     p == "base"
+
 -- Helpers
 
 mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ raw n, t, a)
@@ -290,3 +322,26 @@ instance Arbitrary QType where
 
 instance Arbitrary Entry where
   arbitrary = E <$> arbitrary
+
+data JsonType = JsonType String
+
+instance Show JsonType where
+  show (JsonType s) = show s
+
+jsonTypes = map JsonType [
+    "{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Ordering\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Int\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]},{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Int\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"(,)\",\"module\":\"GHC.Tuple\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]},{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}]}",
+    "{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}",
+    "{\"tycon\":{\"name\":\"Int\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[]}",
+    "{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}",
+    "{\"tycon\":{\"name\":\"[]\",\"module\":\"GHC.Types\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"(->)\",\"module\":\"GHC.Prim\",\"package\":\"ghc-prim\"},\"args\":[{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]},{\"tycon\":{\"name\":\"Integer\",\"module\":\"GHC.Integer.Type\",\"package\":\"integer-gmp\"},\"args\":[]}]}]}"
+    ]
+
+-- Some actual output, generated using list-extras
+instance Arbitrary JsonType where
+  arbitrary = elements jsonTypes
