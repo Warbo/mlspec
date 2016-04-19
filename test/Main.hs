@@ -299,14 +299,14 @@ canHandleFunctionType = test || error dbg
         dbg     = show (("result", result), ("typ", typ))
         test    = case result of
                        Nothing          -> False
-                       Just (n, ms, ps) -> and [
-                           n == "((->) Prelude.Integer Prelude.Integer)",
-                           "Prelude" `elem` ms,
-                           "base"    `elem` ps
-                         ] || error (show (("dbg", dbg),
-                                           ("n",   n),
-                                           ("ms",  ms),
-                                           ("ps",  ps)))
+                       Just (n, ms, ps) ->
+                         ((n == "((->) Prelude.Integer Prelude.Integer)") &&
+                          ("Prelude" `elem` ms)                           &&
+                          ("base"    `elem` ps))                          ||
+                         error (show (("dbg", dbg),
+                                      ("n",   n),
+                                      ("ms",  ms),
+                                      ("ps",  ps)))
 
 -- Helpers
 
