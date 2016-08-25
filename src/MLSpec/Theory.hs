@@ -231,11 +231,15 @@ readClusters x = case eitherDecode' (fromString x) of
 runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
-runTheory :: Theory -> IO (Maybe String)
-runTheory (T es) = do
+renderTheory (T es) = do
   Just stdout <- eval' renderMainShowVarTypes (renderDef es)
   let (types, mods, pkgs) = extractTypesFromOutput stdout
-  eval' (renderMain types) (withPkgs pkgs (withMods mods (renderDef es)))
+  return (renderMain types, withPkgs pkgs (withMods mods (renderDef es)))
+
+runTheory :: Theory -> IO (Maybe String)
+runTheory t = do
+  (x, y) <- renderTheory t
+  eval' x y
 
 renderWithVariables :: String -> [String] -> String
 renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
