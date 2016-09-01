@@ -234,12 +234,12 @@ runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 renderTheory (T es) = do
   Just stdout <- eval' renderMainShowVarTypes (renderDef es)
   let (types, mods, pkgs) = extractTypesFromOutput stdout
-  return (renderMain types, withPkgs pkgs (withMods mods (renderDef es)))
+  return (types, withPkgs pkgs (withMods mods (renderDef es)))
 
 runTheory :: Theory -> IO (Maybe String)
 runTheory t = do
   (x, y) <- renderTheory t
-  eval' x y
+  eval' (renderMain x) y
 
 renderWithVariables :: String -> [String] -> String
 renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
