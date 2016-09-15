@@ -187,19 +187,20 @@ quickSpec' x = "MLSpec.Helper.quickSpecRaw (" ++ x ++ ")"
 
 quickSpecPrint' :: String -> String
 quickSpecPrint' x =
-  "do { eqs <- " ++ quickSpec' x ++ "; putStrLn (unlines (map show eqs)); }"
+  "do { eqs <- " ++ quickSpec' x ++ "; Prelude.putStrLn (Prelude.unlines (Prelude.map Prelude.show eqs)); }"
 
 renderMain :: [String] -> String -> String
 renderMain ts x = "main = " ++ quickSpecPrint' (withoutUndef' (renderWithVariables x ts))
 
 renderMainShowVarTypes :: String -> String
-renderMainShowVarTypes x = "main = " ++ intercalate " >> " [
+renderMainShowVarTypes x = "main = " ++ intercalate " Prelude.>> " [
     pre',
-    "putStrLn (MLSpec.Helper.showReqVarTypes (" ++ withoutUndef' x ++ "))",
+    "Prelude.putStrLn (MLSpec.Helper.showReqVarTypes (" ++ withoutUndef' x ++ "))",
     post']
-  where pre'  = "putStrLn \"BEGIN TYPES\""
-        post' = "putStrLn \"END TYPES\""
+  where pre'  = "Prelude.putStrLn \"BEGIN TYPES\""
+        post' = "Prelude.putStrLn \"END TYPES\""
 
+-- Can't find a way to qualify ":" and "[]", so leave them bare
 asList :: [Expr] -> Expr
 asList = foldr (\x -> (("(:)" $$ x) $$)) "[]"
 
@@ -249,7 +250,7 @@ addVars' []     x = x
 addVars' (t:ts) x = concat [
   "\n(MLSpec.Helper.addVars \n",
   show t,
-  "\n (RuntimeArbitrary.getArbGen [undefined :: " ++ t ++ "])",
+  "\n (RuntimeArbitrary.getArbGen [Prelude.undefined :: " ++ t ++ "])",
   "\n (" ++ addVars' ts x ++ "))"]
 
 extractTypesFromOutput :: String -> ([String], [Mod], [Pkg])
