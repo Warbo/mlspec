@@ -2,7 +2,10 @@
 
 This project constructs "theories" for the QuickSpec system to explore.
 
-Specifically, it reads from stdin, descriptions of functions as JSON like:
+It reads from stdin or a filename argument, and parses a JSON array of
+arrays of function descriptions.
+
+A function description looks like:
 
     {
         "package" : "foo"
@@ -12,11 +15,58 @@ Specifically, it reads from stdin, descriptions of functions as JSON like:
       , "arity"   : 1
     }
 
-It takes a directory name as argument, and inside that directory creates a new
-Haskell project. That project has all of the given packages as Cabal
-dependencies; along with an executable `Main.hs` which imports all of the given
-modules, defines a QuickSpec "theory" containing all of the given functions and
-a `main` function which calls `quickSpec` on that theory.
+Each array will be turned into a QuickSpec signature and explored.
 
-If the `SIZE` environment variable is available, it will be read as an `Int` and
-used as an upper bound on the number of functions added to the theory.
+Equations found by all of these explorations are printed to stdout as JSON
+objects, one per line.
+
+## Formatting ##
+
+### Equations ###
+
+Each equation is an object with the following fields:
+
+ - `relation`: This has no real meaning, it's basically a tag for distinguishing
+   that this is an equation. The value will be `"~="`, to indicate that it was
+   found by QuickSpec and is hence only tested rather than formally proven.
+ - `lhs`: a term representing the left-hand-side of the equation. There's no
+   conceptual difference between the left and right, they're just names.
+ - `rhs`: a term representing the right-hand-side of the equation. Again, no
+   real difference from the left hand side except the name.
+
+### Terms ###
+
+A term is an object, with a `role` field containing one of `"constant"`,
+`"variable"` or `"application"`. The other fields depend on the term's role:
+
+ - Constants
+    - `type`: The type of the constant, a string written in Haskell's type
+      notation. This is taken from the given function descriptions. For example
+      `"Int -> (Int -> Bool) -> IO Float"`
+    - `symbol`: The name of the constant, as a string. For example `"reverse"`.
+ - Variables
+    - `type`: The type of the variable, a string written in Haskell's type
+      notation. Variables are automatically added to a signature to be used as
+      arguments to the given functions. For example `"[Int]"`.
+    - `"id"`: A numeric ID for the variable. IDs start at `0`. Three variables
+      are added for each argument type. For example, to represent three integer
+      variables we might use `{"role": "variable", "type": "Int", "id":0}`,
+      `{"role": "variable", "type": "Int", "id":1}` and
+      `{"role": "variable", "type": "Int", "id":2}`.
+ - Applications
+    - `lhs`: A term representing a function to apply.
+    - `rhs`: A term representing the argument to apply the `lhs` function to.
+      Functions are curried, so calling with multiple arguments should be done
+      via a left-leaning tree.
+
+## Implementation Notes ##
+
+We use the `nix-eval` package to run QuickSpec with all of the required packages
+available. If some packages aren't in the default GHC package database,
+`nix-eval` will call the `nix-shell` command, so you'll need a working
+installation of Nix in your path.
+
+We include a Cabal test suite to check internal function behaviour. We also
+include an executable `mlspec-test-quickspec` for integration tests which use
+QuickSpec. We also have a `test.sh` script which invokes these as well as
+running various examples through the `MLSpec` executable.
