@@ -229,8 +229,37 @@ readClusters x = case eitherDecode' (fromString x) of
     Right c -> [c]
     Left  e -> error ("Failed to read cluster(s): " ++ e)
 
-runTheoriesFromClusters :: String -> IO [String]
-runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
+runTheoriesFromClusters :: String -> IO String
+runTheoriesFromClusters = runTheories . getProjects
+
+runTheories :: [Theory] -> IO String
+runTheories [] = return ""
+runTheories ts = do
+  ts' <- mapM renderTheory ts
+  result <- eval' (\x -> "main = do { " ++ x ++ "}")
+                  (renderMains ts')
+  case result of
+    Nothing -> error "Error running theories"
+    Just x  -> return x
+
+-- Combines a list of Expr together; the expression will be meaningless, but is
+-- useful for combining dependencies
+combineDeps :: [Expr] -> Expr
+combineDeps [] = ""
+combineDeps (e:es) = e $$ combineDeps es
+
+renderMains :: [([String], Expr)] -> Expr
+renderMains xs = expr {
+                   eExpr = "putStrLn \"\"; " ++ joined
+                 }
+  where expr = withPkgs ["mlspec-helper", "quickspec"]      .
+               withMods ["MLSpec.Helper", "Test.QuickSpec"] $
+               combineDeps (map snd xs)
+        joined :: String
+        joined = intercalate "; " . map renderEach $ xs
+        renderEach :: ([String], Expr) -> String
+        renderEach (ts, x) = quickSpecPrint'
+                               (withoutUndef' (renderWithVariables (eExpr x) ts))
 
 renderTheory (T []) = return ([], qualified "Test.QuickSpec.Signature"
                                             "emptySig")
@@ -240,6 +269,7 @@ renderTheory (T es) = do
   return (types, withPkgs pkgs (withMods mods (renderDef es)))
 
 runTheory :: Theory -> IO (Maybe String)
+runTheory (T []) = return (Just "")
 runTheory t = do
   (x, y) <- renderTheory t
   eval' (renderMain x) (withPkgs ["mlspec-helper", "quickspec"] .

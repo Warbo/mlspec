@@ -8,5 +8,4 @@ main = do args <- getArgs
           contents <- case args of
             []    -> getContents
             (f:_) -> readFile f
-          outs     <- runTheoriesFromClusters contents
-          mapM putStrLn outs
+          runTheoriesFromClusters contents >>= putStrLn

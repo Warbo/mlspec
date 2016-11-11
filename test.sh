@@ -55,3 +55,10 @@ do
     echo "Found '$EQS' equations from '$FILE'"
 done
 echo "Successfully processed example data"
+
+echo "Running MLSpec on empty input"
+OUTPUT=$(echo "[]" | cabal run -v0 MLSpec) ||
+    fail "MLSpec failed on empty input"
+echo "Successfully processed empty input"
+
+echo "All tests pass"
