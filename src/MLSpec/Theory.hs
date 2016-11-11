@@ -182,6 +182,12 @@ requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec", "RuntimeArbitrary"]
 withoutUndef' :: String -> String
 withoutUndef' x = "(Test.QuickSpec.without (" ++ x ++ ") [\"undefined\"])"
 
+without' :: Expr
+without' = qualified "Test.QuickSpec" "without"
+
+withoutUndefExpr :: Expr -> Expr
+withoutUndefExpr e = (without' $$ e) $$ "[\"undefined\"]"
+
 quickSpec' :: String -> String
 quickSpec' x = "MLSpec.Helper.quickSpecRaw (" ++ x ++ ")"
 
@@ -200,15 +206,44 @@ renderMainShowVarTypes x = "main = " ++ intercalate " Prelude.>> " [
   where pre'  = "Prelude.putStrLn \"BEGIN TYPES\""
         post' = "Prelude.putStrLn \"END TYPES\""
 
+getRequiredTypes :: [Theory] -> IO [([String], Expr)]
+getRequiredTypes [] = return []
+getRequiredTypes ts = do
+    Just stdout <- eval' ("main = " ++)
+                         (renderMainShowVarTypesMultiple rendered)
+    return (extractAllTypes rendered stdout)
+  where rendered      = map render ts
+        render (T es) = renderDef es
+
+putStrLn' :: Expr
+putStrLn' = "Prelude.putStrLn"
+
+seq' []  = error "Nothing to sequence"
+seq' [x] = x
+seq' (x:xs) = ("Prelude.>>" $$ x) $$ seq' xs
+
+renderMainShowVarTypesMultiple :: [Expr] -> Expr
+renderMainShowVarTypesMultiple = go 0
+  where go idx []     = putStrLn' $$ "\"\""
+        go idx (x:xs) =
+          let pre = putStrLn' $$ asString ("BEGIN TYPES " ++ show idx)
+              suf = putStrLn' $$ asString ("END TYPES "   ++ show idx)
+              x'  = putStrLn' $$ (qualified "MLSpec.Helper" "showReqVarTypes" $$
+                                    withoutUndefExpr x)
+              xs' = renderMainShowVarTypesMultiple xs
+           in seq' [pre, x', suf, xs']
+
 -- Can't find a way to qualify ":" and "[]", so leave them bare
 asList :: [Expr] -> Expr
 asList = foldr (\x -> (("(:)" $$ x) $$)) "[]"
 
 renderDef :: [Entry] -> Expr
-renderDef es = addScope $ withInstances $ signature' $$ sig
+renderDef es = addScope (withInstances sig)
   where signature' = withPkgs ["quickspec"] . qualified "Test.QuickSpec" $
                        "signature"
-        sig        = asList (concatMap theoryLine es)
+        sig        = case es of
+                          [] -> qualified "Test.QuickSpec.Signature" "emptySig"
+                          _  -> signature' $$ asList (concatMap theoryLine es)
         withInstances = withPkgs ["runtime-arbitrary", "QuickCheck", "ifcxt"] .
                         withMods ["IfCxt", "Test.QuickCheck"]                 .
                         withFlags flags
@@ -233,12 +268,12 @@ runTheoriesFromClusters = runTheories . getProjects
 runTheories :: [Theory] -> IO String
 runTheories [] = return ""
 runTheories ts = do
-  ts' <- mapM renderTheory' ts
-  case catMaybes ts' of
-       []   -> return ""
-       ts'' -> do
+  withTypes <- getRequiredTypes (filter (\(T es) -> not (null es)) ts)
+  case withTypes of
+       [] -> return ""
+       _  -> do
          result <- eval' (\x -> "main = do { " ++ x ++ "}")
-                         (renderMains ts'')
+                         (renderMains withTypes)
          case result of
               Nothing -> error "Error running theories"
               Just x  -> return x
@@ -297,19 +332,66 @@ addVars' (t:ts) x = concat [
   "\n (" ++ addVars' ts x ++ "))"]
 
 extractTypesFromOutput :: String -> ([String], [Mod], [Pkg])
-extractTypesFromOutput = collate                    .
-                         mapMaybe jsonToTypeModPkgs .
-                         filter looksJson           .
-                         dropStart                  .
-                         dropEnd                    .
+extractTypesFromOutput = extractSection .
+                         dropStart      .
+                         dropEnd        .
                          lines
   where dropStart =           drop 1 . dropWhile (/= "BEGIN TYPES")
         dropEnd   = reverse . drop 1 . dropWhile (/= "END TYPES") . reverse
-        looksJson ('{':_) = True
+
+extractSection :: [String] -> ([String], [Mod], [Pkg])
+extractSection = collate                    .
+                 mapMaybe jsonToTypeModPkgs .
+                 filter looksJson
+  where looksJson ('{':_) = True
         looksJson _       = False
         collate [] = ([], [], [])
         collate ((s, ms, ps):xs) = let (ss, ms', ps') = collate xs
                                     in (s:ss, ms++ms', ps++ps')
+
+extractAllTypes :: [Expr] -> String -> [([String], Expr)]
+extractAllTypes es s = zipWith augment outputs es
+  where -- Give each signature a list of types which we should provide variables
+        -- for. Also ensure the signature depends on mods/pkgs required for
+        -- those types (e.g. if they're in a separate ".Types" module)
+        augment o e = case extractSection o of
+          (types, mods, pkgs) -> (types, withPkgs pkgs (withMods mods e))
+
+        -- The sections of text between "BEGIN TYPES" and "END TYPES" sentinels
+        outputs = splitString False [] (lines s)
+
+        -- Parses lines to extract the 'sections'. We recurse through the lines,
+        -- building up an accumulator of the sections. The 'keep' parameter
+        -- determines whether we accumulate or skip the line, and we toggle this
+        -- parameter when we spot the sentinels.
+        splitString :: Bool -> [[String]] -> [String] -> [[String]]
+
+        -- If we see a BEGIN sentinel, start keeping lines in a new acc
+        splitString   False     acc  (l:ls) | "BEGIN TYPES" `isPrefixOf` l =
+          splitString True  ([]:acc)    ls
+
+        -- If we see an END sentinel, stop keeping lines and finalise acc's head
+        splitString   True          (a:acc) (l:ls) | "END TYPES" `isPrefixOf` l =
+          splitString False (reverse a:acc)    ls
+
+        -- Base case. If there are no more lines, finalise acc and return it.
+        splitString   False acc     [] = reverse acc
+
+        -- If we're keeping lines, prepend one to acc's head and recurse
+        splitString   True     (a:acc) (l:ls) =
+          splitString True ((l:a):acc)    ls
+
+        -- If we're not keeping lines, skip and recurse
+        splitString   False acc  (l:ls) =
+          splitString False acc     ls
+
+        -- No other patterns are permitted (e.g. keeping when there's no acc)
+        splitString   keep  acc     ls = error . concat $ [
+            "Unexpected situation arose while parsing. Accumulated so far: ",
+            show acc,
+            ". Lines remaining: ", show ls, ".",
+            "Currently ", if keep then "keeping" else "skipping", " lines."
+          ]
 
 jsonToTypeModPkgs :: String -> Maybe (String, [Mod], [Pkg])
 jsonToTypeModPkgs s = case jsonToTypeModPkgs' s of
