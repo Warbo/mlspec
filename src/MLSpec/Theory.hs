@@ -263,7 +263,13 @@ readClusters x = case eitherDecode' (fromString x) of
     Left  e -> error ("Failed to read cluster(s): " ++ e)
 
 runTheoriesFromClusters :: String -> IO String
-runTheoriesFromClusters = runTheories . getProjects
+runTheoriesFromClusters = fmap unDepth .  runTheories . getProjects
+
+unDepth :: String -> String
+unDepth = unlines . filter noDepth . lines
+  where noDepth :: String -> Bool
+        noDepth "" = False
+        noDepth l  = not ("Depth " `isPrefixOf` l)
 
 runTheories :: [Theory] -> IO String
 runTheories [] = return ""
