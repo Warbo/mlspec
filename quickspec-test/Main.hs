@@ -29,20 +29,20 @@ main = go $ testGroup "Tests depending on QuickSpec" [
   where go = defaultMain . localOption (QuickCheckTests 1)
 
 noMissingTypes = monadicIO $ do
-    Just out <- theoryGo bools
+    out <- theoryGo bools
     monitor (counterexample out)
     assert (noMissingTypeMessages out)
   where noMissingTypeMessages = not . (msg `isInfixOf`)
         msg = "WARNING: there are no variables of the following types"
 
 getDistinctArbitraries = monadicIO $ do
-    Just out <- theoryGo ints
+    out <- theoryGo ints
     monitor (counterexample out)
     assert (noEqualVars out)
   where noEqualVars = ("0 raw equations" `isInfixOf`)
 
 getEquations  = monadicIO $ do
-    Just out <- theoryGo bools
+    out <- theoryGo bools
     monitor (counterexample out)
     gotJson out
   where json :: String -> [Maybe Value]
@@ -61,8 +61,8 @@ ints = [
 
 theoryGo syms = do
     monitor (counterexample (unlines ("":(imports ++ [main]))))
-    x <- run (runTheory (theory (C syms)))
-    monitor (counterexample (fromMaybe "Got Nothing" x))
+    x <- run (runTheories [theory (C syms)])
+    monitor (counterexample ("theoryGo x: " ++ x))
     return x
   where r       = renderDef syms
         imports = map mkImport (eMods r)

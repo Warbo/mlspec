@@ -247,8 +247,6 @@ thDeps :: Expr -> Bool
 thDeps e = "-XTemplateHaskell" `elem` eFlags (thUnquote e) &&
            "-XTemplateHaskell" `elem` eFlags (thQuote   e)
 
-runTheoryTest = runTheory
-
 -- | We use `single` since our JSON encoding only allows one mod/pkg
 getProjectsTest :: Cluster -> Property
 getProjectsTest (C es) = not (null es) ==>

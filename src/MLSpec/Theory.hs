@@ -211,9 +211,7 @@ renderDef es = addScope $ withInstances $ signature' $$ sig
         sig        = asList (concatMap theoryLine es)
         withInstances = withPkgs ["runtime-arbitrary", "QuickCheck", "ifcxt"] .
                         withMods ["IfCxt", "Test.QuickCheck"]                 .
-                        withFlags flags                                       .
-                        withPreamble "mkIfCxtInstances ''Arbitrary"           .
-                        withPreamble "mkIfCxtInstances ''Ord"
+                        withFlags flags
         flags      = ["-XTemplateHaskell",
                       "-XFlexibleInstances",
                       "-XFlexibleContexts",
@@ -235,12 +233,15 @@ runTheoriesFromClusters = runTheories . getProjects
 runTheories :: [Theory] -> IO String
 runTheories [] = return ""
 runTheories ts = do
-  ts' <- mapM renderTheory ts
-  result <- eval' (\x -> "main = do { " ++ x ++ "}")
-                  (renderMains ts')
-  case result of
-    Nothing -> error "Error running theories"
-    Just x  -> return x
+  ts' <- mapM renderTheory' ts
+  case catMaybes ts' of
+       []   -> return ""
+       ts'' -> do
+         result <- eval' (\x -> "main = do { " ++ x ++ "}")
+                         (renderMains ts'')
+         case result of
+              Nothing -> error "Error running theories"
+              Just x  -> return x
 
 -- Combines a list of Expr together; the expression will be meaningless, but is
 -- useful for combining dependencies
@@ -253,27 +254,36 @@ renderMains xs = expr {
                    eExpr = "putStrLn \"\"; " ++ joined
                  }
   where expr = withPkgs ["mlspec-helper", "quickspec"]      .
-               withMods ["MLSpec.Helper", "Test.QuickSpec"] $
-               combineDeps (map snd xs)
+               withMods ["MLSpec.Helper", "Test.QuickSpec"] .
+               withInstances . combineDeps . map snd $ xs
         joined :: String
         joined = intercalate "; " . map renderEach $ xs
         renderEach :: ([String], Expr) -> String
         renderEach (ts, x) = quickSpecPrint'
                                (withoutUndef' (renderWithVariables (eExpr x) ts))
 
-renderTheory (T []) = return ([], qualified "Test.QuickSpec.Signature"
-                                            "emptySig")
-renderTheory (T es) = do
-  Just stdout <- eval' renderMainShowVarTypes (renderDef es)
-  let (types, mods, pkgs) = extractTypesFromOutput stdout
-  return (types, withPkgs pkgs (withMods mods (renderDef es)))
+withInstances = withPreamble "mkIfCxtInstances ''Arbitrary" .
+                withPreamble "mkIfCxtInstances ''Ord"
 
-runTheory :: Theory -> IO (Maybe String)
-runTheory (T []) = return (Just "")
-runTheory t = do
-  (x, y) <- renderTheory t
-  eval' (renderMain x) (withPkgs ["mlspec-helper", "quickspec"] .
-                        withMods ["MLSpec.Helper", "Test.QuickSpec"] $ y)
+-- | Like renderTheory', but includes preamble for defining instances. We keep
+--   this separate, since instances should be defined exactly once, and hence
+--   this function's results can't be combined.
+renderTheory :: Theory -> IO (Maybe ([String], Expr))
+renderTheory t = do
+  x <- renderTheory' t
+  case x of
+    Nothing -> return Nothing
+    Just (ts, e) -> return (Just (ts, withInstances e))
+
+-- | Returns `Nothing` for an empty `Theory`, otherwise renders an Expr
+--   containing a signature for the given `Theory`.
+renderTheory' :: Theory -> IO (Maybe ([String], Expr))
+renderTheory' (T []) = return Nothing
+renderTheory' (T es) = do
+    Just stdout <- eval' renderMainShowVarTypes rendered
+    let (types, mods, pkgs) = extractTypesFromOutput stdout
+    return (Just (types, withPkgs pkgs (withMods mods rendered)))
+  where rendered = renderDef es
 
 renderWithVariables :: String -> [String] -> String
 renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
