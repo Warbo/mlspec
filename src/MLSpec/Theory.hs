@@ -232,6 +232,8 @@ readClusters x = case eitherDecode' (fromString x) of
 runTheoriesFromClusters :: String -> IO [String]
 runTheoriesFromClusters s = catMaybes <$> mapM runTheory (getProjects s)
 
+renderTheory (T []) = return ([], qualified "Test.QuickSpec.Signature"
+                                            "emptySig")
 renderTheory (T es) = do
   Just stdout <- eval' renderMainShowVarTypes (renderDef es)
   let (types, mods, pkgs) = extractTypesFromOutput stdout
@@ -240,7 +242,8 @@ renderTheory (T es) = do
 runTheory :: Theory -> IO (Maybe String)
 runTheory t = do
   (x, y) <- renderTheory t
-  eval' (renderMain x) y
+  eval' (renderMain x) (withPkgs ["mlspec-helper", "quickspec"] .
+                        withMods ["MLSpec.Helper", "Test.QuickSpec"] $ y)
 
 renderWithVariables :: String -> [String] -> String
 renderWithVariables sig ts = "(" ++ addVars' ts sig ++ ")"
