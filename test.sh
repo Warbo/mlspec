@@ -61,4 +61,9 @@ OUTPUT=$(echo "[]" | cabal run -v0 MLSpec) ||
     fail "MLSpec failed on empty input"
 echo "Successfully processed empty input"
 
+echo "Running MLSpec on empty cluster"
+OUTPUT=$(echo "[[]]" | cabal run -v0 MLSpec) ||
+    fail "MLSpec failed on empty cluster"
+echo "Successfully processed empty cluster"
+
 echo "All tests pass"
