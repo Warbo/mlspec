@@ -20,8 +20,6 @@ import qualified Language.Haskell.Exts.Syntax as HES
 import           System.IO
 import           System.IO.Unsafe
 import           System.Process
-import qualified Test.Arbitrary.Cabal         as Cabal
-import           Test.Arbitrary.Haskell
 
 newtype Type  = Ty String deriving (Eq, Ord)
 newtype Arity = A  Int    deriving (Eq, Ord)
@@ -177,7 +175,7 @@ requiredDeps :: [Pkg]
 requiredDeps = map Pkg ["mlspec-helper", "quickspec", "QuickCheck", "runtime-arbitrary"]
 
 requiredMods :: [Mod]
-requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec", "RuntimeArbitrary"]
+requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec", "Test.RuntimeArbitrary"]
 
 withoutUndef' :: String -> String
 withoutUndef' x = "(Test.QuickSpec.without (" ++ x ++ ") [\"undefined\"])"
@@ -334,7 +332,7 @@ addVars' []     x = x
 addVars' (t:ts) x = concat [
   "\n(MLSpec.Helper.addVars \n",
   show t,
-  "\n (RuntimeArbitrary.getArbGen [Prelude.undefined :: " ++ t ++ "])",
+  "\n (Test.RuntimeArbitrary.getArbGen [Prelude.undefined :: " ++ t ++ "])",
   "\n (" ++ addVars' ts x ++ "))"]
 
 extractTypesFromOutput :: String -> ([String], [Mod], [Pkg])

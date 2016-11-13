@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                mlspec
-version:             0.1.1.0
+version:             0.1.1.1
 synopsis:            Runs QuickSpec on sub-sets of Haskell definitions
 -- description:         
 homepage:            http://chriswarbo.net/git/mlspec
@@ -16,12 +16,15 @@ build-type:          Simple
 extra-source-files:  README
 cabal-version:       >=1.10
 
+source-repository head
+  type:     git
+  location: http://chriswarbo.net/git/mlspec.git
+
 library
   exposed-modules:     MLSpec.Theory
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.8 && <4.9
-                     , ArbitraryHaskell
                      , hashable
                      , aeson
                      , stringable
@@ -55,7 +58,6 @@ test-suite test
   build-depends:       base >= 4.8
                      , mlspec
                      , nix-eval
-                     , ArbitraryHaskell
                      , MissingH
                      , process
                      , temporary
@@ -82,7 +84,6 @@ executable mlspec-test-quickspec
   build-depends:       base >= 4.8
                      , mlspec
                      , nix-eval
-                     , ArbitraryHaskell
                      , MissingH
                      , process
                      , temporary

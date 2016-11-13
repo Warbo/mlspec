@@ -16,7 +16,6 @@ import           System.Directory
 import           System.Exit
 import           System.IO.Temp
 import           System.Process
-import qualified Test.Arbitrary.Cabal   as Cabal
 import           Test.QuickCheck.Monadic
 import           Test.Tasty             (defaultMain, testGroup, localOption)
 import           Test.Tasty.QuickCheck

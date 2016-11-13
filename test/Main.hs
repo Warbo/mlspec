@@ -18,8 +18,6 @@ import           System.Directory
 import           System.Exit
 import           System.Process
 import           System.IO.Temp
-import qualified Test.Arbitrary.Cabal   as Cabal
-import           Test.Arbitrary.Haskell
 import           Test.QuickCheck
 import           Test.QuickCheck.Monadic
 import           Test.Tasty             (defaultMain, testGroup, localOption)
