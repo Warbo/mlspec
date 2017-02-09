@@ -285,8 +285,7 @@ runTheories ts = do
 -- Combines a list of Expr together; the expression will be meaningless, but is
 -- useful for combining dependencies
 combineDeps :: [Expr] -> Expr
-combineDeps [] = ""
-combineDeps (e:es) = e $$ combineDeps es
+combineDeps = foldr ($$) ""
 
 renderMains :: [([String], Expr)] -> Expr
 renderMains xs = expr {
