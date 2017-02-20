@@ -217,7 +217,8 @@ addScope = withPkgs requiredDeps . withMods requiredMods
 
 requiredDeps :: [Pkg]
 requiredDeps = map Pkg ["mlspec-helper", "quickspec", "QuickCheck",
-                        "runtime-arbitrary", "hashable"]
+                        "runtime-arbitrary", "hashable", "murmur-hash",
+                        "cereal"]
 
 requiredMods :: [Mod]
 requiredMods = map Mod ["Data.Serialize", "Data.Digest.Murmur32",

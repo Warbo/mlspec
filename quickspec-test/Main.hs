@@ -55,7 +55,7 @@ getEquations  = monadicIO $ do
 
 -- Build and run theories
 ints = [
-    E (withPkgs ["containers"] "show",  Ty "Integer -> String", A 1)
+    E (withPkgs ["containers"] "show",  Ty "Integer -> String", A 1, H True)
   ]
 
 theoryGo syms = do
@@ -69,11 +69,11 @@ theoryGo syms = do
 
 bools = let f = withPkgs ["containers"] . qualified "Data.Bool"
          in [
-    E (f "True",  Ty "Bool",                 A 0)
-  , E (f "False", Ty "Bool",                 A 0)
-  , E (f "not",   Ty "Bool -> Bool",         A 1)
-  , E (f "||",    Ty "Bool -> Bool -> Bool", A 2)
-  , E (f "&&",    Ty "Bool -> Bool -> Bool", A 2)
+    E (f "True",  Ty "Bool",                 A 0, H True)
+  , E (f "False", Ty "Bool",                 A 0, H True)
+  , E (f "not",   Ty "Bool -> Bool",         A 1, H True)
+  , E (f "||",    Ty "Bool -> Bool -> Bool", A 2, H True)
+  , E (f "&&",    Ty "Bool -> Bool -> Bool", A 2, H True)
   ]
 
 qs = withPkgs ["quickspec"] . qualified "Test.QuickSpec" . raw
