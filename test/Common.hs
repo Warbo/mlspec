@@ -46,7 +46,7 @@ instance Arbitrary Theory where
     exprs   <- arbitrary
     types   <- arbitrary
     arities <- arbitrary
-    return $ T (map E (zip3 exprs types arities))
+    return $ T (map E (zip4 exprs types arities (repeat (H False))))
 
 instance Arbitrary Expr where
   arbitrary = do ps <- arbitrary

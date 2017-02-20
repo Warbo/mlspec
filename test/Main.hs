@@ -95,7 +95,9 @@ renderedDefinitionSetsArity (Positive n) =
     forAll (vectorOf (n `mod` 10) arbitrary) go
   where go :: [Entry] -> Bool
         go ss = let output        = eExpr (renderDef ss)
-                    arityExists a = ("Test.QuickSpec.fun" ++ show a) `isInfixOf` output
+                    arityExists a =
+                      ("Test.QuickSpec.fun"   ++ show a) `isInfixOf` output ||
+                      ("Test.QuickSpec.blind" ++ show a) `isInfixOf` output
                  in all arityExists (map getArity ss)
 
 renderedClusterContainsNames (Positive count) = do
@@ -147,7 +149,7 @@ moduleRunsQuickSpec t ts =
 
 --canHandleJSONEntries :: Entry -> Property
 canHandleJSONEntries m p e t a =
-  let entry = E (withMods [m] $ withPkgs [p] $ raw e, t, a)
+  let entry = E (withMods [m] $ withPkgs [p] $ raw e, t, a, H False)
    in counterexample (show [Just entry, decode (encode entry)])
                      (case decode (encode entry) of
                            Nothing -> error $ "Couldn't decode '" ++ S.toString (encode entry) ++ "'"
@@ -161,10 +163,11 @@ canHandleJSONClusters es' =
         cluster = C es
         es      = map single (filter empty es')
         empty x = not (null (getPkg x) || null (getMod x))
-        single (E (e, t, a)) = E (e { ePkgs = take 1 (ePkgs e),
-                                      eMods = take 1 (eMods e)},
-                                  t,
-                                  a)
+        single (E (e, t, a, h)) = E (e { ePkgs = take 1 (ePkgs e),
+                                         eMods = take 1 (eMods e)},
+                                     t,
+                                     a,
+                                     h)
 
 canReadJSONClusters :: [Cluster] -> Bool
 canReadJSONClusters cs' = readClusters encoded == cs
@@ -178,13 +181,13 @@ canReadJSONClusters cs' = readClusters encoded == cs
                       ePkgs=p:_,
                       eMods=m:_,
                       eExpr=e
-                   }, t, a):es) = E (Expr {
-                                        ePkgs=[p],
-                                        eMods=[m],
-                                        eExpr=e,
-                                        eFlags=[],
-                                        ePreamble=[]
-                                     }, t, a) : pruneE es
+                   }, t, a, h):es) = E (Expr {
+                                          ePkgs=[p],
+                                          eMods=[m],
+                                          eExpr=e,
+                                          eFlags=[],
+                                          ePreamble=[]
+                                       }, t, a, h) : pruneE es
         pruneE (e:es) = pruneE es
         pruneE [] = []
 
@@ -252,7 +255,7 @@ getProjectsTest (C es) = not (null es) ==>
                              j  = S.toString (encode (toJSON [c]))
                              ps = getProjects j
                              ts = [theory c]
-                             single (E (e, t, a)) = E (single' e, t, a)
+                             single (E (e, t, a, h)) = E (single' e, t, a, h)
                              single' e = e {
                                eMods = take 1 (eMods e),
                                ePkgs = take 1 (ePkgs e)
@@ -304,13 +307,16 @@ canHandleFunctionType = test || error dbg
 
 -- Helpers
 
-mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ raw n, t, a)
+mkEntry p m n t a = E (withPkgs [p] $ withMods [m] $ raw n, t, a, H False)
 
 -- Uncurried
 mkEntryUC (p, m, n, t, a) = mkEntry p m n t a
 
 mkEntries :: [Cluster] -> B.ByteString
 mkEntries = encode
+
+instance Arbitrary Hashable where
+  arbitrary = fmap H arbitrary
 
 instance Show Cluster where
   show (C xs) = S.toString (encode xs)
@@ -323,7 +329,7 @@ instance Arbitrary Cluster where
     ns <- vectorOf n arbitrary
     ts <- vectorOf n arbitrary
     as <- vectorOf n arbitrary
-    return $ C (zipWith5 (\p m n t a -> E (withPkgs [p] $ qualified m n, t, a)) ps ms ns ts as)
+    return $ C (zipWith5 (\p m n t a -> E (withPkgs [p] $ qualified m n, t, a, H False)) ps ms ns ts as)
 
 mkCluster ps ms ns ts = (ps, ms, ns, zipWith4 mkEntry ps ms ns ts)
 

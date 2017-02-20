@@ -7,7 +7,6 @@ import           Data.Aeson.Types
 import           Data.Char
 import           Data.Data
 import           Data.Generics.Aliases
-import           Data.Hashable
 import           Data.List
 import           Data.Maybe
 import qualified Data.MemoTrie as MT
@@ -23,13 +22,14 @@ import           System.Process
 
 newtype Type  = Ty String deriving (Eq, Ord)
 newtype Arity = A  Int    deriving (Eq, Ord)
+newtype Hashable = H Bool deriving (Eq, Ord, Show)
 
 unPkg  (Pkg  x) = x
 unMod  (Mod  x) = x
 unFlag (Flag x) = x
 unType (Ty   x) = x
 
-newtype Entry = E (Expr, Type, Arity) deriving (Show, Eq)
+newtype Entry = E (Expr, Type, Arity, Hashable) deriving (Show, Eq)
 
 instance FromJSON Entry where
   parseJSON (Object o) = do
@@ -38,16 +38,18 @@ instance FromJSON Entry where
     n <- o .: "name"
     t <- o .: "type"
     a <- o .: "arity"
-    return $ E (withPkgs [Pkg p] $ withMods [Mod m] $ raw n, Ty t, A a)
+    h <- o .: "hashable"
+    return $ E (withPkgs [Pkg p] $ withMods [Mod m] $ raw n, Ty t, A a, H h)
   parseJSON _ = mzero
 
 instance ToJSON Entry where
-  toJSON (E (e, Ty t, A a)) = object [
-      "package" .= unPkg (head (ePkgs e))
-    , "module"  .= unMod (head (eMods e))
-    , "name"    .= eExpr e
-    , "type"    .= t
-    , "arity"   .= a
+  toJSON (E (e, Ty t, A a, H h)) = object [
+      "package"  .= unPkg (head (ePkgs e))
+    , "module"   .= unMod (head (eMods e))
+    , "name"     .= eExpr e
+    , "type"     .= t
+    , "arity"    .= a
+    , "hashable" .= h
     ]
 
 newtype Cluster = C [Entry] deriving (Eq)
@@ -70,7 +72,7 @@ instance Eq Theory where
   T xs == T ys = all (`elem` ys) xs && all (`elem` xs) ys
 
 getExpr :: Entry -> Expr
-getExpr (E (e, _, _)) = e
+getExpr (E (e, _, _, _)) = e
 
 getPkg :: Entry -> [Pkg]
 getPkg = ePkgs . getExpr
@@ -82,10 +84,12 @@ getName :: Entry -> String
 getName = eExpr . getExpr
 
 getType :: Entry -> Type
-getType (E (_, t, _)) = t
+getType (E (_, t, _, _)) = t
 
 getArity :: Entry -> Arity
-getArity (E (_, _, a)) = a
+getArity (E (_, _, a, _)) = a
+
+getHashable (E (_, _, _, h)) = h
 
 readMods :: Type -> [Mod]
 readMods x = concatMap readMods'' (typeBits x)
@@ -102,14 +106,54 @@ readMods' = concat . gmapQ (const [] `extQ` typeMod)
 
 typeMod (HES.ModuleName m) = [Mod m]
 
+-- If the entry is hashable, we use a "blind" function and an observer.
+-- Otherwise we use a "fun" function.
 theoryLine :: Entry -> [Expr]
-theoryLine (E (_, _, A a)) | a > 5 = []  -- QuickSpec only goes up to fun5
-theoryLine (E (e, _,   a))         = [letIn [(name, val)] x]
+theoryLine (E (_, _, A a, _  )) | a > 5 = []  -- QuickSpec only goes up to fun5
+theoryLine (E (e, _, A a, H h))         = [letIn [(name, val)] x]
   where name = "f"
         val  = thUnquote (mono $$ thQuote (wrapOp e))
-        x    = (func $$ quoted (raw (eExpr e))) $$ name
-        func = qualified "Test.QuickSpec" (wrapped "" (show a) "fun")
         mono = withPkgs ["mlspec-helper"] $ qualified "MLSpec.Helper" "mono"
+        x    = if h then blind else fun
+
+        fun  = (ofArity "fun" $$ symbol) $$ name
+
+        blind = signature $$
+                  (("(:)" $$ ((ofArity "blind" $$ symbol) $$ name)) $$
+                  (("(:)" $$ (observer $$ hasher)) $$ "[]"))
+
+        -- Suffix func with arity, e.g. fun0, fun1, blind0, blind1, etc.
+        ofArity func = qualified "Test.QuickSpec" (wrapped "" (show a) func)
+
+        -- The "name" we tell QuickSpec to use; the Haskell global's name
+        symbol = quoted (raw (eExpr e))
+
+        signature = withPkgs ["quickspec"]
+                      (qualified "Test.QuickSpec.Signature" "signature")
+
+        observer = withPkgs ["quickspec"]
+                     (qualified "Test.QuickSpec.Signature" "observer1")
+
+        -- Gives us an expression of f's output type
+        addCalls 0 x = x
+        addCalls n x = addCalls (n-1) (x $$ "undefined")
+        fOut = addCalls a "f"
+
+        -- Forces input type to be f's output type
+        converter = ("flip" $$ "asTypeOf") $$ fOut
+
+        compose [x] = x
+        compose (x:xs) = ("(.)" $$ x) $$ compose xs
+
+        hasher = compose [withPkgs ["murmur-hash"]
+                            (qualified "Data.Digest.Murmur32" "asWord32"),
+                          withPkgs ["murmur-hash"]
+                            (qualified "Data.Digest.Murmur32" "hash32"),
+                          withPkgs ["cereal"]
+                            (qualified "Data.Serialize" "runPut"),
+                          withPkgs ["cereal"]
+                            (qualified "Data.Serialize" "put"),
+                          converter]
 
 -- | Wraps operators in parentheses, eg. "(<>)", leaves alphanumeric names alone
 wrapOp :: Expr -> Expr
@@ -172,10 +216,13 @@ theory (C es) = T (nub es)
 addScope = withPkgs requiredDeps . withMods requiredMods
 
 requiredDeps :: [Pkg]
-requiredDeps = map Pkg ["mlspec-helper", "quickspec", "QuickCheck", "runtime-arbitrary"]
+requiredDeps = map Pkg ["mlspec-helper", "quickspec", "QuickCheck",
+                        "runtime-arbitrary", "hashable"]
 
 requiredMods :: [Mod]
-requiredMods = map Mod ["MLSpec.Helper", "Test.QuickSpec", "Test.RuntimeArbitrary"]
+requiredMods = map Mod ["Data.Serialize", "Data.Digest.Murmur32",
+                        "MLSpec.Helper", "Test.QuickSpec",
+                        "Test.RuntimeArbitrary"]
 
 withoutUndef' :: String -> String
 withoutUndef' x = "(Test.QuickSpec.without (" ++ x ++ ") [\"undefined\"])"
