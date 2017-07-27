@@ -348,8 +348,11 @@ renderMains xs = expr {
         renderEach (ts, x) = quickSpecPrint'
                                (withoutUndef' (renderWithVariables (eExpr x) ts))
 
-withInstances = withPreamble "mkIfCxtInstances ''Arbitrary" .
-                withPreamble "mkIfCxtInstances ''Ord"
+withInstances = withPreamble "mkIfCxtInstances ''Arbitrary"            .
+                withPreamble "mkIfCxtInstances ''Ord"                  .
+                withPreamble "mkIfCxtInstances ''Test.Feat.Enumerable" .
+                withPkgs ["testing-feat"]                              .
+                withMods ["Test.Feat"]
 
 -- | Like renderTheory', but includes preamble for defining instances. We keep
 --   this separate, since instances should be defined exactly once, and hence
