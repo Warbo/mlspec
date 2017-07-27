@@ -1,0 +1,55 @@
+From: Chris Warburton
+Date: Thu, 27 Jul 2017 16:30:52 +0100
+State: new
+Subject: Fix weigh dependency
+Message-Id: <e0631dca6175c650-0-artemis@nixos>
+
+It's giving test errors on NixOS:
+
+Building weigh-0.0.4...
+Preprocessing library weigh-0.0.4...
+[1 of 2] Compiling Weigh.GHCStats   ( src/Weigh/GHCStats.hs, dist/build/Weigh/GHCStats.o )
+[2 of 2] Compiling Weigh            ( src/Weigh.hs, dist/build/Weigh.o )
+In-place registering weigh-0.0.4...
+Preprocessing test suite 'weigh-test' for weigh-0.0.4...
+[1 of 1] Compiling Main             ( src/test/Main.hs, dist/build/weigh-test/weigh-test-tmp/Main.dyn_o )
+Linking dist/build/weigh-test/weigh-test ...
+running tests
+Running 1 test suites...
+Test suite weigh-test: RUNNING...
+
+Case                             Allocated  GCs
+integers count 0                        72    0
+integers count 1                        88    0
+integers count 2                       104    0
+integers count 3                       120    0
+integers count 10                      232    0
+integers count 100                   1,672    0
+integers count IO CAF 0                 80    0
+integers count IO func 0                84    0
+integers count IO CAF 1                 96    0
+integers count IO func 1               100    0
+ints count 1                            72    0
+ints count 10                           72    0
+ints count 1000000                      72    0
+\_ -> IntegerStruct 0 0                 72    0
+\x -> IntegerStruct x 0                 84    0
+\x -> IntegerStruct x x                 84    0
+\x -> IntegerStruct (x+1) x             92    0
+\x -> IntegerStruct (x+1) (x+1)         92    0
+\x -> IntegerStruct (x+1) (x+2)        100    0
+\x -> HasInt x                          80    0
+\x -> HasUnpacked (HasInt x)            80    0
+\x -> HasPacked (HasInt x)             100    0
+
+Check problems:
+  ints count 1
+    Allocated bytes exceeds 0: 72
+  ints count 10
+    Allocated bytes exceeds 0: 72
+  ints count 1000000
+    Allocated bytes exceeds 0: 72
+Test suite weigh-test: FAIL
+Test suite logged to: dist/test/weigh-0.0.4-weigh-test.log
+0 of 1 test suites (0 of 1 test cases) passed.
+builder for ‘/nix/store/8cv57axpznzd6lsv6d65avrgbdx48c4g-weigh-0.0.4.drv’ failed with exit code 1

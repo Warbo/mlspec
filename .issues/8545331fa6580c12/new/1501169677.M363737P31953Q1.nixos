@@ -1,0 +1,15 @@
+From: Chris Warburton
+Date: Thu, 27 Jul 2017 16:32:41 +0100
+State: new
+Subject: Bump haskell-src-exts version
+Message-Id: <8545331fa6580c12-0-artemis@nixos>
+
+We're stuck on 1.17.* because 1.18.* introduces new parameters (for
+annotation).
+
+It's not worth being generic; we can kill backwards compatibility if we
+like (as long as we bump our version number!), but going forward it may
+be useful.
+
+This is not a priority unless something else breaks because of it
+(e.g. Cabal requiring a single version to be shared by all dependencies)
