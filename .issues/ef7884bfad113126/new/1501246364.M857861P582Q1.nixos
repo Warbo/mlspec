@@ -1,0 +1,9 @@
+From: Chris Warburton
+Date: Fri, 28 Jul 2017 13:51:13 +0100
+State: new
+Subject: Include CoArbitrary instances
+Message-Id: <ef7884bfad113126-0-artemis@nixos>
+
+We can only get Arbitrary functions if we have a CoArbitrary instances
+for their arguments. We need to add a `mkIfCxt.... ''CoArbitrary` line
+to ensure this will be picked up by the instance resolution of ifCxt.
