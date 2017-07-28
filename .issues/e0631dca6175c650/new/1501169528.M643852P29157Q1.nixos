@@ -1,8 +1,9 @@
 From: Chris Warburton
 Date: Thu, 27 Jul 2017 16:30:52 +0100
-State: new
+State: resolved
 Subject: Fix weigh dependency
 Message-Id: <e0631dca6175c650-0-artemis@nixos>
+resolution: fixed
 
 It's giving test errors on NixOS:
 

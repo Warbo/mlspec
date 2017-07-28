@@ -72,7 +72,7 @@ test-suite test
                      -- doesn't (yet) look at benchmark dependencies
                      , murmur-hash
                      , cereal
-                     --, weigh  -- FIXME: weigh is broken
+                     , weigh >= 0.0.3 && < 0.0.5
 
 -- These executables are actually tests. Since they test the output of commands,
 -- it's hard to capture these commands as dependencies in Cabal. Instead, we
@@ -107,7 +107,7 @@ executable bench-nat
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -119,7 +119,7 @@ executable bench-force
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -131,7 +131,7 @@ executable bench-lazy
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -143,7 +143,7 @@ executable bench-strict
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -155,7 +155,7 @@ executable bench-stricthash
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -167,7 +167,7 @@ executable bench-naive-even
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -179,7 +179,7 @@ executable bench-acc-even
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq
@@ -191,7 +191,7 @@ executable bench-bang-even
   build-depends:       base >= 4.8
                      , mlspec
                      , bytestring
-                     --, weigh
+                     , weigh >= 0.0.3 && < 0.0.5
                      , cereal
                      , murmur-hash
                      , deepseq

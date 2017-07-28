@@ -1,0 +1,13 @@
+From: Chris Warburton
+Date: Thu, 27 Jul 2017 18:19:15 +0100
+Subject: Re: Fix weigh dependency
+Message-Id: <e0631dca6175c650-c5cb59fd5139c100-artemis@nixos>
+References: <e0631dca6175c650-0-artemis@nixos>
+In-Reply-To: <e0631dca6175c650-0-artemis@nixos>
+
+Done some digging and it looks like these test failures only occur in
+some particular circumstances. In particular, we can tincify MLSpec and
+it works, or we can use a particular 0.0.3 git commit and it works, or
+we can use Hackage 0.0.4 and it works. The problem may just be with
+their HEAD, which we don't need to care about unless/until they release
+a new official version to Hackage.
