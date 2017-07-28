@@ -1,0 +1,11 @@
+From: Chris Warburton
+Date: Fri, 28 Jul 2017 14:03:52 +0100
+Subject: Re: Include CoArbitrary instances
+Message-Id: <ef7884bfad113126-a8539f2a64e477d9-artemis@nixos>
+References: <ef7884bfad113126-0-artemis@nixos>
+In-Reply-To: <ef7884bfad113126-0-artemis@nixos>
+
+Added CoArbitrary line to renderer, bumped version and tests are green
+(we're not currently checking if Arbitrary instances are found, so there
+was no simple place to put a CoArbitrary-specific test; chalk it up to
+the TODOs ;) )

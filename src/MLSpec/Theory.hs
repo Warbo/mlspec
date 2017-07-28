@@ -349,6 +349,7 @@ renderMains xs = expr {
                                (withoutUndef' (renderWithVariables (eExpr x) ts))
 
 withInstances = withPreamble "mkIfCxtInstances ''Arbitrary"            .
+                withPreamble "mkIfCxtInstances ''CoArbitrary"          .
                 withPreamble "mkIfCxtInstances ''Ord"                  .
                 withPreamble "mkIfCxtInstances ''Test.Feat.Enumerable" .
                 withPkgs ["testing-feat"]                              .
