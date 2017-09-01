@@ -1,5 +1,5 @@
 name:                mlspec
-version:             0.2.1.0
+version:             0.2.0.0
 synopsis:            Runs QuickSpec on sub-sets of Haskell definitions
 homepage:            http://chriswarbo.net/git/mlspec
 license:             PublicDomain
@@ -20,7 +20,6 @@ library
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.8
-                       -- && <4.9
                      , hashable
                      , aeson
                      , stringable
@@ -66,7 +65,7 @@ test-suite test
                      , syb
                      , QuickCheck
                      , quickspec
-                     , tasty >= 0.7
+                     , tasty >= 0.11.2.1
                      , tasty-quickcheck
                      -- The following are needed by the benchmarks, but Nix
                      -- doesn't (yet) look at benchmark dependencies
@@ -97,7 +96,7 @@ executable mlspec-test-quickspec
                      , syb
                      , QuickCheck
                      , quickspec
-                     , tasty >= 0.7
+                     , tasty >= 0.11.2.1
                      , tasty-quickcheck
 
 executable bench-nat
