@@ -66,6 +66,4 @@ OUTPUT=$(echo "[[]]" | cabal run -v0 MLSpec) ||
     fail "MLSpec failed on empty cluster"
 echo "Successfully processed empty cluster"
 
-# FIXME: Memory benchmarks disabled since weigh's broken
-#./test-data/memory-bench.sh || fail "Failed to benchmark memory"
 echo "All tests pass"

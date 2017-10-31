@@ -40,7 +40,7 @@ instance FromJSON Entry where
     a <- o .: "arity"
     h <- o .: "hashable"
     return $ E (withPkgs [Pkg p] $ withMods [Mod m] $ raw n, Ty t, A a, H h)
-  parseJSON _ = mzero
+  parseJSON x = error ("Doesn't look like an 'Entry': " ++ show x)
 
 instance ToJSON Entry where
   toJSON (E (e, Ty t, A a, H h)) = object [

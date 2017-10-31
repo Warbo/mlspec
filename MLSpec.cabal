@@ -1,5 +1,5 @@
 name:                mlspec
-version:             0.2.0.0
+version:             0.2.1.0
 synopsis:            Runs QuickSpec on sub-sets of Haskell definitions
 homepage:            http://chriswarbo.net/git/mlspec
 license:             PublicDomain
@@ -67,11 +67,6 @@ test-suite test
                      , quickspec
                      , tasty >= 0.11.2.1
                      , tasty-quickcheck
-                     -- The following are needed by the benchmarks, but Nix
-                     -- doesn't (yet) look at benchmark dependencies
-                     , murmur-hash
-                     , cereal
-                     , weigh >= 0.0.3 && < 0.0.5
 
 -- These executables are actually tests. Since they test the output of commands,
 -- it's hard to capture these commands as dependencies in Cabal. Instead, we
@@ -98,99 +93,3 @@ executable mlspec-test-quickspec
                      , quickspec
                      , tasty >= 0.11.2.1
                      , tasty-quickcheck
-
-executable bench-nat
-  default-language:    Haskell2010
-  main-is:             BenchNat.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-                     
-executable bench-force
-  default-language:    Haskell2010
-  main-is:             BenchForce.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-lazy
-  default-language:    Haskell2010
-  main-is:             BenchLazy.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-strict
-  default-language:    Haskell2010
-  main-is:             BenchStrict.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-stricthash
-  default-language:    Haskell2010
-  main-is:             BenchStrictHash.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-naive-even
-  default-language:    Haskell2010
-  main-is:             BenchEven.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-acc-even
-  default-language:    Haskell2010
-  main-is:             BenchAccEven.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
-
-executable bench-bang-even
-  default-language:    Haskell2010
-  main-is:             BenchAccBangEven.hs
-  hs-source-dirs:      benchmarks/memory
-  build-depends:       base >= 4.8
-                     , mlspec
-                     , bytestring
-                     , weigh >= 0.0.3 && < 0.0.5
-                     , cereal
-                     , murmur-hash
-                     , deepseq
