@@ -303,10 +303,15 @@ getProjects s = map theory (readClusters s)
 
 readClusters :: String -> [Cluster]
 readClusters x = case eitherDecode' (fromString x) of
-  Right cs -> cs
-  Left  e  -> case eitherDecode' (fromString x) of
-    Right c -> [c]
-    Left  e -> error ("Failed to read cluster(s): " ++ e)
+    Right cs -> cs
+    Left  e1 -> case eitherDecode' (fromString x) of
+      Right c  -> [c]
+      Left  e2 -> error (report e1 e2)
+  where report :: String -> String -> String
+        report e1 e2 = concat [
+          "Failed to read list of clusters, with message: ", e1,
+          "\n\nTried to read a single cluster, but failed with message: ", e2,
+          "\n\nGiving up!"]
 
 runTheoriesFromClusters :: String -> IO String
 runTheoriesFromClusters = fmap unDepth .  runTheories . getProjects
