@@ -1,5 +1,5 @@
 name:                mlspec
-version:             0.2.1.1
+version:             0.2.1.2
 synopsis:            Runs QuickSpec on sub-sets of Haskell definitions
 homepage:            http://chriswarbo.net/git/mlspec
 license:             PublicDomain
@@ -42,6 +42,8 @@ executable MLSpec
   build-depends:       base >= 4.8
                      , mlspec
                      , text
+                     -- Used by nix-evaled code; include here to fail fast
+                     , mlspec-helper >= 0.2.1.0
   hs-source-dirs:      mlspec-exe
   default-language:    Haskell2010
 
