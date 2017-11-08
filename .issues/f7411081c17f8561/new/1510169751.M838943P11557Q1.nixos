@@ -1,0 +1,12 @@
+From: Chris Warburton
+Date: Wed, 08 Nov 2017 19:34:42 +0000
+Subject: Re: Wrap benchmarks with asv
+Message-Id: <f7411081c17f8561-e6a801c3391a6dae-artemis@nixos>
+References: <f7411081c17f8561-0-artemis@nixos>
+In-Reply-To: <f7411081c17f8561-0-artemis@nixos>
+
+No longer applicable. The benchmarks were removed since they're mainly
+of historical interest, and they're in git if any archaeologist wants
+them.
+
+The dependency on bench was also causing problems downstream.

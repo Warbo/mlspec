@@ -1,7 +1,8 @@
 From: Chris Warburton
 Date: Thu, 27 Jul 2017 16:32:15 +0100
-State: new
+State: resolved
 Subject: Wrap benchmarks with asv
 Message-Id: <f7411081c17f8561-0-artemis@nixos>
+resolution: fixed
 
 That way, we get pretty charts, etc.
