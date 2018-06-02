@@ -1,4 +1,4 @@
-{-# LANGUAGE TupleSections, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
 import           Common
@@ -346,7 +346,7 @@ instance Arbitrary QType where
 instance Arbitrary Entry where
   arbitrary = E <$> arbitrary
 
-data JsonType = JsonType String
+newtype JsonType = JsonType String
 
 instance Show JsonType where
   show (JsonType s) = show s

@@ -66,7 +66,7 @@ instance Show Type where
 instance Show Arity where
   show (A  x) = show x
 
-data Theory = T [Entry] deriving (Show)
+newtype Theory = T [Entry] deriving (Show)
 
 instance Eq Theory where
   T xs == T ys = all (`elem` ys) xs && all (`elem` xs) ys
